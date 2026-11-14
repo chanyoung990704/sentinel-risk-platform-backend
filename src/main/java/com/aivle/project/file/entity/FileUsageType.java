@@ -5,5 +5,6 @@ package com.aivle.project.file.entity;
  */
 public enum FileUsageType {
 	POST_ATTACHMENT,
-	REPORT_PDF
+	REPORT_PDF,
+	CUSTOM_REPORT_PDF
 }

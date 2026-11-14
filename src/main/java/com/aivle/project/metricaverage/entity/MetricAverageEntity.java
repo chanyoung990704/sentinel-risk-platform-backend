@@ -63,6 +63,11 @@ public class MetricAverageEntity extends BaseEntity {
 	@Column(name = "data_source_version", nullable = false)
 	private int dataSourceVersion;
 
+	@Column(name="data_snapshot_id",length=36,columnDefinition="CHAR(36)")
+	private String dataSnapshotId;
+
+	public void bindSourceSnapshot(String snapshotId) {this.dataSnapshotId=snapshotId;}
+
 	public static MetricAverageEntity create(
 		QuartersEntity quarter,
 		MetricsEntity metric,

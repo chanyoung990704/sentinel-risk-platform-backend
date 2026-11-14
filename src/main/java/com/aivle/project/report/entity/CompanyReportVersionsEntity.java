@@ -40,6 +40,10 @@ public class CompanyReportVersionsEntity extends BaseEntity {
 	@Column(name = "version_no", nullable = false)
 	private int versionNo;
 
+	// NULL은 기존 일반 보고서, 값이 있으면 검증/활성화 대상으로 격리된 버전이다.
+	@Column(name = "data_snapshot_id", length = 36, columnDefinition = "CHAR(36)")
+	private String dataSnapshotId;
+
 	@Column(name = "generated_at", nullable = false)
 	private LocalDateTime generatedAt;
 

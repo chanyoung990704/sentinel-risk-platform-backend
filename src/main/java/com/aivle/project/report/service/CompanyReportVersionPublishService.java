@@ -66,7 +66,7 @@ public class CompanyReportVersionPublishService {
 		}
 
 		Optional<CompanyReportVersionsEntity> version =
-			companyReportVersionsRepository.findTopByCompanyReportOrderByVersionNoDesc(report.get());
+			companyReportVersionsRepository.findTopByCompanyReportAndDataSnapshotIdIsNullOrderByVersionNoDesc(report.get());
 		if (version.isEmpty()) {
 			log.info(
 				"보고서 발행 스킵: 보고서 버전 미존재 (stockCode={}, quarterKey={})",

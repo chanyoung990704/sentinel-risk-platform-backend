@@ -103,6 +103,8 @@ public class SecurityConfig {
 	};
 
 	private static final String[] USER_GET_ENDPOINTS = {
+		"/api/report-requests/*",
+		"/api/report-requests/*/file",
 		"/api/companies",
 		"/api/companies/*/insights",
 		"/api/companies/*/overview",
@@ -120,6 +122,7 @@ public class SecurityConfig {
 	};
 
 	private static final String[] USER_POST_ENDPOINTS = {
+		"/api/companies/*/custom-report-requests",
 		"/api/companies/*/news/refresh-latest",
 		"/api/watchlists",
 		"/api/companies/*/ai-report",
@@ -216,7 +219,7 @@ public class SecurityConfig {
 		}
 		configuration.setAllowedOrigins(origins);
 		configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-		configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With", "X-CSRF-Token"));
+		configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-Requested-With", "X-CSRF-Token", "Idempotency-Key", "X-Run-Id"));
 		configuration.setAllowCredentials(true);
 		configuration.setMaxAge(3600L);
 

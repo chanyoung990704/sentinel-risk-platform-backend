@@ -1,5 +1,7 @@
 package com.aivle.project.report.repository;
 
+import com.aivle.project.dataimport.repository.SnapshotQueryScope;
+
 import com.aivle.project.company.entity.QCompaniesEntity;
 import com.aivle.project.file.entity.QFilesEntity;
 import com.aivle.project.metric.entity.MetricValueType;
@@ -63,12 +65,14 @@ public class CompanyReportMetricValuesRepositoryImpl implements CompanyReportMet
 			.join(v.metric, m)
 			.join(v.quarter, q)
 			.where(
+				SnapshotQueryScope.forValue(rv, v.valueType),
 				c.stockCode.eq(stockCode),
 				q.quarterKey.between(fromQuarterKey, toQuarterKey),
 				rv.versionNo.eq(
 					JPAExpressions.select(rv2.versionNo.max())
 						.from(rv2)
 						.where(rv2.companyReport.eq(cr),
+							SnapshotQueryScope.forValue(rv2, v.valueType),
 							JPAExpressions.selectOne()
 								.from(v2)
 								.where(v2.reportVersion.eq(rv2),
@@ -121,6 +125,7 @@ public class CompanyReportMetricValuesRepositoryImpl implements CompanyReportMet
 			.join(v.metric, m)
 			.join(v.quarter, q)
 			.where(
+				SnapshotQueryScope.forValue(rv, v.valueType),
 				c.stockCode.eq(stockCode),
 				q.quarterKey.between(fromQuarterKey, toQuarterKey),
 				m.metricCode.in(metricCodes),
@@ -128,6 +133,7 @@ public class CompanyReportMetricValuesRepositoryImpl implements CompanyReportMet
 					JPAExpressions.select(rv2.versionNo.max())
 						.from(rv2)
 						.where(rv2.companyReport.eq(cr),
+							SnapshotQueryScope.forValue(rv2, v.valueType),
 							JPAExpressions.selectOne()
 								.from(v2)
 								.where(v2.reportVersion.eq(rv2),
@@ -184,6 +190,7 @@ public class CompanyReportMetricValuesRepositoryImpl implements CompanyReportMet
 			.join(v.quarter, q)
 			.leftJoin(rv.pdfFile, f)
 			.where(
+				SnapshotQueryScope.forType(rv, valueType),
 				c.stockCode.eq(stockCode),
 				cr.quarter.quarterKey.eq(quarterKey),
 				v.valueType.eq(valueType),
@@ -191,6 +198,7 @@ public class CompanyReportMetricValuesRepositoryImpl implements CompanyReportMet
 					JPAExpressions.select(rv2.versionNo.max())
 						.from(rv2)
 						.where(rv2.companyReport.eq(cr),
+							SnapshotQueryScope.forType(rv2, valueType),
 							JPAExpressions.selectOne()
 								.from(v2)
 								.where(v2.reportVersion.eq(rv2),
@@ -247,6 +255,7 @@ public class CompanyReportMetricValuesRepositoryImpl implements CompanyReportMet
 			.join(v.quarter, q)
 			.leftJoin(rv.pdfFile, f)
 			.where(
+				SnapshotQueryScope.forType(rv, valueType),
 				c.id.eq(companyId),
 				cr.quarter.quarterKey.eq(quarterKey),
 				v.valueType.eq(valueType),
@@ -254,6 +263,7 @@ public class CompanyReportMetricValuesRepositoryImpl implements CompanyReportMet
 					JPAExpressions.select(rv2.versionNo.max())
 						.from(rv2)
 						.where(rv2.companyReport.eq(cr),
+							SnapshotQueryScope.forType(rv2, valueType),
 							JPAExpressions.selectOne()
 								.from(v2)
 								.where(v2.reportVersion.eq(rv2),
@@ -296,6 +306,7 @@ public class CompanyReportMetricValuesRepositoryImpl implements CompanyReportMet
 			.from(rv2)
 			.where(
 				rv2.companyReport.eq(cr),
+				SnapshotQueryScope.forType(rv2, valueType),
 				JPAExpressions.selectOne()
 					.from(v2)
 					.join(v2.metric, m2)
@@ -312,6 +323,7 @@ public class CompanyReportMetricValuesRepositoryImpl implements CompanyReportMet
 			.from(rv3)
 			.where(
 				rv3.companyReport.eq(cr),
+				SnapshotQueryScope.forType(rv3, valueType),
 				JPAExpressions.selectOne()
 					.from(v3)
 					.join(v3.metric, m3)
@@ -345,6 +357,7 @@ public class CompanyReportMetricValuesRepositoryImpl implements CompanyReportMet
 			.join(v.quarter, q)
 			.leftJoin(md).on(md.metric.eq(m).and(md.locale.eq(locale)))
 			.where(
+				SnapshotQueryScope.forType(rv, valueType),
 				c.id.eq(companyId),
 				q.id.eq(quarterId),
 				v.valueType.eq(valueType),
@@ -377,36 +390,21 @@ public class CompanyReportMetricValuesRepositoryImpl implements CompanyReportMet
 		QCompanyReportVersionsEntity rv2 = new QCompanyReportVersionsEntity("rv2");
 		QCompanyReportMetricValuesEntity v2 = new QCompanyReportMetricValuesEntity("v2");
 		QMetricsEntity m2 = new QMetricsEntity("m2");
-		QCompanyReportVersionsEntity rv3 = new QCompanyReportVersionsEntity("rv3");
-		QCompanyReportMetricValuesEntity v3 = new QCompanyReportMetricValuesEntity("v3");
-		QMetricsEntity m3 = new QMetricsEntity("m3");
 
-		var latestRiskVersion = JPAExpressions.select(rv2.versionNo.max())
+		// 현재 non-NULL 행도 유효 후보이므로, 같은 분류의 더 높은 유효 버전만 없으면 최신이다.
+		var newerEligibleVersion = JPAExpressions.selectOne()
 			.from(rv2)
 			.where(
 				rv2.companyReport.eq(cr),
+				rv2.versionNo.gt(rv.versionNo),
+				SnapshotQueryScope.forValue(rv2, v.valueType),
 				JPAExpressions.selectOne()
 					.from(v2)
 					.join(v2.metric, m2)
 					.where(
 						v2.reportVersion.eq(rv2),
 						v2.metricValue.isNotNull(),
-						m2.isRiskIndicator.isTrue()
-					)
-					.exists()
-			);
-
-		var latestNonRiskVersion = JPAExpressions.select(rv3.versionNo.max())
-			.from(rv3)
-			.where(
-				rv3.companyReport.eq(cr),
-				JPAExpressions.selectOne()
-					.from(v3)
-					.join(v3.metric, m3)
-					.where(
-						v3.reportVersion.eq(rv3),
-						v3.metricValue.isNotNull(),
-						m3.isRiskIndicator.isFalse()
+						m2.isRiskIndicator.eq(m.isRiskIndicator)
 					)
 					.exists()
 			);
@@ -432,11 +430,12 @@ public class CompanyReportMetricValuesRepositoryImpl implements CompanyReportMet
 			.join(v.quarter, q)
 			.leftJoin(md).on(md.metric.eq(m).and(md.locale.eq(locale)))
 			.where(
+				SnapshotQueryScope.forValue(rv, v.valueType),
 				c.stockCode.eq(stockCode),
 				q.quarterKey.between(fromQuarterKey, toQuarterKey),
 				v.metricValue.isNotNull(),
-				m.isRiskIndicator.isTrue().and(rv.versionNo.eq(latestRiskVersion))
-					.or(m.isRiskIndicator.isFalse().and(rv.versionNo.eq(latestNonRiskVersion)))
+				m.isRiskIndicator.isTrue().or(m.isRiskIndicator.isFalse()),
+				newerEligibleVersion.notExists()
 			)
 			.orderBy(q.quarterKey.asc(), m.metricCode.asc())
 			.fetch()
@@ -464,6 +463,7 @@ public class CompanyReportMetricValuesRepositoryImpl implements CompanyReportMet
 			.join(rv.companyReport, cr)
 			.join(v.metric, m)
 			.where(
+				SnapshotQueryScope.fixedVersion(rv),
 				cr.company.id.eq(companyId),
 				cr.quarter.id.eq(quarterId),
 				rv.id.eq(reportVersionId),
@@ -498,6 +498,7 @@ public class CompanyReportMetricValuesRepositoryImpl implements CompanyReportMet
 			.join(rv.companyReport, cr)
 			.join(v.metric, m)
 			.where(
+				SnapshotQueryScope.forType(rv, valueType),
 				cr.quarter.id.eq(quarterId),
 				v.quarter.id.eq(quarterId),
 				v.valueType.eq(valueType),
@@ -507,6 +508,7 @@ public class CompanyReportMetricValuesRepositoryImpl implements CompanyReportMet
 					JPAExpressions.select(rv2.versionNo.max())
 						.from(rv2)
 						.where(rv2.companyReport.eq(cr),
+							SnapshotQueryScope.forType(rv2, valueType),
 							JPAExpressions.selectOne()
 								.from(v2)
 								.where(v2.reportVersion.eq(rv2),
@@ -545,6 +547,7 @@ public class CompanyReportMetricValuesRepositoryImpl implements CompanyReportMet
 			.from(rv2)
 			.where(
 				rv2.companyReport.eq(cr),
+				SnapshotQueryScope.actual(rv2),
 				JPAExpressions.selectOne()
 					.from(v2)
 					.join(v2.metric, m2)
@@ -561,6 +564,7 @@ public class CompanyReportMetricValuesRepositoryImpl implements CompanyReportMet
 			.from(rv3)
 			.where(
 				rv3.companyReport.eq(cr),
+				SnapshotQueryScope.actual(rv3),
 				JPAExpressions.selectOne()
 					.from(v3)
 					.join(v3.metric, m3)
@@ -581,6 +585,7 @@ public class CompanyReportMetricValuesRepositoryImpl implements CompanyReportMet
 			.join(v.metric, m).fetchJoin()
 			.join(v.quarter, q)
 			.where(
+				SnapshotQueryScope.actual(rv),
 				c.id.eq(companyId),
 				q.quarterKey.eq(quarterKey),
 				v.valueType.eq(MetricValueType.ACTUAL),
@@ -607,6 +612,7 @@ public class CompanyReportMetricValuesRepositoryImpl implements CompanyReportMet
 				.join(cr.company, c)
 				.join(v.quarter, q)
 				.where(
+					SnapshotQueryScope.actual(rv),
 					c.stockCode.in(stockCodes),
 					v.valueType.eq(MetricValueType.ACTUAL),
 					v.metricValue.isNotNull()

@@ -1,4 +1,10 @@
 HELP.md
+.env
+.env.*
+!.env.example
+/secrets/
+/upload/
+/logs/
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
@@ -45,3 +51,18 @@ out/
 gha-creds-*.json
 perf/results/*
 !perf/results/.gitkeep
+
+### 로컬 포트폴리오 참고 문서 ###
+/docs/portfolio/포트폴리오 참고용.md
+/docs/data/preflight.md
+/docs/data/import-journal.md
+/docs/data/snapshot-activation.md
+/docs/data-quality-results.md
+/docs/results/mysql-baseline.md
+/docs/results/custom-report.md
+/docs/results/messaging-recovery.md
+/docs/results/browser-and-cache.md
+/docs/results/reliability.md
+/docs/results/data-quality.md
+/docs/results/performance.md
+__pycache__/

@@ -1,6 +1,9 @@
 package com.aivle.project.report.service;
 
 import com.aivle.project.company.entity.CompaniesEntity;
+import com.aivle.project.dataimport.repository.SnapshotReportRepository;
+import com.aivle.project.dataimport.service.SnapshotMaterializationService;
+import com.aivle.project.dataimport.service.SnapshotActivationService;
 import com.aivle.project.company.repository.CompaniesRepository;
 import com.aivle.project.common.util.GetOrCreateResolver;
 import com.aivle.project.metric.entity.MetricValueType;
@@ -44,6 +47,18 @@ public class CompanyReportMetricImportService {
 	private final CompanyReportVersionsRepository companyReportVersionsRepository;
 	private final CompanyReportMetricValuesRepository companyReportMetricValuesRepository;
 	private final CompanyReportVersionIssueService companyReportVersionIssueService;
+	private final SnapshotReportRepository snapshotReports;
+	private final SnapshotMaterializationService snapshotMaterializer;
+	private final SnapshotActivationService snapshotActivation;
+
+	/** D04 CLI가 사용할 신규 적재 경로. 그룹별 transaction 뒤 검증/활성화를 분리한다. */
+	public java.util.UUID importSnapshot(java.util.UUID snapshotId) {
+		for(var target:snapshotReports.targets(snapshotId)) {
+			if(target.companyId()==null)throw new IllegalStateException("기업 마스터 적재가 먼저 필요함");
+			snapshotMaterializer.materialize(snapshotId,target.companyId(),target.quarterKey());
+		}
+		snapshotActivation.verify(snapshotId);snapshotActivation.activate(snapshotId);return snapshotId;
+	}
 
 	@Transactional
 	public ReportImportResult importMetrics(int baseQuarterKey, List<CompanyMetricValueCommand> commands) {

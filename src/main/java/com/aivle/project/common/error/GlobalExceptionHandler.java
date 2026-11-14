@@ -87,10 +87,16 @@ public class GlobalExceptionHandler {
 		IllegalArgumentException.class,
 		MethodArgumentTypeMismatchException.class,
 		MissingServletRequestParameterException.class,
+		org.springframework.web.bind.MissingRequestHeaderException.class,
 		HttpMessageNotReadableException.class
 	})
 	public ResponseEntity<ApiResponse<Void>> handleBadRequest(Exception ex, HttpServletRequest request) {
 		return buildResponse(CommonErrorCode.COMMON_400, request.getRequestURI());
+	}
+
+	@ExceptionHandler(org.springframework.web.servlet.resource.NoResourceFoundException.class)
+	public ResponseEntity<ApiResponse<Void>> handleNoResource(Exception ex,HttpServletRequest request) {
+		return buildResponse(CommonErrorCode.COMMON_404,request.getRequestURI());
 	}
 
 	@ExceptionHandler(Exception.class)

@@ -15,10 +15,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * 로컬 파일 저장소 (dev 전용).
+ * 로컬 파일 저장소 (dev/local 전용).
  */
 @Component
-@Profile("dev")
+@Profile({"dev", "local"})
 @RequiredArgsConstructor
 public class LocalFileStorageService implements FileStorageService {
 

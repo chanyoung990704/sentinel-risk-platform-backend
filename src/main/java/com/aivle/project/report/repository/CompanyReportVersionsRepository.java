@@ -14,7 +14,20 @@ import org.springframework.data.jpa.repository.Query;
  */
 public interface CompanyReportVersionsRepository extends JpaRepository<CompanyReportVersionsEntity, Long> {
 
+	@org.springframework.data.jpa.repository.Lock(jakarta.persistence.LockModeType.PESSIMISTIC_WRITE)
 	Optional<CompanyReportVersionsEntity> findTopByCompanyReportOrderByVersionNoDesc(CompanyReportsEntity companyReport);
+
+	Optional<CompanyReportVersionsEntity> findTopByCompanyReportAndDataSnapshotIdIsNullOrderByVersionNoDesc(CompanyReportsEntity companyReport);
+
+	@Query("""
+		select (count(rv) > 0) from CompanyReportVersionsEntity rv
+		where rv.id = :versionId and rv.companyReport.company.id = :companyId
+		  and rv.companyReport.quarter.id = :quarterId
+		  and (rv.dataSnapshotId is null or exists (select s.id from DataSnapshotStateEntity s where s.id=rv.dataSnapshotId and s.state='VERIFIED'))
+		""")
+	boolean isReadableFixedVersion(@org.springframework.data.repository.query.Param("companyId") Long companyId,
+		@org.springframework.data.repository.query.Param("quarterId") Long quarterId,
+		@org.springframework.data.repository.query.Param("versionId") Long versionId);
 
 	Optional<CompanyReportVersionsEntity> findTopByCompanyReportAndPdfFileIsNotNullOrderByVersionNoDesc(
 		CompanyReportsEntity companyReport
@@ -31,6 +44,7 @@ public interface CompanyReportVersionsRepository extends JpaRepository<CompanyRe
 		  and q.year = :year
 		  and q.quarter = :quarter
 		  and rv.pdfFile is not null
+		  and rv.dataSnapshotId is null
 		order by rv.versionNo desc
 		""")
 	java.util.List<Long> findLatestPdfFileIdsByCompanyIdAndYearAndQuarter(
@@ -40,9 +54,10 @@ public interface CompanyReportVersionsRepository extends JpaRepository<CompanyRe
 		Pageable pageable
 	);
 
-	Optional<CompanyReportVersionsEntity> findTopByCompanyReportAndPublishedFalseOrderByVersionNoDesc(
-		CompanyReportsEntity companyReport
-	);
+	default Optional<CompanyReportVersionsEntity> findTopByCompanyReportAndPublishedFalseOrderByVersionNoDesc(CompanyReportsEntity companyReport) {
+		return findTopByCompanyReportAndDataSnapshotIdIsNullAndPublishedFalseOrderByVersionNoDesc(companyReport);
+	}
+	Optional<CompanyReportVersionsEntity> findTopByCompanyReportAndDataSnapshotIdIsNullAndPublishedFalseOrderByVersionNoDesc(CompanyReportsEntity companyReport);
 
 	@Query("""
 		select cr.company.id as companyId,
@@ -54,7 +69,11 @@ public interface CompanyReportVersionsRepository extends JpaRepository<CompanyRe
 			select max(rv2.versionNo)
 			from CompanyReportVersionsEntity rv2
 			where rv2.companyReport = cr
+			  and (rv2.dataSnapshotId = (select a.snapshotId from ActiveDataSnapshotEntity a where a.family = 'FINANCIAL')
+			       or (rv2.dataSnapshotId is null and not exists (select a.family from ActiveDataSnapshotEntity a where a.family = 'FINANCIAL' and a.snapshotId is not null)))
 		)
+		and (rv.dataSnapshotId = (select a.snapshotId from ActiveDataSnapshotEntity a where a.family = 'FINANCIAL')
+		     or (rv.dataSnapshotId is null and not exists (select a.family from ActiveDataSnapshotEntity a where a.family = 'FINANCIAL' and a.snapshotId is not null)))
 		order by cr.quarter.id, cr.company.id
 		""")
 	Page<RiskScoreBatchTargetProjection> findLatestRiskScoreTargets(Pageable pageable);
@@ -68,6 +87,7 @@ public interface CompanyReportVersionsRepository extends JpaRepository<CompanyRe
 		where c.stockCode = :stockCode
 		  and q.quarterKey = :quarterKey
 		  and rv.pdfFile is not null
+		  and rv.dataSnapshotId is null
 		order by rv.versionNo desc
 		""")
 	java.util.List<CompanyReportVersionsEntity> findLatestWithPdf(

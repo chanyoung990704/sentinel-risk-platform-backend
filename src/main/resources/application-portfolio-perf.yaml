@@ -1,0 +1,30 @@
+# 기존 perf(H2)와 구분해 local,portfolio-perf로 실행한다.
+turnstile:
+  mock-allow-all: true
+spring:
+  jpa:
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+  datasource:
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 10
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: false
+logging:
+  level:
+    p6spy: OFF
+    org.hibernate.SQL: OFF
+    org.hibernate.orm.jdbc.bind: OFF
+    com.aivle.project.company.service.CompanySearchService: WARN
+    com.aivle.project.common.logging.ApiLoggingAspect: WARN
+    com.aivle.project.common.logging.ApiLogProcessor: WARN

@@ -1,0 +1,6 @@
+{
+  "mysql": "mysql@sha256:7dcddc01f13bab2f15cde676d44d01f61fc9f99fe7785e86196dfc07d358ae2b",
+  "redis": "redis@sha256:352c1fdadc91926edda08f45aeb3f27f37194c2f14101229c0523a11195c96e3",
+  "kafka": "apache/kafka@sha256:41c20d65b0a2180b9deca056d47540771752e69fe9225d5748dd65a25a9675d7",
+  "python": "python@sha256:b18b261e1b4974b4f321451ad5251ded85abb22c2b8b262da527dda1d031ab30"
+}

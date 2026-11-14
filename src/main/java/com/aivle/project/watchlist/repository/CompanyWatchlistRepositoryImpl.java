@@ -1,5 +1,7 @@
 package com.aivle.project.watchlist.repository;
 
+import com.aivle.project.dataimport.repository.SnapshotQueryScope;
+
 import com.aivle.project.company.entity.QCompaniesEntity;
 import com.aivle.project.metric.entity.MetricValueType;
 import com.aivle.project.metric.entity.QMetricsEntity;
@@ -71,7 +73,7 @@ public class CompanyWatchlistRepositoryImpl implements CompanyWatchlistRepositor
 			.join(crv).on(crv.companyReport.eq(cr))
 			.join(crmv).on(crmv.reportVersion.eq(crv).and(crmv.quarter.eq(q)))
 			.join(crmv.metric, m)
-			.leftJoin(ma).on(ma.quarter.eq(q).and(ma.metric.eq(m)))
+			.leftJoin(ma).on(ma.quarter.eq(q).and(ma.metric.eq(m)).and(SnapshotQueryScope.actualSource(ma.dataSnapshotId)))
 			.where(
 				cw.user.id.eq(userId),
 				cw.deletedAt.isNull(),
@@ -79,11 +81,13 @@ public class CompanyWatchlistRepositoryImpl implements CompanyWatchlistRepositor
 				q.quarter.eq(quarter),
 				m.isRiskIndicator.isFalse(),
 				crmv.valueType.eq(valueType),
+				SnapshotQueryScope.forType(crv, valueType),
 				crmv.metricValue.isNotNull(),
 				crv.versionNo.eq(
 					JPAExpressions.select(crv2.versionNo.max())
 						.from(crv2)
 						.where(crv2.companyReport.eq(cr),
+							SnapshotQueryScope.forType(crv2, valueType),
 							JPAExpressions.selectOne()
 								.from(v2)
 								.where(v2.reportVersion.eq(crv2),
@@ -107,6 +111,9 @@ public class CompanyWatchlistRepositoryImpl implements CompanyWatchlistRepositor
 		QCompanyWatchlistEntity cw = QCompanyWatchlistEntity.companyWatchlistEntity;
 		QCompaniesEntity c = QCompaniesEntity.companiesEntity;
 		QRiskScoreSummaryEntity rss = QRiskScoreSummaryEntity.riskScoreSummaryEntity;
+		QCompanyReportVersionsEntity riskVersion=new QCompanyReportVersionsEntity("riskVersion");
+		QCompanyReportVersionsEntity riskVersion2=new QCompanyReportVersionsEntity("riskVersion2");
+		QRiskScoreSummaryEntity rss2=new QRiskScoreSummaryEntity("riskSummary2");
 
 		return queryFactory
 			.select(Projections.constructor(WatchlistDashboardRiskRow.class,
@@ -121,10 +128,13 @@ public class CompanyWatchlistRepositoryImpl implements CompanyWatchlistRepositor
 			.from(cw)
 			.join(cw.company, c)
 			.join(rss).on(rss.company.eq(c))
+			.join(rss.reportVersion,riskVersion)
 			.where(
 				cw.user.id.eq(userId),
 				cw.deletedAt.isNull(),
 				rss.quarter.id.eq(quarterId),
+				SnapshotQueryScope.actual(riskVersion),
+				riskVersion.versionNo.eq(JPAExpressions.select(riskVersion2.versionNo.max()).from(rss2).join(rss2.reportVersion,riskVersion2).where(rss2.company.eq(c),rss2.quarter.id.eq(quarterId),SnapshotQueryScope.actual(riskVersion2))),
 				riskLevelEq(rss, riskLevel)
 			)
 			.orderBy(rss.riskScore.desc())
@@ -174,11 +184,13 @@ public class CompanyWatchlistRepositoryImpl implements CompanyWatchlistRepositor
 				q.year.eq(year),
 				q.quarter.eq(quarter),
 				crmv.valueType.eq(valueType),
+				SnapshotQueryScope.forType(crv, valueType),
 				crmv.metricValue.isNotNull(),
 				crv.versionNo.eq(
 					JPAExpressions.select(crv2.versionNo.max())
 						.from(crv2)
 						.where(crv2.companyReport.eq(cr),
+							SnapshotQueryScope.forType(crv2, valueType),
 							JPAExpressions.selectOne()
 								.from(v2)
 								.where(v2.reportVersion.eq(crv2),
@@ -240,11 +252,13 @@ public class CompanyWatchlistRepositoryImpl implements CompanyWatchlistRepositor
 				q.year.gt(fromYear).or(q.year.eq(fromYear).and(q.quarter.goe(fromQuarter))),
 				q.year.lt(toYear).or(q.year.eq(toYear).and(q.quarter.loe(toQuarter))),
 				crmv.valueType.eq(valueType),
+				SnapshotQueryScope.forType(crv, valueType),
 				crmv.metricValue.isNotNull(),
 				crv.versionNo.eq(
 					JPAExpressions.select(crv2.versionNo.max())
 						.from(crv2)
 						.where(crv2.companyReport.eq(cr),
+							SnapshotQueryScope.forType(crv2, valueType),
 							JPAExpressions.selectOne()
 								.from(v2)
 								.where(v2.reportVersion.eq(crv2),
@@ -301,12 +315,14 @@ public class CompanyWatchlistRepositoryImpl implements CompanyWatchlistRepositor
 				q.year.eq(year),
 				q.quarter.eq(quarter),
 				crmv.valueType.eq(valueType),
+				SnapshotQueryScope.forType(crv, valueType),
 				m.isRiskIndicator.isFalse(),
 				crmv.metricValue.isNotNull(),
 				crv.versionNo.eq(
 					JPAExpressions.select(crv2.versionNo.max())
 						.from(crv2)
 						.where(crv2.companyReport.eq(cr),
+							SnapshotQueryScope.forType(crv2, valueType),
 							JPAExpressions.selectOne()
 								.from(v2)
 								.where(v2.reportVersion.eq(crv2),

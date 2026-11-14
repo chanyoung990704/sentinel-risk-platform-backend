@@ -76,7 +76,7 @@ public class CompanyPredictionCacheService {
 		CompanyReportsEntity report = getOrCreateReport(company, targetQuarterEntity);
 
 		CompanyReportVersionsEntity latestVersion = companyReportVersionsRepository
-			.findTopByCompanyReportOrderByVersionNoDesc(report)
+			.findTopByCompanyReportAndDataSnapshotIdIsNullOrderByVersionNoDesc(report)
 			.orElseGet(() -> companyReportVersionIssueService.issueNextVersion(report, true, null));
 
 		if (companyReportMetricValuesRepository.existsByReportVersionAndValueTypeAndMetricValueIsNotNull(

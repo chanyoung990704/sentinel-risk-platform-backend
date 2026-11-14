@@ -1,0 +1,94 @@
+spring:
+  config:
+    import: file:${PORTFOLIO_SECRET_DIR}/application-secrets.properties
+  datasource:
+    url: jdbc:mysql://127.0.0.1:13306/sentinel_portfolio?serverTimezone=UTC&useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8
+    username: sentinel_local
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    locations: classpath:db/migration
+    validate-on-migrate: true
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 16379
+      repositories:
+        enabled: false
+  kafka:
+    bootstrap-servers: 127.0.0.1:19092
+    admin:
+      auto-create: false
+    listener:
+      missing-topics-fatal: false
+  mail:
+    host: 127.0.0.1
+    port: 1
+server:
+  address: 127.0.0.1
+  port: 18080
+management:
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      group:
+        apiReady:
+          include: readinessState,reportApi
+        workerReady:
+          include: reportWorker
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  health:
+    mail:
+      enabled: false
+ai:
+  server:
+    url: http://127.0.0.1:18081
+    mock:
+      enabled: false
+app:
+  ai:
+    job:
+      kafka-enabled: true
+  cors:
+    allowed-origins: http://localhost:3000
+  auth:
+    cookie:
+      secure: false
+  file:
+    upload:
+      upload-dir: ${PORTFOLIO_DATA_DIR}/uploads
+  email:
+    verification:
+      skip: true
+jwt:
+  keys:
+    private-key-path: ${PORTFOLIO_SECRET_DIR}/jwt/private.pem
+    public-key-path: ${PORTFOLIO_SECRET_DIR}/jwt/public.pem
+    current-kid: portfolio-local
+turnstile:
+  secret-key: ""
+  verify-url: http://127.0.0.1:18081/turnstile-disabled
+dart:
+  api:
+    base-url: http://127.0.0.1:18081/dart-disabled
+  corp-sync:
+    schedule:
+      enabled: false
+metric-average:
+  schedule:
+    enabled: false
+
+# Outbox 본문과 자유 입력이 JDBC 바인딩 로그에 노출되지 않도록 한다.
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: false
+custom-report:
+  worker:
+    enabled: false # 관리 앱 launcher만 명시적으로 켜며 컴포넌트 시험에는 주입하지 않는다.

@@ -21,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import org.springframework.dao.DataIntegrityViolationException;
 
 /**
  * 분기별 비위험 지표 통계를 계산한다.
@@ -38,7 +37,9 @@ public class MetricAverageCalculationService {
 	private final QuartersRepository quartersRepository;
 	private final MetricsRepository metricsRepository;
 
+	@Transactional
 	public QuarterMetricAverageSaveResult calculateAndInsertMissingByQuarter(Long quarterId) {
+		String source=metricAverageRepository.findActiveSourceSnapshot().orElse(null);
 		List<MetricValueSampleProjection> samples = metricValuesRepository.findNonRiskActualMetricSamplesByQuarterId(
 			quarterId,
 			MetricValueType.ACTUAL
@@ -53,25 +54,23 @@ public class MetricAverageCalculationService {
 		int insertedCount = 0;
 		int skippedCount = 0;
 
-		for (Map.Entry<Long, List<BigDecimal>> entry : valuesByMetric.entrySet()) {
+		for (Map.Entry<Long, List<BigDecimal>> entry : valuesByMetric.entrySet().stream().sorted(Map.Entry.comparingByKey()).toList()) {
 			Long metricId = entry.getKey();
-			if (metricAverageRepository.existsByQuarterIdAndMetricId(quarterId, metricId)) {
+			var existing=metricAverageRepository.findAnyByQuarterIdAndMetricIdForUpdate(quarterId,metricId);
+			if (existing.isPresent() && java.util.Objects.equals(existing.get().getDataSnapshotId(),source)) {
 				skippedCount++;
 				continue;
 			}
 			MetricAverageResult result = calculate(metricId, entry.getValue());
-			try {
-				insert(quarterId, result, now);
-				insertedCount++;
-			} catch (DataIntegrityViolationException e) {
-				skippedCount++;
-			}
+			upsert(quarterId,result,now,source);
+			insertedCount++;
 		}
 		return new QuarterMetricAverageSaveResult(insertedCount, skippedCount);
 	}
 
 	@Transactional
 	public List<MetricAverageResult> calculateAndUpsertByQuarter(Long quarterId) {
+		String source=metricAverageRepository.findActiveSourceSnapshot().orElse(null);
 		List<MetricValueSampleProjection> samples = metricValuesRepository.findNonRiskActualMetricSamplesByQuarterId(
 			quarterId,
 			MetricValueType.ACTUAL
@@ -84,29 +83,14 @@ public class MetricAverageCalculationService {
 
 		List<MetricAverageResult> results = new ArrayList<>();
 		LocalDateTime now = LocalDateTime.now();
-		for (Map.Entry<Long, List<BigDecimal>> entry : valuesByMetric.entrySet()) {
+		for (Map.Entry<Long, List<BigDecimal>> entry : valuesByMetric.entrySet().stream().sorted(Map.Entry.comparingByKey()).toList()) {
 			Long metricId = entry.getKey();
 			List<BigDecimal> values = entry.getValue();
 			MetricAverageResult result = calculate(metricId, values);
-			upsert(quarterId, result, now);
+			upsert(quarterId, result, now, source);
 			results.add(result);
 		}
 		return results;
-	}
-
-	private void insert(Long quarterId, MetricAverageResult result, LocalDateTime now) {
-		MetricAverageEntity entity = createSkeleton(quarterId, result.metricId(), now);
-		entity.refresh(
-			result.avgValue(),
-			result.medianValue(),
-			result.minValue(),
-			result.maxValue(),
-			result.stddevValue(),
-			result.companyCount(),
-			now,
-			DATA_SOURCE_VERSION
-		);
-		metricAverageRepository.saveAndFlush(entity);
 	}
 
 	MetricAverageResult calculate(Long metricId, List<BigDecimal> values) {
@@ -125,8 +109,8 @@ public class MetricAverageCalculationService {
 		return new MetricAverageResult(metricId, avg, median, min, max, stddev, count);
 	}
 
-	private void upsert(Long quarterId, MetricAverageResult result, LocalDateTime now) {
-		MetricAverageEntity entity = metricAverageRepository.findByQuarterIdAndMetricId(quarterId, result.metricId())
+	private void upsert(Long quarterId, MetricAverageResult result, LocalDateTime now, String source) {
+		MetricAverageEntity entity = metricAverageRepository.findAnyByQuarterIdAndMetricIdForUpdate(quarterId, result.metricId())
 			.orElseGet(() -> createSkeleton(quarterId, result.metricId(), now));
 		entity.refresh(
 			result.avgValue(),
@@ -138,6 +122,7 @@ public class MetricAverageCalculationService {
 			now,
 			DATA_SOURCE_VERSION
 		);
+		entity.bindSourceSnapshot(source);
 		metricAverageRepository.save(entity);
 	}
 

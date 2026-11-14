@@ -1,0 +1,21 @@
+{
+  "connector.class": "io.debezium.connector.mysql.MySqlConnector",
+  "tasks.max": "1",
+  "database.hostname": "mysql",
+  "database.port": "3306",
+  "database.user": "sentinel_cdc",
+  "database.password": "${file:/run/secrets/cdc-reader.properties:password}",
+  "database.server.id": "223345",
+  "database.include.list": "sentinel_cdc_probe",
+  "table.include.list": "sentinel_cdc_probe.outbox_probe",
+  "topic.prefix": "__PREFIX__",
+  "schema.history.internal.kafka.bootstrap.servers": "kafka:9092",
+  "schema.history.internal.kafka.topic": "__HISTORY__",
+  "schema.history.internal.store.only.captured.tables.ddl": "true",
+  "schema.history.internal.store.only.captured.databases.ddl": "true",
+  "snapshot.mode": "initial",
+  "snapshot.locking.mode": "none",
+  "include.schema.changes": "false",
+  "tombstones.on.delete": "false",
+  "poll.interval.ms": "200"
+}

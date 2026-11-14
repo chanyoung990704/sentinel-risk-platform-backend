@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "repetitions": [1, 2, 3],
+  "terminalObservationSeconds": 180,
+  "relay": "cdc",
+  "defaultNormalRequests": 100,
+  "cases": [
+    {"id":"F01","level":"real-mysql-process-boundary","requests":1,"methods":["actualProcessHaltBeforeAndAfterAcceptCommitPreservesAtomicityAndReplay"],"condition":"commit 전/후 각각 별도 JVM halt, 미커밋 없음/같은 키 재수락 동일 ID"},
+    {"id":"F02","level":"http-cdc-process-container","requests":100,"methods":["connectorOnlyOutagePreservesHundredAcceptedAcrossApiRestart"],"condition":"connector 단독 10초 이상 중단·API 재시작·100개 고유 수락 전부 성공"},
+    {"id":"F03","level":"http-kafka-process-container","requests":100,"methods":["brokerOnlyOutagePreservesHundredAcceptedAcrossApiRestart"],"condition":"broker 단독 10초 이상 중단·API 재시작·100개 고유 수락 전부 성공"},
+    {"id":"F04","level":"http-kafka-ack-process-boundary","requests":1,"methods":["inboxCommitThenActualJvmHaltBeforeAckRedeliversSameOffset","databaseCommitThenAckFailureRedeliversOneInboxAndJob"],"condition":"Inbox commit/ACK 전 halt·같은 partition/offset 실제 재수신·job/artifact 하나"},
+    {"id":"F05","level":"real-mysql-worker-boundary-and-runbook","requests":1,"methods":["durableReadyRunsWithoutWakeupAndExternalPortHasNoDatabaseTransaction","gracefulStopBlocksNewClaimsAndPreservesReadyJob"],"condition":"명시 wakeup 없이 DB READY 회수; 별도 M05 100건 실제 scan/복원 대조","limit":"단위 경계의 외부 생성/결과 포트는 recorder이며 실제 HTTP 완료는 M05 별도 증거"},
+    {"id":"F06","level":"http-process-lease-and-mysql-fence","requests":1,"methods":["killedGenerationProcessIsRecoveredByLeaseWithoutDuplicateArtifact","expiredWorkerCannotCompleteNewAttemptOrOverwriteItsFile","expiredLeaseIsRecoveredAndOldTokenCannotHeartbeatOrFailNewAttempt"],"condition":"실제 HTTP 진입 후 JVM kill·lease 복구·옛 token/파일 확정 거부"},
+    {"id":"F07","level":"http-response-loss","requests":100,"methods":["remoteProcessingWithLostResponseRetriesWithoutDuplicateBusinessResult"],"condition":"원격 처리200 후 첫 응답 유실·외부101회/DB100효과"},
+    {"id":"F08","level":"http-worker-and-adapter-boundaries","requests":1,"methods":["permanentInvalidPdfFailsOnceAndReturnsAdmissionSlot","temporaryHttpFailuresRecoverWithinThreeAttemptBudget","timeoutIsTransientAndRemoteAddressesAreNeverCalled","transientFailuresStopAfterThreeAttemptsAndReturnSlotOnce","permanentFailureDoesNotRetryOrReleaseSlotTwice"],"condition":"영구PDF1실패/일시5xx2회뒤3번째성공·최초포함총3회예산/실제HTTPtimeout분류·worker최대3회","limit":"timeout 분류와 worker 재시도 예산은 서로 다른 시험 경계로 검증"},
+    {"id":"F09","level":"http-file-mysql-process-boundary","requests":1,"methods":["actualJvmHaltAfterFileWriteRollsBackDatabaseThenLeaseRecoveryCompletes","cleanupPreservesReferenceAndLiveLeaseButDeletesExpiredOrphan","cleanupSerializesWithCompletionAndExpiredCompletionRollsBack"],"condition":"파일 기록/DBcommit 전 halt·복구 결과 하나·고아/참조/유효lease 정리 경계","limit":"120초 유예 정리는 제어 시각의 별도 실제 파일/DB 시험, 실시간 대기는 아님"},
+    {"id":"F10","level":"real-status-redis-db-projector","requests":1,"methods":["cacheOutageKeepsAuthenticatedReadAndWorkerCompletionThenProjectorResumesForThreeSeeds","missLoadsOwnedDatabaseAndTwoSecondTtlExpires","ownedCacheNamespaceLossRebuildsAllStatusesFromDatabase"],"condition":"상태Redis중단/TTL2초/시험소유10키 소실·DB원장 불변·최신상태재구성","limit":"인증Redis전체장애의 인증 우회 가용성은 범위 밖"},
+    {"id":"F11","level":"real-mysql-import-process-boundary","requests":0,"methods":["abruptJvmExitAtSixthCommitResumesFromDatabase"],"condition":"합성100cell·6번째chunk commit전/후 halt·clean 대비 전체 key/value 일치","limit":"실제149976행 전체 중단재개는 D04 역사 근거와 구분"},
+    {"id":"F12","level":"real-source-http-retry-boundary","requests":1,"methods":["retryKeepsAcceptedSnapshotAndActualChecksumAfterNewPointerActivation"],"condition":"A접수/첫실패→검증된B pointer→두번째실제모의호출·결과 A checksum 고정"},
+    {"id":"F13","level":"http-worker-admin-service","requests":1,"methods":["exhaustedHttpFailuresRequireOneAuditedRecoveryAndKeepAttemptHistory"],"condition":"3회 소진 후 원인제거·동일관리command 반복·generation2/감사1개·최종성공"},
+    {"id":"F14","level":"real-kafka-quarantine-dlt","requests":0,"methods":["dltBrokerOutageKeepsRawJournalAndOutboxUntilDeliveryResumes"],"condition":"malformed raw/격리/Outbox보존·DLT broker 중단재개·실제관측·요청분모와분리"},
+    {"id":"F15","level":"not-applicable","requests":0,"methods":[],"reason":"선택 발행기는 CDC이며 polling ACK/delivery 기록 경계는 실행하지 않는다"},
+    {"id":"F16","level":"http-owner-and-real-cache-boundaries","requests":1,"methods":["actualHttpDeniesOtherOwnerForStatusFileAndLegacyRoutes","anotherOwnerAndDeletedUserCannotReadACachedOwnedResult"],"condition":"다른JWT사용자 상태/파일/legacy 404·타인캐시키/삭제사용자 거부"}
+  ]
+}

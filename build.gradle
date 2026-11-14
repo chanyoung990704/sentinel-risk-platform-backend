@@ -77,6 +77,8 @@ dependencies {
 
 	// Excel (Apache POI)
 	implementation 'org.apache.poi:poi-ooxml:5.4.0'
+	// 모의 보고서도 크기/구조가 유효한 PDF인지 검사한다.
+	implementation('org.apache.pdfbox:pdfbox:3.0.8') { exclude group: 'commons-logging', module: 'commons-logging' }
 
 	// API Documentation (Swagger)
 	// SpringDoc: 버전 명시 필요 (Boot 3.x 대응)
@@ -93,6 +95,8 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation 'org.testcontainers:junit-jupiter'
+	testImplementation 'org.testcontainers:mysql'
+	testImplementation 'org.testcontainers:kafka'
 	testImplementation 'com.squareup.okhttp3:mockwebserver:4.12.0'
 	testImplementation 'io.projectreactor:reactor-test'
 	testImplementation 'org.springframework.kafka:spring-kafka-test'
@@ -100,6 +104,12 @@ dependencies {
 		transitive = false
 	}
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+// 모든 시험 task가 기존 보안 프로필과 Mockito agent를 공유한다.
+tasks.withType(Test).configureEach {
+	jvmArgs "-javaagent:${configurations.mockitoAgent.singleFile}"
+	systemProperty "spring.profiles.active", "test"
 }
 
 tasks.named('test') {
@@ -117,6 +127,92 @@ tasks.named('test') {
 		// CI 속도 개선용: 명시적으로 IntegrationTest 네이밍을 제외
 		exclude '**/*IntegrationTest.class'
 	}
-	jvmArgs "-javaagent:${configurations.mockitoAgent.singleFile}"
-	systemProperty "spring.profiles.active", "test"
+}
+
+// 결과를 매번 새로 생성해 이전 실행의 XML을 검증 근거로 쓰지 않는다.
+def portfolioTest = { String taskName, List<String> included, List<String> excluded ->
+	tasks.register(taskName, Test) {
+		group = 'verification'
+		description = "Run ${taskName} portfolio test scope"
+		testClassesDirs = sourceSets.test.output.classesDirs
+		classpath = sourceSets.test.runtimeClasspath
+		dependsOn tasks.named('testClasses')
+		maxParallelForks = 1
+		forkEvery = 0
+		maxHeapSize = '512m'
+		// 많은 JPA 시험 컨텍스트가 512MB heap을 채우지 않도록 보관 수를 제한한다.
+		systemProperty 'spring.test.context.cache.maxSize', '16'
+		// 별도 JVM의 강제 종료·재개 시험에서도 동일한 시험/애플리케이션 클래스를 사용한다.
+		systemProperty 'sentinel.test.classpath', sourceSets.test.runtimeClasspath.asPath
+		outputs.upToDateWhen { false }
+		useJUnitPlatform {
+			if (included) includeTags included as String[]
+			if (excluded) excludeTags excluded as String[]
+		}
+	}
+}
+
+portfolioTest('fastTest', [], ['integration', 'realinfra', 'cdc', 'reliability']).configure {
+	systemProperty 'spring.kafka.listener.auto-startup', 'false'
+	systemProperty 'spring.kafka.admin.auto-create', 'false'
+}
+portfolioTest('realInfraTest', ['integration', 'realinfra'], ['cdc', 'reliability'])
+portfolioTest('cdcTest', ['cdc'], [])
+portfolioTest('reliabilityTest', ['reliability'], [])
+
+// DB/서버 기동 없이 지정한 원본 파일만 검증한다. 오류 격리는 종료 코드 2다.
+tasks.register('prepareCustomReportCli') {
+	group = 'verification'
+	description = 'Prepare the standalone local report recovery command'
+	dependsOn tasks.named('classes')
+	def destination = layout.buildDirectory.file('portfolio-report-classpath.txt')
+	inputs.files(sourceSets.main.runtimeClasspath)
+	outputs.file(destination)
+	doLast { destination.get().asFile.text = sourceSets.main.runtimeClasspath.asPath }
+}
+tasks.named('realInfraTest') { dependsOn tasks.named('prepareCustomReportCli') }
+tasks.named('reliabilityTest') { dependsOn tasks.named('prepareCustomReportCli') }
+
+tasks.register('prepareImportCli') {
+	group = 'verification'
+	description = 'Prepare the standalone local data import command'
+	dependsOn tasks.named('classes')
+	def destination = layout.buildDirectory.file('portfolio-import-classpath.txt')
+	outputs.file(destination)
+	doLast {
+		destination.get().asFile.text = sourceSets.main.runtimeClasspath.asPath
+	}
+}
+
+tasks.register('importPreflight', JavaExec) {
+	group = 'verification'
+	classpath = sourceSets.main.runtimeClasspath
+	mainClass = 'com.aivle.project.dataimport.cli.ImportPreflightCommand'
+	maxHeapSize = '1g'
+	doFirst {
+		if (!project.hasProperty('sourceDir') || !project.hasProperty('outputDir')) {
+			throw new GradleException('-PsourceDir=<원본 경로> -PoutputDir=<새 결과 경로> 필요')
+		}
+		args project.property('sourceDir'), project.property('outputDir'), project.findProperty('baseQuarter') ?: '20253'
+	}
+}
+
+def outboxMode = providers.gradleProperty('outboxMode').getOrElse('undecided')
+def requiredPortfolioTests = ['fastTest', 'realInfraTest', 'reliabilityTest']
+if (outboxMode == 'cdc') requiredPortfolioTests += 'cdcTest'
+def verificationStartedAt = System.currentTimeMillis() / 1000.0
+
+tasks.register('verifiedCheck', Exec) {
+	group = 'verification'
+	description = 'Require executed, passing, unskipped portfolio scopes (Python 3 required)'
+	dependsOn requiredPortfolioTests
+	doFirst {
+		if (!(outboxMode in ['cdc', 'polling'])) {
+			throw new GradleException('Choose -PoutboxMode=cdc or polling after validating connector readiness')
+		}
+	}
+	commandLine(['python3', 'scripts/reliability/verify_test_results.py',
+		'--results-root', 'build/test-results', '--deny-skips', '--since', verificationStartedAt.toString(),
+		'--output', 'build/reports/portfolio-verification.json'] +
+		requiredPortfolioTests.collectMany { ['--require', it] })
 }

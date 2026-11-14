@@ -1,0 +1,235 @@
+[ {
+  "severity" : "WARNING",
+  "code" : "MISSING_INDUSTRY_NAME",
+  "provenance" : {
+    "source" : "INDUSTRY",
+    "fileHash" : "9151e63d1c0d489adb41f6dfb07461ddefebf2977e5cae1015cb5d18832ab553",
+    "sheet" : "Sheet1",
+    "row" : 127,
+    "column" : 4
+  },
+  "key" : "003310",
+  "raw" : "",
+  "detail" : "업종명 NULL 허용; 코드와 재무 값은 보존"
+}, {
+  "severity" : "WARNING",
+  "code" : "MISSING_INDUSTRY_NAME",
+  "provenance" : {
+    "source" : "INDUSTRY",
+    "fileHash" : "9151e63d1c0d489adb41f6dfb07461ddefebf2977e5cae1015cb5d18832ab553",
+    "sheet" : "Sheet1",
+    "row" : 203,
+    "column" : 4
+  },
+  "key" : "005860",
+  "raw" : "",
+  "detail" : "업종명 NULL 허용; 코드와 재무 값은 보존"
+}, {
+  "severity" : "WARNING",
+  "code" : "MISSING_INDUSTRY_NAME",
+  "provenance" : {
+    "source" : "INDUSTRY",
+    "fileHash" : "9151e63d1c0d489adb41f6dfb07461ddefebf2977e5cae1015cb5d18832ab553",
+    "sheet" : "Sheet1",
+    "row" : 407,
+    "column" : 4
+  },
+  "key" : "016790",
+  "raw" : "",
+  "detail" : "업종명 NULL 허용; 코드와 재무 값은 보존"
+}, {
+  "severity" : "WARNING",
+  "code" : "MISSING_INDUSTRY_NAME",
+  "provenance" : {
+    "source" : "INDUSTRY",
+    "fileHash" : "9151e63d1c0d489adb41f6dfb07461ddefebf2977e5cae1015cb5d18832ab553",
+    "sheet" : "Sheet1",
+    "row" : 496,
+    "column" : 4
+  },
+  "key" : "025880",
+  "raw" : "",
+  "detail" : "업종명 NULL 허용; 코드와 재무 값은 보존"
+}, {
+  "severity" : "WARNING",
+  "code" : "MISSING_INDUSTRY_NAME",
+  "provenance" : {
+    "source" : "INDUSTRY",
+    "fileHash" : "9151e63d1c0d489adb41f6dfb07461ddefebf2977e5cae1015cb5d18832ab553",
+    "sheet" : "Sheet1",
+    "row" : 506,
+    "column" : 4
+  },
+  "key" : "027710",
+  "raw" : "",
+  "detail" : "업종명 NULL 허용; 코드와 재무 값은 보존"
+}, {
+  "severity" : "WARNING",
+  "code" : "MISSING_INDUSTRY_NAME",
+  "provenance" : {
+    "source" : "INDUSTRY",
+    "fileHash" : "9151e63d1c0d489adb41f6dfb07461ddefebf2977e5cae1015cb5d18832ab553",
+    "sheet" : "Sheet1",
+    "row" : 594,
+    "column" : 4
+  },
+  "key" : "035810",
+  "raw" : "",
+  "detail" : "업종명 NULL 허용; 코드와 재무 값은 보존"
+}, {
+  "severity" : "WARNING",
+  "code" : "MISSING_INDUSTRY_NAME",
+  "provenance" : {
+    "source" : "INDUSTRY",
+    "fileHash" : "9151e63d1c0d489adb41f6dfb07461ddefebf2977e5cae1015cb5d18832ab553",
+    "sheet" : "Sheet1",
+    "row" : 700,
+    "column" : 4
+  },
+  "key" : "043610",
+  "raw" : "",
+  "detail" : "업종명 NULL 허용; 코드와 재무 값은 보존"
+}, {
+  "severity" : "WARNING",
+  "code" : "MISSING_INDUSTRY_NAME",
+  "provenance" : {
+    "source" : "INDUSTRY",
+    "fileHash" : "9151e63d1c0d489adb41f6dfb07461ddefebf2977e5cae1015cb5d18832ab553",
+    "sheet" : "Sheet1",
+    "row" : 782,
+    "column" : 4
+  },
+  "key" : "052220",
+  "raw" : "",
+  "detail" : "업종명 NULL 허용; 코드와 재무 값은 보존"
+}, {
+  "severity" : "WARNING",
+  "code" : "MISSING_INDUSTRY_NAME",
+  "provenance" : {
+    "source" : "INDUSTRY",
+    "fileHash" : "9151e63d1c0d489adb41f6dfb07461ddefebf2977e5cae1015cb5d18832ab553",
+    "sheet" : "Sheet1",
+    "row" : 864,
+    "column" : 4
+  },
+  "key" : "060570",
+  "raw" : "",
+  "detail" : "업종명 NULL 허용; 코드와 재무 값은 보존"
+}, {
+  "severity" : "WARNING",
+  "code" : "MISSING_INDUSTRY_NAME",
+  "provenance" : {
+    "source" : "INDUSTRY",
+    "fileHash" : "9151e63d1c0d489adb41f6dfb07461ddefebf2977e5cae1015cb5d18832ab553",
+    "sheet" : "Sheet1",
+    "row" : 1335,
+    "column" : 4
+  },
+  "key" : "136490",
+  "raw" : "",
+  "detail" : "업종명 NULL 허용; 코드와 재무 값은 보존"
+}, {
+  "severity" : "WARNING",
+  "code" : "MISSING_INDUSTRY_NAME",
+  "provenance" : {
+    "source" : "INDUSTRY",
+    "fileHash" : "9151e63d1c0d489adb41f6dfb07461ddefebf2977e5cae1015cb5d18832ab553",
+    "sheet" : "Sheet1",
+    "row" : 1549,
+    "column" : 4
+  },
+  "key" : "218150",
+  "raw" : "",
+  "detail" : "업종명 NULL 허용; 코드와 재무 값은 보존"
+}, {
+  "severity" : "WARNING",
+  "code" : "MISSING_INDUSTRY_NAME",
+  "provenance" : {
+    "source" : "INDUSTRY",
+    "fileHash" : "9151e63d1c0d489adb41f6dfb07461ddefebf2977e5cae1015cb5d18832ab553",
+    "sheet" : "Sheet1",
+    "row" : 1867,
+    "column" : 4
+  },
+  "key" : "353810",
+  "raw" : "",
+  "detail" : "업종명 NULL 허용; 코드와 재무 값은 보존"
+}, {
+  "severity" : "WARNING",
+  "code" : "MISSING_INDUSTRY_NAME",
+  "provenance" : {
+    "source" : "INDUSTRY",
+    "fileHash" : "9151e63d1c0d489adb41f6dfb07461ddefebf2977e5cae1015cb5d18832ab553",
+    "sheet" : "Sheet1",
+    "row" : 1896,
+    "column" : 4
+  },
+  "key" : "368970",
+  "raw" : "",
+  "detail" : "업종명 NULL 허용; 코드와 재무 값은 보존"
+}, {
+  "severity" : "ERROR",
+  "code" : "INVALID_STOCK_CODE",
+  "provenance" : {
+    "source" : "INDUSTRY",
+    "fileHash" : "9151e63d1c0d489adb41f6dfb07461ddefebf2977e5cae1015cb5d18832ab553",
+    "sheet" : "Sheet1",
+    "row" : 2085,
+    "column" : 1
+  },
+  "key" : "",
+  "raw" : "null",
+  "detail" : "종목코드 형식 오류"
+}, {
+  "severity" : "ERROR",
+  "code" : "INVALID_STOCK_CODE",
+  "provenance" : {
+    "source" : "METRIC13",
+    "fileHash" : "54399d65fa557d3a5c2f5655b02c4f0db1bcdd96a852dbf8b4ee1fa8bdcaa544",
+    "sheet" : "2025Q3_13지표_4분기추이_no_industry",
+    "row" : 2085,
+    "column" : 1
+  },
+  "key" : "",
+  "raw" : "",
+  "detail" : "종목코드 없음"
+}, {
+  "severity" : "ERROR",
+  "code" : "INVALID_STOCK_CODE",
+  "provenance" : {
+    "source" : "METRIC5",
+    "fileHash" : "24376bb3695aa25e130d04dd90c473620bb71e3a0eb4275272e4da12e44badde",
+    "sheet" : "2025Q3_5지표_업종상대값_4분기추이",
+    "row" : 2085,
+    "column" : 1
+  },
+  "key" : "",
+  "raw" : "null",
+  "detail" : "종목코드 형식 오류"
+}, {
+  "severity" : "ERROR",
+  "code" : "INVALID_STOCK_CODE",
+  "provenance" : {
+    "source" : "REFERENCE13",
+    "fileHash" : "612abdbe411d9f6e8e9d109c12636e5361c240b66a6041858fbd300318b025e3",
+    "sheet" : "CSV",
+    "row" : 2085,
+    "column" : 1
+  },
+  "key" : "",
+  "raw" : "",
+  "detail" : "종목코드 없음"
+}, {
+  "severity" : "ERROR",
+  "code" : "INVALID_STOCK_CODE",
+  "provenance" : {
+    "source" : "REFERENCE5",
+    "fileHash" : "1c57c6669945dc111d9db605047d94486984bf2d1cea7395835ebf00ce68fbfb",
+    "sheet" : "CSV",
+    "row" : 2085,
+    "column" : 1
+  },
+  "key" : "",
+  "raw" : "null",
+  "detail" : "종목코드 형식 오류"
+} ]

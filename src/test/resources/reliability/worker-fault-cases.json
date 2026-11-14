@@ -1,0 +1,11 @@
+{
+  "설명": "R04는 명시적 시각과 barrier로 검증한다. 실제 process kill은 M06에서 별도 수행한다.",
+  "workers": 4,
+  "leaseSeconds": 30,
+  "heartbeatSeconds": 5,
+  "attemptBudget": 3,
+  "retrySeconds": [1, 5],
+  "jitterSeed": 17,
+  "testJitterMillis": 0,
+  "cases": ["동시 claim", "claim 후 만료", "옛 token 거부", "3회 소진", "영구 오류", "READY 신호 유실", "4개 상한", "정상 종료 차단"]
+}

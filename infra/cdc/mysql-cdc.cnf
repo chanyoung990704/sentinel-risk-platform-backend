@@ -1,0 +1,6 @@
+[mysqld]
+server-id=223344
+log-bin=mysql-bin
+binlog-format=ROW
+binlog-row-image=FULL
+binlog-expire-logs-seconds=864000

@@ -27,6 +27,8 @@ public interface CompanyReportMetricValuesRepository extends JpaRepository<Compa
 		join cr.company c
 		where c.stockCode = :stockCode
 		  and v.valueType = com.aivle.project.metric.entity.MetricValueType.ACTUAL
+		  and (rv.dataSnapshotId = (select a.snapshotId from ActiveDataSnapshotEntity a where a.family = 'FINANCIAL')
+		       or (rv.dataSnapshotId is null and not exists (select a.family from ActiveDataSnapshotEntity a where a.family = 'FINANCIAL' and a.snapshotId is not null)))
 		""")
 	Optional<Integer> findMaxActualQuarterKeyByStockCode(@Param("stockCode") String stockCode);
 
@@ -38,6 +40,8 @@ public interface CompanyReportMetricValuesRepository extends JpaRepository<Compa
 		join rv.companyReport cr
 		where cr.company.id = :companyId
 		  and v.valueType = com.aivle.project.metric.entity.MetricValueType.ACTUAL
+		  and (rv.dataSnapshotId = (select a.snapshotId from ActiveDataSnapshotEntity a where a.family = 'FINANCIAL')
+		       or (rv.dataSnapshotId is null and not exists (select a.family from ActiveDataSnapshotEntity a where a.family = 'FINANCIAL' and a.snapshotId is not null)))
 		""")
 	Optional<Integer> findMaxActualQuarterKeyByCompanyId(@Param("companyId") Long companyId);
 }

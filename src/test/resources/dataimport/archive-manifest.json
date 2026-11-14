@@ -1,0 +1,67 @@
+{
+  "fingerprint" : "8447350f40677e8ce60b3317f475134c017943c2a672f6371d06b6f4d6bf63f2",
+  "baseQuarterKey" : 20253,
+  "parserVersion" : "preflight-v1",
+  "decimalPolicyVersion" : "decimal20-4-half-up-v1",
+  "canonicalChecksum" : "bdde302162d4a00adc458851666ed63a1755a8b9c064ae3ed65e53ee1d32892f",
+  "sources" : [ {
+    "role" : "COMPANY",
+    "fileName" : "listed_company_codes.csv",
+    "sha256" : "9f82cb80975b2a6fd0d2fa67b8170b15f3d99a6a5a2d06ed96b67889e3947c5f",
+    "bytes" : 265096,
+    "encoding" : "UTF-8-BOM",
+    "sheet" : "CSV",
+    "rows" : 3942
+  }, {
+    "role" : "INDUSTRY",
+    "fileName" : "기업명-업종코드.xlsx",
+    "sha256" : "9151e63d1c0d489adb41f6dfb07461ddefebf2977e5cae1015cb5d18832ab553",
+    "bytes" : 85060,
+    "encoding" : "OOXML",
+    "sheet" : "Sheet1",
+    "rows" : 2084
+  }, {
+    "role" : "METRIC13",
+    "fileName" : "2025Q3_13지표_4분기추이_no_industry.xlsx",
+    "sha256" : "54399d65fa557d3a5c2f5655b02c4f0db1bcdd96a852dbf8b4ee1fa8bdcaa544",
+    "bytes" : 1508097,
+    "encoding" : "OOXML",
+    "sheet" : "2025Q3_13지표_4분기추이_no_industry",
+    "rows" : 2084
+  }, {
+    "role" : "METRIC5",
+    "fileName" : "2025Q3_5지표_업종상대값_4분기추이.xlsx",
+    "sha256" : "24376bb3695aa25e130d04dd90c473620bb71e3a0eb4275272e4da12e44badde",
+    "bytes" : 653221,
+    "encoding" : "OOXML",
+    "sheet" : "2025Q3_5지표_업종상대값_4분기추이",
+    "rows" : 2084
+  }, {
+    "role" : "REFERENCE13",
+    "fileName" : "2025Q3_13지표_4분기추이_no_industry.csv",
+    "sha256" : "612abdbe411d9f6e8e9d109c12636e5361c240b66a6041858fbd300318b025e3",
+    "bytes" : 1935995,
+    "encoding" : "UTF-8-BOM",
+    "sheet" : "CSV",
+    "rows" : 2084
+  }, {
+    "role" : "REFERENCE5",
+    "fileName" : "2025Q3_5지표_업종상대값_4분기추이.csv",
+    "sha256" : "1c57c6669945dc111d9db605047d94486984bf2d1cea7395835ebf00ce68fbfb",
+    "bytes" : 882383,
+    "encoding" : "UTF-8-BOM",
+    "sheet" : "CSV",
+    "rows" : 2084
+  } ],
+  "counts" : {
+    "zeroCells" : 1383,
+    "numericCells" : 141320,
+    "canonicalCells" : 149976,
+    "nullCells" : 8656,
+    "metricCompanies" : 2083,
+    "errors" : 5,
+    "companies" : 3942,
+    "warnings" : 13,
+    "industries" : 2083
+  }
+}

@@ -42,6 +42,7 @@ public class RiskScoreCalculationService {
 
 	@Transactional
 	public RiskAggregationResult calculateAndUpsert(Long companyId, Long quarterId, Long reportVersionId) {
+		if(!companyReportVersionsRepository.isReadableFixedVersion(companyId,quarterId,reportVersionId))throw new IllegalStateException("검증되지 않거나 기업/분기가 다른 위험도 원본 버전");
 		List<BigDecimal> values = metricValuesRepository.findRiskMetricValuesByCompanyQuarterAndVersion(
 			companyId,
 			quarterId,

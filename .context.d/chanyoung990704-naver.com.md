@@ -1,11 +1,75 @@
 # Per-User Session Log
 
+- 2026-11-12 | 중간 결과: R07 브라우저9/9/build·M03 15회4848성공/6가드단축·M04실제cache8시험/Redis중단3seed 통과. 추가version gate RED보강후전체회귀중, native ABBA비교/최종검토/정리 남음. docs/results/browser-and-cache.md와실행원장에조건·한계기록. 원본/자료/offset 보존, 커밋·push없음.
+
+- 2026-11-12 | 작업: 승인된 R07→M03→M04 시작 | 기존 프런트 원본 보존 복원·실제 브라우저→cache-off 기준선→상태 Redis/장애/전후 비교까지 진행. 원자료 perf/results/20261112-r07-m03-m04. 기존 자료/변경 보존, Ubuntu 전용 실행, 커밋·push 없음.
+
 ## 1. Owner (소유자)
 - id: chanyoung990704-naver.com
 - source: git config user.email
 - email: chanyoung990704@naver.com
 
 ## 2. Recent Notes (최근 메모)
+
+- 2026-11-14 | 작업: 사용자 GitHub push·README 최신 결과 편집·main 병합 명시 승인 | 결과: README 핵심 표/조건/아키텍처/완료 상태를 검증된 수치로 정리, 원시 자료·참고용 Git 제외 유지 및 환경/키 제외 보강·동영상 binary 속성 보강. 기존607 Java/104 Python 측정 소스와 새 문서 편집을 구분해 게시용 검증 준비 | 이슈: 원본 main checkout의 개인 context/AGENTS/계획 미커밋 변경은 보존하며 원격 main에 fast-forward 반영 예정. 코드·화면·문서를 논리 단위로 커밋하고 원격 SHA 확인,force/사용자 변경 덮어쓰기 없음.
+
+- 2026-11-13 | 작업: M05~M07 최종 마감 | 결과: 복원303성공/적용15조건3반복·정상복구900성공/F15 N/A. 독립Important5단일RED→GREEN보강·F08문구정정후Java607pass/기존15skip·Python104pass·bootJar성공,실행실패/error0. 실제guard/현재실행기·원본과restore149976독립전체대조0차이·격리828/연결Outbox828/전체tablecount/재무SHA/6imageID보존. 원본6서비스재개/API초기정지·시험2환경보존정지·미종결/슬롯/앱0. 최종1162파일/14주장검증과PowerShell→Ubuntu Verify-Evidence wrapper까지exit0 | 이슈: strict gate INCOMPLETE는15기존skip,첫반복분리·준비공개보강전3반복/현재회귀별도·원격AI/HA/RPO0/사실정확성미검증한계와Ruling11기록. 대표3사례각3줄/결과3문서/ADR/runbook/README/계획/context동기화·변경소스50/main0·원자료/Git제외유지·추가재검토/커밋/push/배포/PDF없음. 완료근거perf/results/20261113-m05-m07/evidence-summary.json,evidence-verification-latest.json.
+
+- 2026-11-13 | 작업: M07 독립검토 후 단일 fix pass | 결과: 첫전체603pass/ready공개1fail/기존15skip을보존. Important5의소유권/기존broker/DB파일대조/XML메서드연결/두JVM원자준비공개를RED→GREEN,공용CDC변경소유권도2RED→GREEN,전체Python104pass·준비경계3pass. F08문구조건오표기는Important재평가정정. 3반복M06은수정전실측/입력을보존하고준비공개밖Java/Gradle동일성자동대조·현재최종회귀별도 | 이슈: 세션54335에서m07-final-verified-02전체4scope/bootJar/strictGate→실제guard/runbook/독립대조/원본보존재개감사중. finish_evidence(prereview/final)·문서/계획/context마감남음; 추가독립재검토없음,원본149976/828격리보존정지,Ubuntu실행·커밋/push/배포/PDF없음. 원장에판정보류Ruling5건과제한기록.
+
+- 2026-11-13 | 작업: M05~M07 이어서 실행 | 결과: 복원3회303/303·M06적용15조건×3반복완료/F15 N/A·정상복구9묶음900성공. 첫반복91기존성공+F04별도1성공/원래실패보존, seed2/3각92pass. 최초전체H2환경오염1045를실행기환경분리1RED→GREEN으로수정, 새m07-full-fixed에서fast444pass/기존15skip·실제인프라136pass확인후CDC/운영회귀중 | 이슈: strict15skip미완료표시유지, Python/현재runbook·독립원본대조·원본start/보존감사·최종증거/독립검토1회/문서마감남음. 세션88436·원장perf/results/20261113-m05-m07,원본volume/828격리/재무149976보존정지·Ubuntu실행·커밋/push/배포/PDF없음.
+
+- 2026-11-13 이후 계속 | M05 세반복각101/101(총303)·금융149976/NULL8656/zero1383·기업3942/업종2083원본독립대조차이0. M06 첫정식반복92시험중91pass/ACK관측1fail;업무는성공했지만재할당전재수신1로조기판정. 같은180초예산의수신/ACK/업무 barrier추가후F04실제1/1pass(초기jobSUCC·offset287/수신1→44.732s뒤offset288/수신2). 업무·공유실행기·다른시험/Gradle변경없고해당메서드밖바이트일치검사,기존실패를보존한m06-seed1-repaired분리근거생성. seed2/3·전체회귀계속(세션12926),원본portfolio계속보존정지. docs/resultReliability/최종편집·전체검증·fresh검토1회·원본재개/보존감사남음. 진행원장과원자료는perf/results/20261113-m05-m07;사용자“이어서계속진행”은전체승인범위유지로반영.
+
+- 2026-11-13 | 중간 결과: M05 seed1/2 각각101/101·실제PDF/기존완료보존확인,seed3별도DB복원중. 첫harness readiness경로/attempt대조SQL실패는수락·복원DB를보존해대조재개했고실패raw도보존. 원본portfolio정지·828격리/149976금융행/volume/history보존,새operations/restore초기화전에DB/PDF ZIP사본과소유label/경로확인. M06 실제중단/ACK/파일/응답유실·재시도/source/권한시험·조건JSON과M07증거검증/ADR/로컬문서초안작성. Python89pass+PID준비전소유권1RED→GREEN,Java컴파일통과·기능행렬/전체회귀는아직미실행. 역사41회CSV재계산일치·새성능주장없음. 전체승인범위를끝까지이어가며마지막fresh검토1회후원본재개/보존대조예정.
+
+- 2026-11-13 | 작업: 사용자 “M공칠 최종 증거 편집까지 진행하자” 승인으로 M05→M06→M07 실행 시작 | 기존 managed worktree/dirty 변경·원본/149976금융행/미확인격리828/offset/history와 비밀 파일 보존. Ubuntu 애플리케이션/Gradle/Docker 실행, inline TDD·마지막 전체 독립검토1회, 커밋/push/배포·포트폴리오PDF제작 제외. operations/restore 별도 Compose·비밀상태·volume을 같은 포트로 순차 기동해 메모리 제한을 관리하고 기존 환경은 정지/재개만 한다. 원장 perf/results/20261113-m05-m07/progress.md.
+
+- 2026-11-13 | 작업: 다음 실행 범위 확정 문서화 | R07/M03/M04·승인된 시험자료 정리 완료 기록과 기존 M05/M06/M07 계획을 대조했다. 다음 실행 단위는 M05 운영 절차·기동/종료/한도·정지 checkpoint/독립 namespace 복원 및 검증·증거 기록까지로 한정한다. READ 오류 가드 미연결은 안전 중단 범위에서 보강하고 기존 일회성 로그인/reader 준비 실패는 재현·오류 분류 대상으로 포함한다. M06 전체 장애행렬/M07 최종 편집·새 성능 튜닝/원격AI/배포는 제외 | 범위 문서만 작성하며 애플리케이션 구현·인프라 실행에는 착수하지 않는다. docs/superpowers/plans/2026-11-13-m05-scope.md 참조.
+
+- 2026-11-12 19:10 | 사용자 “정리까지 진행해” 명시승인에 따라 시험자료 정리 | 계정20/보고서·PDF9622/입증격리714와종속원장삭제,소유인증캐시1013키(세션20/refresh993)제거,GLOBAL0. 미확인격리828/연결Outbox828 ID집합보존·ZIP9622사본6005339bytes/SHA검증. cleanup-applied-before/after.json기록 | cleanup-verified-data-audit.json149976금융행전체SHA282ba715...일치·schema35/33. 패키지/보존최종감사통과(cleanup-verified-audit.json). 기존원본/volume/offset/history·raw/ZIP보존,앱코드변경/커밋/push/배포없음.
+
+- 2026-11-12 18:58 | 체크포인트재개마감 | final-audit.json exit0/769입력·104frontend·infra10불일치0/598클래스·83리소스동일/현재CDC RUNNING/소유앱종료. resumed-final-data-audit.json전체149976행SHA282ba715...유지 | 최초reader준비실패뒤별도준비확인·전체SELECT통과를구분기록. 삭제승인거절유지/계정20·보고서/PDF9622·격리1542보존(후보714/미확인828제외). R07/M03/M04코드·시험·3줄참고문서·계획/컨텍스트마감. 선택적시험정리만명시승인대기.
+
+- 2026-11-12 마감 | R07/M03/M04구현·27회V2실측·독립Important3보강완료. Java591pass/15기존skip이후Java/리소스/Gradle동일,Python71·브라우저13/build통과. 기준선4756완료·READ663484시작/오류·DTO불일치0,캐시P95중앙36.122→32.393ms/TPS446.379→483.413/SQL1→1.0975와편차/비용으로기본off. 소유9622PDF실파일대조/ZIP사본SHA검증·149976금융행지문유지 | 최종읽기감사통과(final-audit.json). 시험계정20/9622보고서·PDF/격리1542는구체적삭제승인없다는자동승인거절로보존,입증714만정리후보/미확인828제외. M05이후미착수·커밋/push/배포없음. 참고용3줄/조건/한계·계획완료체크갱신.
+
+- 2026-11-12 14:15 | 작업: R07→M03→M04 진행 | 결과: 브라우저9/build·Java591pass/15기존skip·Python70pass. 측정구간/완료경계 보강 V2 M03 15회4756접수모두성공(6가드단축TPSnull),소유9620PDF/원장대조·실제149976행지문유지 | 이슈: M04ABBA12회실행중,source동결/최종독립계산·검토·정리남음. V1초기수치는탐색으로보존/정규인용보류. session56967/원장perf/results/20261112-r07-m03-m04/progress.md
+
+- 2026-11-09 | 작업: K01~K03 최종 완료 | 결과: 실제CDC/commit뒤ACK·격리DLT/관리수정replay·실제로그인HTTP~모의PDF 전체복구·readiness/대조CLI 구현. 독립검토Important2를한번RED→GREEN+최종전체회귀로보강했고새Minor1보류. Java594중579pass/기존15skip(실제124·fast444·CDC7·전체복구4),Python60pass·bootJar성공. 104종결요청/wire104/모의call108/상태기록303대조·실제149976행지문유지·9원장/파일메타0·GLOBAL0·소스752/infra10불일치0·실행모의소스동일·소유앱종료·업무CDC RUNNING | 이슈: null/empty격리표현Minor1후속,CDC FAILED는명시stop/정지확인/resume와실제전달확인필요·자가치유아님. 실제HTTP수신/응답보류중kill은외부2/artifact1/attempt2(56558ms관찰)확인. 최초audit관리연결Reset은읽기관찰12회로실제RUNNING확인·제품상태변경없음. 문서조건/각3줄10사례/계획/README/컨텍스트갱신,원자료/참고용/결과Git제외·기존관리worktree/원본/offset/history보존·커밋/push/배포없음. 다음R07→M03/M04,이번자동진행없음. 근거perf/results/20261109-k01-k03/final-verified-audit.json,docs/results/messaging-recovery.md
+
+- 2026-11-09 | 작업: K01~K03 단계 검증·최종 검토 보강 | 결과: K01 실제CDC4/4, K02/대조/기존Snapshot27/27·fast5/5, K03 기본실제HTTP전체4/4통과. 독립검토2Important는CDC기존RUNNING오인/실제HTTP진입전kill시험이며정지확인→재개와모의응답보류/inflight관찰로보강;Python RED→GREEN(복구4/모의7) | 이슈: 소유JVM의실제inflight통합RED→새모의컨테이너→최종4task회귀/실자료지문/문서갱신이남음. 새Minor1(null/empty격리원문구분)보류·재검토없음·자동CDC자가복구미구현명시·원본/offset/history보존·커밋/push없음. perf/results/20261109-k01-k03
+
+- 2026-11-09 | 작업: K01~K03 착수 | 결과: 사용자 승인 CDC실제전달/DBcommit후ACK·격리DLT/HTTP~PDF전체장애복구까지진행. 기존worktree·E03이미지/선택·R01~R06계약·공식3.4/3.3문서확인,단계별TDD로구현 | 이슈: R07/Redis/성능비교/원격AI/외부배포는제외,원자료 perf/results/20261109-k01-k03,원본/실자료/기존변경·offset/history보존,Ubuntu전용·커밋/push없음
+
+- 2026-11-09 | 작업: R01~R06 최종 완료 | 결과: 최종Java565중550통과/기존15skip·실제인프라111/111·fast439pass,Python54pass. 독립검토Important2는실제4RED→4GREEN+최종전체회귀,새Minor0. 실제149976행/NULL8656/zero1383/8332버전·M02전체행hash유지,시험원장7종/맞춤파일메타0·GLOBAL0,721코드/9infra불일치0·실행모의서버hash일치·소유앱종료확인. CLIwrapper한글argv/미등록관리자exit2거부확인. 원자료/57개상태기록·참고용각3줄/조건/한계·계획체크·README/실행문서갱신 | 이슈: 실제Kafka/CDC전달K/브라우저R07/processkillM06/실제AI품질·새성능수치/Redis는후속. 원본checkout/실자료/기존변경보존·커밋/push없음. 최종근거 perf/results/20261109-r01-r06/final-verified-audit.json,docs/results/custom-report.md(로컬Git제외)
+
+- 2026-11-09 | 작업: R01~R06 구현·검토 보강 후 최종 검증 진행 | 결과: 원자 접수/Inbox/job/고정source 모의HTTP/lease·retry/파일·소유자API/관리재개CLI 구현. 단계별 RED→GREEN,설정5개,추가경합4개 GREEN. 독립검토 Important2(완료·고아정리/잠금전시각)를 한 번의 보강으로 재현·수정. 이전 전체실제인프라107중106통과/기대schema30→33 수정,fast454중439pass·기존15skip,Python54pass | 이슈: final-verified 전체회귀 실행 중이며 종료 후 final_audit.py final-verified로 실제149976행 hash·기능원장/슬롯0·편집본/native 일치를 확인하고 문서/계획/컨텍스트 완료 처리. 원자료 perf/results/20261109-r01-r06,재검토/커밋/push없음. 실제Kafka/CDC업무연결·R07·M06·Redis캐시는후속
+
+- 2026-11-09 | 작업: R01~R06 착수 | 결과: 사용자가 R06까지 전체 구현·검증을 명시 확인. 기존 worktree/계획/공통계약 확인 후 테스트 우선으로 원자접수→Inbox/job→모의HTTP→worker→파일/본인API→관리재개 순서 진행 | 이슈: 실제Kafka/CDC업무연결·화면R07은후속,원본/DB/기존변경보존·Ubuntu전용·외부AI미호출·실측전수치미정
+
+- 2026-11-05 | 작업: M01/M02 완료·최종검토 Important2 보강 | 결과: 실제20기업4분기/149976값/8332버전·Ubuntu local,portfolio-perf·Python closed-loop·heap512/pool10/cache-off·warm30s+main120s·c1/c10전후각3회. c1 P95중앙54.3963→40.4278ms(-25.68%)/TPS23.8553→29.0184(+21.64%),c10 P95 200.8360→144.8047(-27.90%)/TPS79.7926→104.4904(+30.95%)로 한SQL MAX→NOT EXISTS채택. c50각1회pending40가드/100미실행. 본14회105364건성공·SQL평균11/coverage100%·20응답hash동일·DB149976행지문불변·14summary재계산일치. Java518중503통과/기존15비활성(실제인프라69/69),도구최종Python29+19통과 | 이슈: 독립검토1회 Important2 SQL다중문장/쓰기위험+최초가입실패재실행차단 RED→GREEN. 단일SQL+고유SELECT전용계정(실MySQL UPDATE1142거부)/동일자격로그인·재가입/commit전후유실검증. 보강후smoke74성공·Java앱jar/계측·발생AST같음·현재sourcecopy0,실측원자료동결/후속보강별도공개. 새Minor없음·기존4보류유지. 참고용3줄사례/결과·조건·원자료Git제외,실행가이드/계획/컨텍스트갱신. 원본checkout보존·소유앱종료·DB/volume보존·커밋/push없음. 다음R01원자접수
+
+- 2026-11-05 | 작업: M01 완료·M02 before 저장 및 한SQL 후보 적용 | 결과: M01 Python23/도구19/실제인프라67/SQL단위6·HTTPsmoke69개/SQL11개. before c1·c10 각3회30s+120s 완료·오류0·계측100%,c50 1회poolpending40지속으로가드중단/100미실행. 선택repository시계열MAX→NOT EXISTS 한쿼리만변경. 실제20기업업무JSON동등성·숫자값변경거부2개통과. 전체재무149976행 before fingerprint282ba71516abf75b3bd414a6f2db753a0181147aad4115923de8b48f6cfb4f09 저장 | 이슈: parity초기LongNode/IntNode비교오류RED→wire JSON GREEN,운영코드변수1개유지·검증시험파일변경별도공개. 전체회귀/after 부하/채택판정은진행중. 중단50단계를3회성과로표시하지않음
+
+- 2026-11-05 | 작업: M01→M02 계측 검증·MySQL 조회 기준선/한SQL 실험 착수 | 결과: 승인된 계획·측정 프로토콜·D04 기록과 기존 perf 경로 확인 후 테스트 우선으로 구현 진행 | 이슈: Ubuntu 전용/기존격리worktree·원본·비밀자료·사용자변경 보존, 수치/개선율은 실측 전 미정
+
+- 2026-11-04 | 작업: D04 실제 원본 전체 적재·재접수·중단재개·독립대조 완료 | 결과: local 최소Spring/JDBC 별도JVM CLI와PS→Ubuntu전달, 마스터/키·값·NULL·출처대조 구현. 실제master3942/업종2083/재무149976(NULL8656·0값1383)/8332버전. 60000개/120chunk에서소유JVM SIGKILL후같은run b0154d6e-dbd1-4ab3-9001-0abcb507e7aa로재개,첫검증timeout보강후snapshot2ba59132-4743-446b-a307-f81e9dd563f2 VERIFIED/ACTIVE. 새run재접수도같은snapshot/값/버전유지. 독립CSV·OOXML/Decimal vsMySQL3시점모두차이0·원본6hash변경0·소스불일치0. 최종realInfra65/65(D04 MySQL17포함)·fast426pass/기존15skip/0fail(441),Python17·mock4통과 | 이슈: ASCII/UTF8출처join이PK첫열만사용해180초TXtimeout→비교값ASCII/bin으로PK5열eq_ref보강. 독립Important1+원본보존상Important로재평가한symlink1 RED→GREEN·재검토없음,PS역슬래시전달실패수정. 새classpath추적Minor1/기존D03 Minor1/E01 Minor2보류. 원천사실전체미검증(3S표본target없음/삼성2018·2021범위밖),첫실패구간시간N/A·성공stage시간은재사용확인. 포트폴리오6개3줄사례/조건/원자료·결과문서Git제외. G1통과/다음M01,커밋·push미수행
+
+- 2026-11-04 | 작업: D04 전체 원본 적재·재적재·중단재개·대조 착수 | 결과: 기존 D01~D03/실행계약을 확인하고 실제 MySQL 실패시험→CLI/검증→전체자료 실행 진행 | 이슈: 원본/기존checkout 보존, Ubuntu 전용, 성능 개선 수치와 원천 사실 정확성은 별도 구분
+
+- 2026-11-04 | 작업: D03 완료 | 결과: V29 버전bridge/원자포인터·V30 평균출처, 현재조회격리·검증·과거고정읽기·VERIFIED재접수 구현. 최종 realInfra48/48(D03 MySQL14 포함), fast426pass/기존15skip/0fail(총441). halt94 rollback/재시도, 독립MySQL A/B각144행·8bridge missing/extra/different0·코드동기화불일치0. 포트폴리오3줄사례5건·조건·최종원자료 기록, 새운영메모Git제외 | 이슈: Important3 RED→GREEN 보강·재검토없음, PDF finder Minor1·기존E01 Minor2보류. 초기fast heap포화실행은소유worker중단143으로보존, context cache16/fork1/heap512MiB로전체재실행통과. 평균출처불일치는NULL/재계산. 다음D04실제149976개/원천대조·성능미수행. fixtureDB보존/종료시포인터복구·기존checkout보존·커밋/push미수행
+
+- 2026-11-04 | 작업: D03 최종 검증 | 결과: 전용 실제 MySQL14/14 통과. V29 버전/포인터 및 V30 평균출처, 현재조회·명시과거읽기·원자전환·halt94·지연집계·VERIFIED재접수 구현. 전체 realInfra/fast 회귀 진행 중 | 이슈: Important3 실패재현 후 수정, PDF derived finder Minor1 보류. 전체 실제 원본/D04·성능·커밋/push 미수행
+
+- 2026-11-04 | 작업: D03 snapshot 조회 격리·검증 후 전환 착수 | 결과: 기존 계획/조회 경로 확인 후 Ubuntu 실패 재현·구현·실제 MySQL 검증 진행 | 이슈: 기존 자료/작업 공간 보존, 실제 전체 원본 적재는 D04이며 이번에는 합성 fixture로 경계를 검증
+
+- 2026-11-04 | 작업: D02 적재 원장/staging/chunk 재시작 완료 | 결과: V28 MySQL/H2, snapshot/run 분리·DB 입력 payload·원자 checkpoint·새TX 재시도·명시resume 구현. D02 MySQL15/15·정책4/4, 전체realInfra34/34·fast426pass/기존15skip/0fail(총441). 실제 JVM commit전/후50/60행에서 새JVM100행 재개, 독립MySQL전체값대조0차이·코드불일치0. 포트폴리오 참고용 3줄사례5건·명령·원자료 기록, 신규운영메모도Git제외 | 이슈: 독립 Important3 RED→GREEN 보강·재검토없음. 감사DB불가 시RecoveryRequired/타JVM차단보장없음. 준비복구는예외주입. 실제149976개/D03/D04·성능·커밋/push미수행, E01보고Minor2유지
+
+- 2026-11-04 | 작업: D02 적재 원장/staging/chunk 재시작 착수 | 결과: 기존 격리 작업 공간과 Ubuntu 실제 MySQL에서 실패 재현→구현→검증 진행 | 이슈: 전체 실제 자료 적재·snapshot 조회 활성화는 D03/D04 범위이며 이번에 수행하지 않음
+
+- 2026-11-04 | 작업: 로컬 참고 문서 Git 제외 | 결과: 사용자 요청으로 포트폴리오 참고용.md와 docs/data/preflight.md를 .gitignore에 추가. 두 파일 모두 기존 Git 미추적 상태이며 로컬 파일 보존 | 이슈: 없음
+
+- 2026-11-04 | 작업: D01 실제 자료 사전 검증 완료 | 결과: strict reader/service/model/CLI·원본6파일 manifest·출처/오류·CSV 대조 구현. Ubuntu36/36, 전체fast422pass/15기존skip/0fail(총437), 실제149976위치 독립전체대조 missing/extra/different0, 원본hash변경0·코드동기화불일치0. 포트폴리오 참고용에 3줄 사례4건과 조건/결과/원자료 연결 | 이슈: DL에너지 코드 누락5위치 오류로 전체ready=false, 업종명 NULL13건은 경고로 값 보존. 독립 지적 수식/완료표시/CSV구조와 nullable 오판을 실패재현 후 수정. D02/DB적재/성능실험/커밋/push 미수행, E01 보고 Minor2 유지
 - 2026-09-15 | 작업: 포트폴리오와 저장소 구현을 교차 검증해 채용 평가자용 README 재구성 | 결과: 프로젝트명을 SENTINEL로 정리하고 데이터 라이프사이클, Kafka 비동기 처리, 사전 집계, 동시성, 장애·배포 경계, 구현/향후 설계를 근거 링크와 함께 재구성. 상대 링크 25개·Markdown fence·Docker Compose config 검증 통과 | 이슈: 포트폴리오의 Full-Text/N+1 수치는 별도 Spring 개인 프로젝트 근거이므로 SENTINEL 성과와 분리. 전체 테스트는 클래스 파일 생성 후 Gradle Test Worker가 모든 테스트 클래스를 읽지 못하는 ClassNotFoundException으로 2회 실패
 - 2026-03-04 | 작업: CodeBuild 대량 테스트 실패 원인 수정 및 재발 방지 가드 추가 | 결과: `application.yaml`에서 `spring.*` 설정이 `server` 하위로 잘못 들어간 구조와 최상위 `server` 중복 키를 정리해 컨텍스트 초기화 실패 경로를 제거하고, `buildspec.yml` PRE_BUILD에 YAML 중복 키/파싱 검증 스크립트를 추가해 동일 유형 오류를 테스트 전 즉시 탐지하도록 보강 | 이슈: 샌드박스 제약으로 로컬 Gradle 테스트 재실행은 미검증
 - 2026-03-04 | 작업: CodeBuild 실패 원인 추적성 개선 및 POST_BUILD 연쇄 오류 노이즈 제거 | 결과: `buildspec.yml`에서 Gradle 테스트 실패 시 XML 리포트의 failure/error를 로그로 출력하도록 보강하고, 이미지 미생성 시 POST_BUILD docker push를 조건부 스킵하도록 정리 | 이슈: 없음
@@ -345,3 +409,41 @@
 - 2026-02-06 | 작업: 보고서 PDF 단독 업로드 API 추가 | 결과: /api/admin/reports/pdf 컨트롤러 및 테스트 추가, PDF 단일 업로드 지원 | 이슈: 없음
 
 - 2026-02-26 | 작업: AI 리포트 다운로드 예외 처리 보강 | 결과: CompanyAiController에서 PDF 미존재(IllegalArgumentException) 시 404 응답 처리 및 Controller 테스트 추가, ./gradlew test 전체 통과 | 이슈: 없음
+- 2026-11-02 | 작업: 개발 부산물과 현재 코드의 로컬 복원 가능성 점검 | 결과: 첫 번째 자료 폴더의 LOCAL_RESTORATION_AUDIT_2026-11-02.md에 기능별 조건/미확보 원본 기록. 동일 소스 영문 임시 경로에서 384 통과, 15 skipped(AuthIntegrationTest 제외, Kafka 시작 비활성화), H2+mock 서버 및 프런트 빌드 확인 | 이슈: 원래 경로 Test Worker ClassNotFoundException, 로컬 인프라/과거 AI 결과 및 DB 전체 백업 미확인. 애플리케이션 소스 변경 없음
+- 2026-11-02 | 작업: 포트폴리오 장애 복구·데이터 정합성·성능 보강 계획 | 결과: docs/superpowers/specs/2026-11-02-portfolio-reliability-design.md와 plans/2026-11-02-portfolio-reliability-roadmap.md 작성, 독립 builder 검토 완료. CDC 우선/불가 시 폴링, 요청 원장+Outbox/Inbox·durable job, 재시작 가능한 데이터 적재, MySQL 기준선, 측정 기반 Redis, 장애 시험과 증거 작성 순서 제안 | 이슈: 사용자 계획 검토 전이며 구현/인프라 설치/DB 변경 미수행. Redis 적용 대상은 검토 후 제안하도록 사용자 위임, 연도별 대량 데이터는 후속 범위
+- 2026-11-03 | 작업: 포트폴리오 목적에 맞춘 설계/계획 재검토 | 결과: 기존 두 문서에 실제 배포를 가정한 로컬 검증 목적, 필수/조건부/후속 범위, 새 요청 성능 기준선 시점, 정상종료/과부하/역할별 상태 확인·복구 절차, FAILED 관리 재개와 snapshot 고정 시험 반영. 독립 검토 지적 2건 반영 및 링크/구조 검증 | 이슈: 문서만 변경했으며 애플리케이션 구현/인프라 설치/DB 적재/새 기능 시험은 미수행
+- 2026-11-03 | 작업: 승인된 설계를 세분화된 애플리케이션 구현·측정 실행 계획으로 구체화 | 결과: docs/superpowers/plans/2026-11-03-execution-index.md 및 공통 계약/하위 4계획/측정 프로토콜 작성. 25개 작업 정의(CDC/폴링 택일로 기본 24개), 작업별 파일/인터페이스/실패 시험/assertion/명령/완료 기준과 125개 체크 단계. 실제 source/query/CORS/파일 접근 경계 대조, migration 순서와 worker fencing 검토 | 이슈: 계획 문서만 작성, 구현·의존성 설치·DB 적재·새 성능/장애 실험 미실행. 설정/부하 수치는 실험 입력값이며 성능 결과 아님
+
+
+### 2026-11-03 | E01 Ubuntu 실행 기준선
+
+- 애플리케이션·Gradle·Docker 시험의 실행 OS를 WSL2 Ubuntu로 확정했다. 원본 main의 기존 수정 사항을 보존하고 managed worktree와 Linux 소스 사본을 사용한다.
+- build.gradle에 fastTest/realInfraTest/cdcTest/reliabilityTest/verifiedCheck를 추가했다. 기존 test 필터·보안 프로필·Mockito agent는 유지한다.
+- Python XML 검증기와 PowerShell 호환 진입점, 소스 지문/시험 태그 수집기, 관련 단위 시험을 추가했다. 빈 결과·불일치·stale XML·전체 skip을 성공으로 취급하지 않는다.
+- Ubuntu fast 회귀: 399개 발견, 384개 실행·통과, 15개 기존 skip, 실패/error 0. 기존 parser와 fast parser 각각 1/1. 원본 src 550개 SHA-256 불일치 0.
+- 실측 환경: Ubuntu 26.04 / Java 21.0.12.1 / Gradle 8.14.3 / Docker 29.1.3 / Spring Kafka 3.3.11. 상세는 docs/runtime/dependency-lock.md 및 Git 제외 원자료 perf/results/20261103-e01-wsl/.
+- CDC/reliability 시험은 아직 없으며 실제 인프라·앱 기동·성능/장애 실험은 미수행이다. 다음 작업은 E02이고 이번에 자동 실행하지 않는다. 커밋·push 미수행.
+
+- E01 독립 검토: 중대 이슈 없음. 전체 gate 보고 Minor 2건(CDC N/A 자동 표기·시험 실패 시 요약 갱신)은 docs/runtime/dependency-lock.md에 보류 기록. fast 수치에는 영향 없음.
+
+
+### 2026-11-03 | E02 실제 인프라·모의 AI·API 실행 완료
+
+- Ubuntu 전용 실행 도구 local_runtime.py와 Windows→WSL 전달 local.ps1, 전용 Compose sentinel-portfolio, local 프로필과 SMTP no-op, 로컬 파일 저장소 프로필을 구성했다. 기존 PC 서비스/원본 checkout은 변경하지 않았다.
+- MySQL 8.0.46/Redis 7.0.15/Apache Kafka 3.7.0/Python 3.12.16 이미지를 digest로 잠갔다. 비밀 파일은 Ubuntu private state에만 생성했다.
+- realInfraTest 19/19: 신규 4개 MySQL V1~V27/Redis TTL/Kafka send-consume/HTTP PDF+SMTP 미사용, 기존 인증 15개 H2+별도 Redis Testcontainer. fast는 384 통과·기존 15 skip·실패/error 0. Python 도구 11/11, mock 서버 4/4.
+- 정상 및 Kafka 중단 상태 API 기동/정상 종료, wrapper up/verify/start-app/stop-app/down과 재기동을 검증했다. 컨테이너 재생성 후 MySQL 마이그레이션 이력 27행/Redis marker/mock journal 보존을 확인했다.
+- 독립 검토 Important 2건(상위 환경변수 격리, 삭제 소스 동기화)을 관련 실패 시험으로 재현한 후 수정했다. 경계 밖 경로 삭제 거부·build 보존·최적화 Python 검증도 회귀 시험으로 확인했다. E02 새 보류 Minor 없음.
+- 최신 실행/시험 범위는 docs/runtime/local-environment.md, 원자료는 Git 제외 perf/results/20261103-e02-runtime/manifest.json에 보관했다. 현재 API/의존 서비스 UP. 커밋·push 미수행.
+- 다음은 E03 CDC probe/발행기 선택이며 아직 수행하지 않았다. 실제 자료 적재/맞춤 보고서 업무 API/Outbox/Inbox/업무 장애 복구는 후속 범위다. E01의 전체 검증 보고 Minor 2건은 별도 보류로 유지한다.
+
+
+### 2026-11-03 | E03 CDC 가능성 검증·선택 완료
+
+- 전용 sentinel_cdc_probe DB/Outbox, reader/writer 제한 계정, MySQL ROW/FULL/server-id223344/10일 binlog 보존, cdc profile worker를 구성했다. Debezium3.4.3.Final digest를 고정했고 Connect4.1.1/Kafka3.7.0/MySQL8.0.46 조합을 실제 검증했다.
+- 최종 probe 20261103-cdc-04: CDC 통합3/3, 초기snapshot1+정상commit10+worker 중단commit5+broker 중단commit5=21개 고유 ID 수신, rollback10개 미전달, DB21행 일치. worker/broker 컨테이너 교체 후 checkpoint 재개·history hash 보존·snapshot 미반복을 확인했다. 추가 중복은 해당 유한 실행0건이며 업무 exactly-once를 의미하지 않는다.
+- 독립 검토 Important2(잠금 충돌 시 결정 불일치, 부분 정지 실패 시 복구 누락)을 실패 회귀로 재현한 후 수정했다. guard 단위2/2 및 실제 정지 직후 예외2건 주입 후 양쪽 구성 요소 복구를 확인했다.
+- Python17/17, mock4/4, 기존 realInfra19/19 통과. 이번 fastTest는 guard2개 선택 실행이며 전체 fast 회귀를 새로 수행한 것은 아니다. 인증은 실제 로그의 H2 확인, 신규4개는 MySQL/Redis/Kafka/HTTP 구성을 유지했다.
+- 초기 cnf777 무시·등록 직후 status404·offset 좌표 비교 오류와 앱 실행 환경을 잘못 주입한 회귀 runner 실패를 보존하고 원인별로 수정했다. 시험 실패를 제외하거나 네트워크 오류만으로 폴링을 고르지 않았다.
+- ADR docs/adr/0001-outbox-relay.md, 원자료 perf/results/20261103-e03-cdc/manifest.json 및 perf/results/20261103-cdc-04/. 선택은 Ubuntu relay-mode.json에도 cdc로 기록했다. 현재 API/기본 구성 요소/Connect UP이며 probe connector는 시험 종료 시 제거했다.
+- 다음 D01 실제 자료 검증은 미수행. 업무 EventRouter/Outbox/Inbox와 강제 종료·전원 차단·다중 broker·binlog 만료 복구는 후속 범위다. E01 보고 Minor2건 유지. 기존 원본 checkout 보존, 커밋·push 미수행.

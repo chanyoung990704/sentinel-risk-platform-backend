@@ -1,3 +1,8 @@
+# JDBC 계측 callback은 유지하되 SQL 바인딩 값(맞춤 요청 원문)은 기록하지 않는다.
+decorator:
+  datasource:
+    p6spy:
+      enable-logging: false
 spring:
   application:
     name: project

@@ -67,6 +67,11 @@ public class ApiLogProcessor {
     private String mask(Object arg) {
         if (arg == null) return "null";
 
+        // 자유 입력은 JSON escape/길이와 관계없이 객체 전체를 기록에서 제외한다.
+        if (arg instanceof com.aivle.project.company.reportrequest.model.CustomReportCommand) {
+            return "[CUSTOM_REPORT_INPUT_MASKED]";
+        }
+
         // HTTP 관련 객체 처리
         if (arg instanceof jakarta.servlet.http.HttpServletRequest || arg instanceof jakarta.servlet.http.HttpServletResponse) {
             return arg.getClass().getSimpleName();
