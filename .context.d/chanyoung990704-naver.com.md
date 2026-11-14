@@ -11,6 +11,8 @@
 
 ## 2. Recent Notes (최근 메모)
 
+- 2026-11-14 | 작업: README 보강·GitHub main fast-forward 게시 | 결과: backend1d07f3a/frontend7d5f009/docsfa691d8 3개논리커밋을origin/main에push,원격fa691d8확인. README새결과·측정범위·cache-off판단·실행상태/흐름정리,Ubuntu명령예시점검·환경/키Git제외·MP4binary/원본blob일치·비밀패턴0/깨진링크0. 기존607/104검증코드변경없고게시메타데이터만별도패키지검증(1164파일/14주장),원래M07raw는보존 | 이슈: 원본main폴더의미커밋context/AGENTS/계획을보존해로컬checkout은동기화하지않음. 실제원격main에반영한것이며로컬변경정리/force/pull덮어쓰기없음. 게시기록/명령예시최종문서커밋은별도전송.
+
 - 2026-11-14 | 작업: 사용자 GitHub push·README 최신 결과 편집·main 병합 명시 승인 | 결과: README 핵심 표/조건/아키텍처/완료 상태를 검증된 수치로 정리, 원시 자료·참고용 Git 제외 유지 및 환경/키 제외 보강·동영상 binary 속성 보강. 기존607 Java/104 Python 측정 소스와 새 문서 편집을 구분해 게시용 검증 준비 | 이슈: 원본 main checkout의 개인 context/AGENTS/계획 미커밋 변경은 보존하며 원격 main에 fast-forward 반영 예정. 코드·화면·문서를 논리 단위로 커밋하고 원격 SHA 확인,force/사용자 변경 덮어쓰기 없음.
 
 - 2026-11-13 | 작업: M05~M07 최종 마감 | 결과: 복원303성공/적용15조건3반복·정상복구900성공/F15 N/A. 독립Important5단일RED→GREEN보강·F08문구정정후Java607pass/기존15skip·Python104pass·bootJar성공,실행실패/error0. 실제guard/현재실행기·원본과restore149976독립전체대조0차이·격리828/연결Outbox828/전체tablecount/재무SHA/6imageID보존. 원본6서비스재개/API초기정지·시험2환경보존정지·미종결/슬롯/앱0. 최종1162파일/14주장검증과PowerShell→Ubuntu Verify-Evidence wrapper까지exit0 | 이슈: strict gate INCOMPLETE는15기존skip,첫반복분리·준비공개보강전3반복/현재회귀별도·원격AI/HA/RPO0/사실정확성미검증한계와Ruling11기록. 대표3사례각3줄/결과3문서/ADR/runbook/README/계획/context동기화·변경소스50/main0·원자료/Git제외유지·추가재검토/커밋/push/배포/PDF없음. 완료근거perf/results/20261113-m05-m07/evidence-summary.json,evidence-verification-latest.json.

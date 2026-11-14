@@ -213,7 +213,7 @@ README에서 구현한 내용과 확장 설계를 섞지 않습니다.
 애플리케이션·Gradle·Docker 기반 검증은 Ubuntu 안에서 실행했습니다. 전용 서비스·비밀 파일·격리 namespace 준비는 [로컬 실행 환경](docs/runtime/local-environment.md), 정지·복원·장애 시험은 [운영 절차](docs/runbooks/portfolio-local.md)를 따릅니다. 원본과 시험 환경은 고정 포트를 공유하므로 순차 운영합니다.
 
 ```bash
-.\gradlew.bat test
+env -u SPRING_DATASOURCE_URL -u SPRING_DATASOURCE_USERNAME -u SPRING_DATASOURCE_PASSWORD -u SPRING_DATASOURCE_DRIVER_CLASS_NAME -u SPRING_PROFILES_ACTIVE bash ./gradlew fastTest --no-daemon
 ```
 
 실제 인프라·CDC·복구 시험은 위 운영 절차의 격리 환경과 전용 도구로 실행합니다. 빠른 회귀 시험은 앱용 DB 환경 변수가 H2 테스트 설정을 덮지 않도록 분리합니다.
@@ -224,7 +224,7 @@ README에서 구현한 내용과 확장 설계를 섞지 않습니다.
 cp .env.example .env
 mkdir -p secrets/jwt logs upload/files
 
-.\gradlew.bat bootJar
+bash ./gradlew bootJar
 docker build -t sentinel-backend:local .
 
 export APP_IMAGE=sentinel-backend:local
