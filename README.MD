@@ -5,6 +5,7 @@
 기능 수보다 **데이터 수집 → 처리 → 저장 → 서빙 → 운영** 흐름에서 발생한 응답 지연, 장시간 외부 처리, 동시성, 정합성 문제를 해결하는 데 집중했습니다.
 
 - 개발 기간: 2026.01 - 2026.03
+- 로컬 복원·신뢰성 보강: 2026.11
 - 팀 구성: 6명(백엔드 2명)
 - 백엔드: Java 21, Spring Boot 3.5, MySQL 8, Redis 7, Kafka, QueryDSL
 - 배포: Docker, AWS ECR, CodeBuild, CodeDeploy, EC2
@@ -13,12 +14,32 @@
 
 | 문제 | 판단과 구현 | 확인한 결과 |
 | --- | --- | --- |
-| 대시보드 요청마다 전체 기업 평균·위험도를 계산 | `metric_averages`, `risk_score_summaries` 사전 집계와 조회 조건에 맞춘 복합 인덱스 적용 | API P95 약 **500ms → 50ms** |
-| AI 리포트 생성 중 요청 스레드가 약 80초 점유 | `202 Accepted + requestId`로 먼저 응답하고 Kafka Consumer가 작업 수행 | 요청 처리와 장시간 작업의 생명주기 분리 |
-| 동시 요청에서 중복 등록·버전 충돌·TTL 누락 가능 | DB Unique Constraint, 비관적 락, Redis Lua를 문제 성격에 따라 분리 적용 | 저장소가 보장하는 원자성 경계로 정합성 보호 |
-| 외부 AI 장애와 배포 실패가 서비스 장애로 전파될 가능성 | Retry·Circuit Breaker·Bulkhead, 애플리케이션 Health Gate 적용 | 외부 호출과 배포 완료 조건을 명시적인 실패 경계로 분리 |
+| 적재 중단·재시도로 값이 누락되거나 미검증 데이터가 조회될 가능성 | snapshot/run/chunk 원장, 검증 후 활성 전환, 독립 CSV/OOXML·Decimal 대조 | **149,976개 위치**의 누락·추가·값 차이·중복 **0**, 실제 60,000개 적재 후 종료·재개 검증 |
+| 요청 저장과 메시지 발행 사이 장애, 재전달·늦은 worker 완료 | 요청·Outbox 원자 저장 → CDC → Inbox/job commit 후 ACK → lease·재시도·결과 확정 | 적용 **15개 장애 조건×3회**, CDC 중단·broker 중단·응답 유실의 정상 복구 **900건 완료** |
+| 재시작 후 대기 작업과 완료 PDF를 함께 복구해야 함 | DB·파일 정지 checkpoint를 별도 DB/broker에 복원하고 Outbox 재전달·Inbox 중복 방어 | 복원 **3회·303건 완료**, 기존 완료 PDF 크기·SHA 보존 및 신규 다운로드 확인 |
+| 기업 개요에서 최신 보고서 버전을 고르는 조회 비용 | MAX 하위 조회를 NOT EXISTS로 변경하고 동일 응답·데이터로 전후 비교 | 동시 10명에서 P95 중앙값 **200.836→144.805ms(-27.90%)**, TPS **79.793→104.490(+30.95%)** |
+| 상태 조회에 Redis를 추가해도 소유권 확인 SQL이 남음 | off/on/on/off 비교로 지연·변동·SQL·정합성을 함께 평가 | P95 중앙값 약 **3.73ms** 차이, SQL/조회 **1→1.0975**와 운영 비용을 고려해 **기본 cache-off** 유지 |
 
-> 대시보드 수치는 사전 집계 구조와 인덱스 재설계를 함께 적용한 뒤 측정한 값입니다. 당시 `EXPLAIN` 출력은 보관하지 않아 두 변경의 기여도를 개별 수치로 분리하지 않습니다. 80초 작업 역시 처리 시간 자체를 줄인 결과가 아니라 요청 스레드 점유를 제거한 결과입니다.
+위 결과는 WSL2 Ubuntu의 실제 MySQL·Redis·Kafka·Debezium과 모의 AI 서버에서 확인했습니다. 파일→DB 정합성, 장애 복구, 조회 성능은 각각 다른 조건의 실험입니다.
+
+### 측정 조건과 결과의 범위
+
+데이터 대조는 2,083기업·18지표·4분기의 149,976개 위치를 대상으로 했으며, NULL 8,656개와 0값 1,383개를 구분했습니다. 이는 원본 파일을 DB로 옮긴 값의 정합성 검증입니다. 전체 공시 사실이나 AI 분석 품질은 별도 검증 대상입니다.
+
+| 실험 | 조건 | 해석 범위 |
+| --- | --- | --- |
+| 정지 복원 | 20사용자·대표 1기업/분기·고정 입력·worker 4개·cap 100, 매회 기존 대상 100건＋복원 후 신규 1건 | 총 303건. 온라인 백업·RPO0·다중 broker HA는 미검증 |
+| 장애 복구 | CDC 중단·broker 중단·응답 유실 각각 100건×3회, 나머지는 결정적 경계 대상 사용 | 정상 복구 900건과 영구 오류의 예상 FAILED를 분리. 응답 유실은 매회 외부 101회·시도 101회·최종 결과 100개 |
+| MySQL 조회 | 실제 재무 데이터, warm 30초/main 120초, 동시 10명·전후 각 3회 중앙값 비교 | 당시 M02 원시 CSV를 재계산한 값. 현재 코드의 새 성능 측정이나 인덱스 단독 효과로 확대하지 않음 |
+| Redis 상태 캐시 | 20사용자·완료 100요청·동시 10명, warm 30초/main 120초, off/on/on/off 3회 | 각 모드 6회. P95 중앙값 36.122→32.393ms지만 반복 범위 중첩·인접 6쌍 중 3쌍 악화, 통계적 유의성 미검증 |
+
+실행과 복원 경계는 [로컬 운영 절차](docs/runbooks/portfolio-local.md), 설계 선택은 [Kafka 선택 근거](docs/adr/0002-kafka-selection.md)와 [Redis 적용 범위](docs/adr/0003-redis-scope.md)에 정리했습니다. 수치 원자료·상세 결과·포트폴리오 참고 문서는 로컬에 보존하고 Git에서 제외합니다. 외부 AI 서버·메일·OAuth·외부 데이터 공급자의 실제 서비스 연결은 이 로컬 시험으로 보장하지 않습니다.
+
+M07 보강 후 최종 회귀는 Java607개·Python104개 통과, 실행 실패0개입니다. Java의 기존 비활성15개는 별도로 남아 있어 strict gate는 `INCOMPLETE`입니다. 위 장애3반복은 당시 기동 도구의 원자료이며, 이후 준비 파일 원자 공개와 복원 도구의 안전 검사를 보강한 현재 코드의 전체 회귀는 별도 실행으로 기록했습니다.
+
+첫 장애 반복은 기존 91개 성공과 ACK 관측 시험의 별도 재실행 1개를 연결한 근거입니다. 최초 관측 실패 1회도 보존하며, 한 번에 전체 통과한 실행으로 표현하지 않습니다. CDC를 선택했으므로 polling 발행 경계는 N/A입니다. 고정 조건과 실제 시험은 [장애 조건](perf/fixtures/fault-matrix.json), [복구 통합 시험](src/test/java/com/aivle/project/reliability/ReportDeliveryRecoveryTest.java), [적재 중단·재개 시험](src/test/java/com/aivle/project/dataimport/ImportResumeIntegrationTest.java)에서 확인할 수 있습니다.
+
+초기 팀 기록의 대시보드 P95 약 500→50ms와 AI 생성 약 80초는 위의 로컬 실험과 구분합니다. 당시 원시 측정 자료·EXPLAIN을 보존하지 않아 재검증한 수치로 사용하지 않습니다. 80초 작업의 개선은 생성 시간 단축보다 요청 스레드 점유를 분리한 결과입니다.
 
 ## 아키텍처
 
@@ -42,9 +63,13 @@ flowchart LR
     subgraph Async[장시간 AI 처리]
         API[REST API]
         KAFKA[Kafka]
-        CONSUMER[Consumer]
-        AI[AI Server]
-        API -->|202 + requestId| KAFKA --> CONSUMER --> AI
+        OUTBOX[MySQL 요청·Outbox]
+        CDC[Debezium CDC]
+        INBOX[Inbox·DB job commit 후 ACK]
+        WORKER[DB scan·lease worker]
+        AI[AI 포트 / 로컬 모의 서버]
+        RESULT[현재 lease만 결과 확정]
+        API --> OUTBOX --> CDC --> KAFKA --> INBOX --> WORKER --> AI --> RESULT
     end
 
     subgraph Serving[서빙]
@@ -55,12 +80,16 @@ flowchart LR
 
     BATCH --> MYSQL
     CLIENTS --> MYSQL
-    AI --> MYSQL
-    AI --> S3
+    OUTBOX -.-> MYSQL
+    INBOX -.-> MYSQL
+    RESULT --> MYSQL
+    RESULT --> S3
     API --> REDIS
     QUERY --> MYSQL
     QUERY --> REDIS
 ```
+
+맞춤 보고서의 로컬 검증은 로컬 파일 저장소를 사용했습니다. 기존 Redis 기반 보고서 상태 경로와 새 MySQL 기반 맞춤 요청 경로는 아래에서 구분합니다.
 
 | 단계 | 구현 | 역할 |
 | --- | --- | --- |
@@ -92,6 +121,15 @@ Client → 상태 조회 → PENDING → PROCESSING → COMPLETED / FAILED
 
 구현 근거: [CompanyAiController](src/main/java/com/aivle/project/company/controller/CompanyAiController.java), [AiJobDispatchService](src/main/java/com/aivle/project/company/job/AiJobDispatchService.java), [AiJobKafkaConsumer](src/main/java/com/aivle/project/company/job/AiJobKafkaConsumer.java), [AiReportRequestStatusService](src/main/java/com/aivle/project/company/service/AiReportRequestStatusService.java)
 
+맞춤 보고서 보강 경로는 추가 지시문·재무 snapshot을 요청 시 고정하고, 접수와 생성의 중단·재개를 분리합니다.
+
+```text
+API → MySQL 요청·Outbox commit → Debezium CDC → Kafka 요청 topic
+    → Inbox·job commit → ACK → lease worker → 모의 AI → PDF·DB 확정
+```
+
+요청·슬롯·Outbox, 수신·job·상태, 결과·슬롯 반환의 각 원자성 경계를 분리했습니다. 재전달은 Inbox로 중복 등록을 막고, 잘못된 메시지는 격리 원문·DLT Outbox에 함께 기록합니다. 최종 실패의 관리 재개는 별도 generation과 감사 명령을 사용합니다. Kafka는 개별 보고서의 접수·실행 분리와 재전달, 상태 이벤트의 후속 소비 확장에 사용하며 단일 브로커의 중단·재개를 검증하는 범위입니다. 실행 절차와 한계는 [CDC 전달·복구](docs/runtime/messaging-recovery.md)에 정리했습니다.
+
 ## 2. 계산을 읽기 경로 밖으로 이동
 
 대시보드 요청마다 전체 기업의 지표 평균과 위험도를 다시 계산하지 않고, 배치 단계에서 결과를 별도 테이블에 저장한 뒤 조회 API는 저장된 결과를 읽도록 변경했습니다.
@@ -101,7 +139,7 @@ Client → 상태 조회 → PENDING → PROCESSING → COMPLETED / FAILED
 - `(company_id, quarter_id)`: 워치리스트 대시보드의 필수 조회 조건에 맞춘 인덱스
 - QueryDSL Projection: 엔티티 그래프 전체가 아니라 응답에 필요한 필드만 조회
 
-이 변경은 대시보드 API P95를 약 500ms에서 50ms로 낮췄습니다. 수치는 동일 변경 전후의 결과이며, 근거가 남아 있지 않은 인덱스 단독 효과로 표현하지 않습니다.
+당시 팀 기록은 대시보드 API P95 약500ms→50ms입니다. 원시 측정 자료를 보존하지 않아 현재 재검증한 수치로 인용하지 않으며, 인덱스 단독 효과로도 표현하지 않습니다. 원시 CSV가 남은 후속 로컬 비교는 위 M02 결과를 사용합니다.
 
 구현 근거: [RiskScoreBatchService](src/main/java/com/aivle/project/risk/service/RiskScoreBatchService.java), [MetricAverageBatchService](src/main/java/com/aivle/project/metricaverage/service/MetricAverageBatchService.java), [CompanyWatchlistRepositoryImpl](src/main/java/com/aivle/project/watchlist/repository/CompanyWatchlistRepositoryImpl.java), [V9 risk summary](src/main/resources/db/migration/V9__create_risk_score_summaries.sql), [V19 performance indexes](src/main/resources/db/migration/V19__add_performance_indexes.sql)
 
@@ -133,10 +171,17 @@ README에서 구현한 내용과 확장 설계를 섞지 않습니다.
 
 | 현재 구현 | 다음 단계 |
 | --- | --- |
-| Kafka 단일 브로커, Consumer, `@Async` 폴백 | DLT, Outbox, `requestId` 멱등 소비 |
-| Redis 기반 요청 상태와 Lua 상태 전이 | 장시간 `PROCESSING` 고착 복구 배치 |
+| 기존 Kafka Consumer/`@Async` 경로, 새 맞춤 요청의 CDC·DB commit 뒤 ACK·격리/DLT | 다중 브로커 가용성, CDC 실패의 자동 감시·재개 |
+| 맞춤 요청 Outbox/Inbox·멱등 job·lease/재시도·본인 PDF·관리 재개·DB/파일 대조·실제 로그인/화면 연결 | 원격 AI 연동·품질·중복 과금 방지 검증 |
+| 운영 runbook·정지 checkpoint/별도 환경 복원·적용 15개 장애 조건 3회·원본 보존 감사 | 온라인 백업·다른 호스트 복원·운영 감시 체계 |
+| 새 맞춤 요청의 DB 기준 상태 캐시·버전 Lua·별도 소비 그룹/Redis 장애 복구 및 전후12회 비교 | 기본 cache-off 유지: 작은 지연 이득 대비 반복 편차·추가 SQL·운영 비용 확인 |
+| 기존 보고서 경로의 Redis 요청 상태·Lua 전이 | 기존 경로의 장시간 `PROCESSING` 고착 복구 배치 |
 | Docker Compose 기반 애플리케이션·Redis·Kafka 구성 | Kafka 다중 브로커, Redis Replica/Sentinel |
 | CodeBuild → ECR → CodeDeploy → EC2, Health Gate | 부하·Scale-out 측정, Multi-AZ, Auto Scaling |
+
+맞춤 보고서 보강은 WSL2 Ubuntu의 전용 MySQL·Kafka/Connect와 모의 AI HTTP 서버에서 검증합니다. 관리 앱 launcher가 CDC 수신과 worker를 켜면 HTTP 접수부터 본인 PDF 조회까지 연결됩니다. DB 장애 뒤 CDC task가 FAILED로 남는 경우에는 위치·이력을 유지하는 명시 복구 명령을 사용합니다. 실제 모델 품질이나 운영 배포 성과를 의미하지 않습니다. [맞춤 보고서 실행 문서](docs/runtime/custom-reports.md)와 [CDC 전달·복구](docs/runtime/messaging-recovery.md)를 참고하세요.
+
+`frontend/`의 기업 상세 화면에서 추가 내용 입력·응답 유실 후 같은 키 재전송·새로고침 후 추적·본인 PDF 다운로드를 연결했습니다. 새 상태 캐시는 MySQL 소유권/현재 버전을 확인하며 실패 시 DB로 조회합니다. 기존 Redis 기반 보고서 상태 경로와 구분하며, 성능 이득을 전제로 하지 않습니다. [화면·캐시 실행과 측정 조건](docs/runtime/browser-and-measurement.md)을 참고하세요.
 
 ## 기술 선택
 
@@ -145,18 +190,18 @@ README에서 구현한 내용과 확장 설계를 섞지 않습니다.
 | Backend | Java 21, Spring Boot 3.5, Spring Security | API, 인증·인가, 트랜잭션 경계 |
 | Data | MySQL 8, JPA, QueryDSL, Flyway | 정합성, 동적 조회, 스키마 버전 관리 |
 | Batch | Spring Batch, Scheduler | 기업 데이터 수집과 사전 집계 |
-| Messaging | Kafka, Spring Event | 장시간 작업과 커밋 이후 후속 처리 분리 |
+| Messaging | Kafka, Debezium CDC, Outbox/Inbox, Spring Event | 커밋된 요청의 전달·중복 수신 방어·실행 원장 분리 |
 | Cache/State | Redis 7, Lua | 요청 상태, 인증 토큰, 횟수 제한의 원자적 갱신 |
 | Resilience | Resilience4j | Retry, Circuit Breaker, Bulkhead |
 | Infra | Docker, AWS ECR, CodeBuild, CodeDeploy, EC2 | 이미지 기반 빌드·배포와 헬스 검증 |
-| Test/Measure | JUnit 5, Mockito, MockWebServer, Testcontainers, JMeter, p6spy | 단위·통합 테스트와 SQL·부하 관찰 |
+| Test/Measure | JUnit 5, Mockito, MockWebServer, Docker Compose, Python, p6spy | 단위·실제 인프라 회귀, HTTP·SQL·부하 계측. JMeter JMX는 미실행 템플릿 |
 
 ## 실행과 검증
 
 ### 사전 준비
 
 - Java 21
-- Docker Desktop
+- WSL2 Ubuntu와 Docker Engine — 로컬 검증 기준 환경
 - `.env.example`을 복사한 `.env`
 - `secrets/jwt/private.pem`, `secrets/jwt/public.pem` RSA 키 쌍
 - `.env`의 `APP_TOKEN_HASH_PEPPER_B64`와 필요한 외부 연동 값
@@ -165,22 +210,26 @@ README에서 구현한 내용과 확장 설계를 섞지 않습니다.
 
 ### 테스트
 
-```powershell
+애플리케이션·Gradle·Docker 기반 검증은 Ubuntu 안에서 실행했습니다. 전용 서비스·비밀 파일·격리 namespace 준비는 [로컬 실행 환경](docs/runtime/local-environment.md), 정지·복원·장애 시험은 [운영 절차](docs/runbooks/portfolio-local.md)를 따릅니다. 원본과 시험 환경은 고정 포트를 공유하므로 순차 운영합니다.
+
+```bash
 .\gradlew.bat test
 ```
 
-### 로컬 Docker 실행
+실제 인프라·CDC·복구 시험은 위 운영 절차의 격리 환경과 전용 도구로 실행합니다. 빠른 회귀 시험은 앱용 DB 환경 변수가 H2 테스트 설정을 덮지 않도록 분리합니다.
 
-```powershell
-Copy-Item .env.example .env
-New-Item -ItemType Directory -Force secrets/jwt, logs, upload/files
+### 기존 애플리케이션 Compose 실행
+
+```bash
+cp .env.example .env
+mkdir -p secrets/jwt logs upload/files
 
 .\gradlew.bat bootJar
 docker build -t sentinel-backend:local .
 
-$env:APP_IMAGE = "sentinel-backend:local"
-$env:ENV_FILE = ".env"
-$env:LOCAL_ENV_FILE = ".env"
+export APP_IMAGE=sentinel-backend:local
+export ENV_FILE=.env
+export LOCAL_ENV_FILE=.env
 docker compose -f docker-compose.app.yml -f docker-compose.local.yml up -d
 ```
 
@@ -191,7 +240,7 @@ docker compose -f docker-compose.app.yml -f docker-compose.local.yml up -d
 
 종료:
 
-```powershell
+```bash
 docker compose -f docker-compose.app.yml -f docker-compose.local.yml down
 ```
 
