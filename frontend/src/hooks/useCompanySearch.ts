@@ -1,0 +1,53 @@
+// 협력사 검색 상태와 필터링을 관리하는 훅입니다.
+import { useCallback, useState } from 'react';
+import { searchCompanies } from '../api/companies';
+import { CompanySearchItem } from '../types/company';
+
+type SearchParams = {
+  keyword: string;
+};
+
+export const useCompanySearch = () => {
+  const [items, setItems] = useState<CompanySearchItem[]>([]);
+  const [total, setTotal] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [hasSearched, setHasSearched] = useState(false);
+
+  const search = useCallback(async ({ keyword }: SearchParams) => {
+    setIsLoading(true);
+    setError(null);
+    setHasSearched(true);
+
+    try {
+      const response = await searchCompanies({
+        keyword: keyword.trim(),
+      });
+      setItems(response);
+      setTotal(response.length);
+    } catch (err) {
+      setError('검색 실패');
+      setItems([]);
+      setTotal(0);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  const clear = useCallback(() => {
+    setItems([]);
+    setTotal(0);
+    setError(null);
+    setHasSearched(false);
+  }, []);
+
+  return {
+    items,
+    total,
+    isLoading,
+    error,
+    hasSearched,
+    search,
+    clear,
+  };
+};

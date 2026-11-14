@@ -1,0 +1,209 @@
+// KPI와 리스크 위젯을 구성하는 대시보드 페이지 컴포넌트입니다.
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import DashboardHeader from '../components/dashboard/DashboardHeader';
+import KpiCards from '../components/dashboard/KpiCards';
+import RiskStatusTrendCard from '../features/dashboard/risk-status-trend/RiskStatusTrendCard';
+import RiskDistributionCard from '../components/dashboard/RiskDistributionCard';
+import { getDashboardSummary } from '../api/companies';
+import { getMockDashboardSummary } from '../mocks/dashboardSummary.mock';
+import { getStoredUser, logout } from '../services/auth';
+import {
+  fetchAdminViewUsers,
+  getAdminViewUsers,
+  getStoredAdminViewUser,
+  isAdminUser,
+  resolveAdminViewUserId,
+  setStoredAdminViewUser,
+} from '../services/adminView';
+import { AdminViewUser } from '../types/adminView';
+import { DashboardSummary, RiskDistribution } from '../types/dashboard';
+
+const buildRiskDistribution = (summary: DashboardSummary): RiskDistribution => {
+  const { NORMAL, CAUTION, RISK } = summary.riskStatusDistribution;
+  const total = NORMAL + CAUTION + RISK;
+  const ratio = (value: number) => (total === 0 ? 0 : Number((value / total).toFixed(2)));
+
+  return {
+    range: summary.range,
+    segments: [
+      { key: 'SAFE', label: '낮음', count: NORMAL, ratio: ratio(NORMAL) },
+      { key: 'WARN', label: '주의', count: CAUTION, ratio: ratio(CAUTION) },
+      { key: 'RISK', label: '높음', count: RISK, ratio: ratio(RISK) },
+    ],
+    summary: {
+      avgRiskLevel: summary.averageRiskLevel ?? null,
+      topSector: summary.majorSector
+        ? {
+            key: summary.majorSector.name,
+            label: summary.majorSector.name,
+          }
+        : undefined,
+    },
+  };
+};
+
+const DashboardPage: React.FC = () => {
+  // TODO(API 연결):
+  // - 더미 데이터 제거
+  // - getDashboardSummary API 연결
+  const navigate = useNavigate();
+  const [data, setData] = useState<DashboardSummary | null>(null);
+  const [riskDistribution, setRiskDistribution] = useState<RiskDistribution | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isError, setIsError] = useState<boolean>(false);
+  const [fallbackMessage, setFallbackMessage] = useState<string | null>(null);
+  const currentUser = getStoredUser();
+  const isAdmin = isAdminUser(currentUser);
+  const [userName] = useState(() => currentUser?.name ?? 'id');
+  const [adminUsers, setAdminUsers] = useState<AdminViewUser[]>([]);
+  const [adminUsersFallback, setAdminUsersFallback] = useState(false);
+  const [adminViewUser, setAdminViewUser] = useState<AdminViewUser | null>(() =>
+    getStoredAdminViewUser(),
+  );
+  const adminViewUserId = resolveAdminViewUserId(isAdmin, adminViewUser);
+
+  const loadSummary = useCallback(async () => {
+    setIsLoading(true);
+    setIsError(false);
+    setFallbackMessage(null);
+
+    try {
+      const response = await getDashboardSummary({ userId: adminViewUserId });
+      setData(response);
+      setRiskDistribution(buildRiskDistribution(response));
+    } catch (error) {
+      const fallback = getMockDashboardSummary();
+      setData(fallback);
+      setRiskDistribution(buildRiskDistribution(fallback));
+      setFallbackMessage('대시보드 API 응답 오류로 목 데이터를 표시하고 있어요.');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [adminViewUserId]);
+
+  const loadAdminUsers = useCallback(async () => {
+    if (!isAdmin) {
+      setAdminUsers([]);
+      setAdminUsersFallback(false);
+      return;
+    }
+
+    try {
+      const response = await fetchAdminViewUsers();
+      setAdminUsers(response);
+      setAdminUsersFallback(false);
+    } catch (error) {
+      setAdminUsers(getAdminViewUsers());
+      setAdminUsersFallback(true);
+    }
+  }, [isAdmin]);
+
+  useEffect(() => {
+    loadSummary();
+  }, [loadSummary]);
+
+  useEffect(() => {
+    void loadAdminUsers();
+  }, [loadAdminUsers]);
+
+  const emptyState = useMemo(() => {
+    if (!riskDistribution || !data) return false;
+    const isEmptyDistribution = riskDistribution.segments.every((segment) => segment.count === 0);
+    return isEmptyDistribution && data.riskStatusDistributionTrend.length === 0;
+  }, [data, riskDistribution]);
+
+  const handleLogout = useCallback(async () => {
+    try {
+      await logout();
+    } catch (error) {
+      // ignore logout errors for now
+    } finally {
+      navigate('/');
+    }
+  }, [navigate]);
+
+  return (
+    <div className="animate-in fade-in duration-700">
+      <DashboardHeader
+        onLogout={handleLogout}
+        userName={userName}
+        showAdminSwitch={isAdmin && adminUsers.length > 0}
+        adminUsers={adminUsers}
+        selectedAdminUserId={adminViewUser?.id}
+        onAdminUserChange={(userId) => {
+          const nextUser =
+            adminUsers.find((user) => String(user.id) === String(userId)) ?? null;
+          setAdminViewUser(nextUser);
+          setStoredAdminViewUser(nextUser);
+        }}
+      />
+
+      {adminUsersFallback && (
+        <div className="mb-6 rounded-2xl border border-amber-500/40 bg-amber-500/10 px-6 py-4 text-sm text-amber-100">
+          사용자 목록 API 오류로 목 데이터를 표시하고 있어요.
+        </div>
+      )}
+
+      {isLoading && (
+        <div className="space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <div
+                key={`kpi-skeleton-${index}`}
+                className="glass-panel p-6 rounded-2xl animate-pulse"
+              >
+                <div className="h-3 w-16 bg-white/10 rounded mb-4"></div>
+                <div className="h-8 w-20 bg-white/10 rounded mb-2"></div>
+                <div className="h-2 w-24 bg-white/5 rounded"></div>
+              </div>
+            ))}
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 glass-panel p-8 rounded-2xl animate-pulse h-72"></div>
+            <div className="glass-panel p-8 rounded-2xl animate-pulse h-72"></div>
+          </div>
+        </div>
+      )}
+
+      {!isLoading && isError && (
+        <div className="glass-panel p-10 rounded-2xl text-center text-slate-300">
+          <div className="text-lg font-medium text-white mb-2">데이터를 불러오지 못했습니다.</div>
+          <p className="text-sm text-slate-500 mb-6">잠시 후 다시 시도해주세요.</p>
+          <button
+            type="button"
+            onClick={loadSummary}
+            className="px-5 py-2 rounded-lg bg-white/10 border border-white/20 text-sm text-white hover:bg-white/20 transition"
+          >
+            다시 시도
+          </button>
+        </div>
+      )}
+
+      {!isLoading && !isError && data && riskDistribution && (
+        <div>
+          {fallbackMessage && (
+            <div className="mb-6 rounded-2xl border border-amber-500/40 bg-amber-500/10 px-6 py-4 text-sm text-amber-100">
+              {fallbackMessage}
+            </div>
+          )}
+          <KpiCards kpis={data.kpis} />
+
+          {emptyState && (
+            <div className="glass-panel p-10 rounded-2xl text-center text-slate-400 mb-10">
+              <div className="text-lg text-white mb-2">표시할 데이터가 없습니다.</div>
+              <p className="text-sm text-slate-500">데이터가 준비될 때까지 잠시만 기다려주세요.</p>
+            </div>
+          )}
+
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <RiskStatusTrendCard summary={data} />
+            <RiskDistributionCard distribution={riskDistribution} />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default DashboardPage;

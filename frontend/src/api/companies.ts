@@ -1,0 +1,217 @@
+// 협력사 관련 API 호출 헬퍼입니다.
+import { ApiRequestError, apiDelete, apiGet, apiPost } from './client';
+import {
+  CompanyConfirmRequest,
+  CompanyConfirmResult,
+  CompanyInsightItem,
+  CompanyInsightsResponse,
+  CompanyOverview,
+  CompanyAiAnalysisResponse,
+  CompanySearchResponse,
+  CompanySummary,
+  UpdateRequestCreate,
+} from '../types/company';
+import { DashboardSummary } from '../types/dashboard';
+import { getAuthToken } from '../services/auth';
+
+const resolveBaseUrl = () => (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/$/, '');
+
+const buildUrl = (
+  url: string,
+  params?: Record<string, string | number | boolean | undefined>,
+): string => {
+  const baseUrl = resolveBaseUrl();
+  const resolvedUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
+  const finalUrl = new URL(resolvedUrl, window.location.origin);
+
+  if (params) {
+    Object.entries(params).forEach(([key, value]) => {
+      if (value === undefined || value === null) return;
+      finalUrl.searchParams.set(key, String(value));
+    });
+  }
+
+  return finalUrl.toString();
+};
+
+export const searchCompanies = async (params: {
+  keyword?: string;
+  name?: string;
+  code?: string;
+}): Promise<CompanySearchResponse> => {
+  // TODO(API 연결): 더미 데이터 제거 후 이 함수 사용
+  const query = params.keyword ?? params.name ?? params.code;
+
+  return apiGet<CompanySearchResponse>('/api/companies/search', { query });
+};
+
+export const confirmCompany = async (
+  payload: CompanyConfirmRequest,
+): Promise<CompanyConfirmResult> => {
+  // TODO(API 연결): 더미 데이터 제거 후 이 함수 사용
+  return apiPost<CompanyConfirmResult, CompanyConfirmRequest>(
+    '/api/companies/confirm',
+    payload,
+  );
+};
+
+export const createWatchlistCompany = async (payload: {
+  companyId: number;
+  note?: string;
+}): Promise<string> => {
+  return apiPost<string, { companyId: number; note?: string }>(
+    '/api/watchlists',
+    payload,
+  );
+};
+
+export const deleteWatchlistCompany = async (companyId: string | number): Promise<string> => {
+  return apiDelete<string>(`/api/watchlists/${companyId}`);
+};
+
+export const listCompanies = async (params?: {
+  q?: string;
+  sector?: string;
+  risk?: string;
+  page?: number;
+  size?: number;
+  sort?: string;
+  userId?: string;
+}): Promise<CompanySummary[]> => {
+  // TODO(API 연결): 더미 데이터 제거 후 이 함수 사용
+  if (params?.userId) {
+    return apiGet<CompanySummary[]>('/api/admin/companies', params);
+  }
+
+  const { userId, ...restParams } = params ?? {};
+  return apiGet<CompanySummary[]>('/api/companies/me', restParams);
+};
+
+export const getCompanySummary = async (
+  companyId: string,
+  params?: { userId?: string },
+): Promise<CompanySummary> => {
+  // TODO(API 연결): 더미 데이터 제거 후 이 함수 사용
+  return apiGet<CompanySummary>(`/api/companies/${companyId}`, params);
+};
+
+export const getCompanyOverview = async (
+  companyId: string,
+  params?: { userId?: string; quarterKey?: string },
+): Promise<CompanyOverview> => {
+  // TODO(API 연결): 더미 데이터 제거 후 이 함수 사용
+  if (params?.userId) {
+    return apiGet<CompanyOverview>(`/api/admin/companies/${companyId}/overview`, params);
+  }
+  return apiGet<CompanyOverview>(`/api/companies/${companyId}`, params);
+};
+
+export const getCompanyInsights = async (
+  companyId: string,
+  params?: { userId?: string },
+): Promise<CompanyInsightItem[]> => {
+  // TODO(API 연결): 더미 데이터 제거 후 이 함수 사용
+  const response = await apiGet<CompanyInsightItem[] | CompanyInsightsResponse>(
+    params?.userId ? `/api/admin/companies/${companyId}/insights` : `/api/companies/${companyId}/insights`,
+    params,
+  );
+
+  if (Array.isArray(response)) {
+    return response;
+  }
+
+  return Array.isArray(response.items) ? response.items : [];
+};
+
+export const getDashboardSummary = async (params?: {
+  userId?: string;
+}): Promise<DashboardSummary> => {
+  // TODO(API 연결): 더미 데이터 제거 후 이 함수 사용
+  if (params?.userId) {
+    return apiGet<DashboardSummary>('/api/admin/dashboard/summary', params);
+  }
+  return apiGet<DashboardSummary>('/api/dashboard/summary', params);
+};
+
+export const createUpdateRequest = async (
+  companyId: string,
+  payload?: UpdateRequestCreate,
+): Promise<{ id: number }> => {
+  // TODO(API 연결): 더미 데이터 제거 후 이 함수 사용
+  return apiPost<{ id: number }, UpdateRequestCreate | undefined>(
+    `/api/companies/${companyId}/update-requests`,
+    payload,
+  );
+};
+
+export const getCompanyAiAnalysis = async (
+  companyId: string,
+  params?: { year?: number; quarter?: number; userId?: string },
+): Promise<CompanyAiAnalysisResponse> => {
+  return apiGet<CompanyAiAnalysisResponse>(
+    `/api/companies/${companyId}/analysis`,
+    params,
+  );
+};
+
+export const downloadCompanyAiReport = async (
+  companyId: string,
+  params: { year: number; quarter: number; userId?: string },
+): Promise<Blob> => {
+  const url = buildUrl(`/api/companies/${companyId}/ai-reports/file`, params);
+  const token = getAuthToken();
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      Accept: 'application/pdf',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+  });
+  const blob = await response.blob();
+  const contentType = response.headers.get('content-type') ?? '';
+
+  if (!contentType.includes('application/pdf')) {
+    const errorText = (await blob.text()).trim();
+    throw new ApiRequestError(
+      errorText || 'AI 리포트 다운로드에 실패했습니다.',
+      { status: response.status },
+    );
+  }
+
+  if (!response.ok) {
+    throw new ApiRequestError('AI 리포트 다운로드에 실패했습니다.', {
+      status: response.status,
+    });
+  }
+
+  return blob;
+};
+
+export interface AiReportRequestResponse {
+  requestId?: string;
+  status?: string;
+  message?: string;
+  completed?: boolean;
+  isCompleted?: boolean;
+  fileId?: string;
+  downloadUrl?: string;
+  createdAt?: string;
+  completedAt?: string;
+}
+
+export const requestCompanyAiReport = async (
+  companyId: string,
+  params: { year: number; quarter: number; userId?: string },
+): Promise<AiReportRequestResponse> => {
+  const url = buildUrl(`/api/companies/${companyId}/ai-reports/requests`, params);
+  return apiPost<AiReportRequestResponse, undefined>(url, undefined);
+};
+
+export const getCompanyAiReportStatus = async (
+  companyId: string,
+  requestId: string,
+): Promise<AiReportRequestResponse> => {
+  return apiGet<AiReportRequestResponse>(
+    `/api/companies/${companyId}/ai-reports/requests/${requestId}`,
+  );
+};
