@@ -11,6 +11,8 @@
 
 ## 2. Recent Notes (최근 메모)
 
+- 2026-11-15 | 작업: 사용자 main 병합 승인 | 결과: 앞서 게시한 refactor/modulith-boundaries의 3d86f64까지 3개 커밋과 원격 main 7fac4c5의 조상 관계(0/3)를 확인했다. 검증된 소스945개 지문 불일치0·내용 변경0·gradlew 인덱스100755를 재확인했으며 병합 기록만 추가해 원격 main과 작업 브랜치를 함께 fast-forward한다 | 이슈: 실제 반영 결과는 push 이후 ls-remote로 확인하여 perf/results/20261115-modulith-push/main-remote-verification.json에 남긴다. 기존15skip/strict INCOMPLETE와 시험 한계 유지, 원본 checkout의 미커밋 변경 및 로컬 main은 보존한다. B09/배포는 범위 밖이다.
+
 - 2026-11-15 | 작업: B01~B08 게시 커밋 구성 | 결과: d3ace67(모듈 전환·관련 시험), d950dbd(verifiedCheck XML 집계 보강)을 refactor/modulith-boundaries에 기록했다. 소스945개와 최종 검증 패키지 지문 일치·비밀키 고신뢰 패턴0·제외 대상 포함0·gradlew100755 확인. README/설계/실행계약/계획/컨텍스트는 별도 문서 커밋으로 함께 게시한다 | 이슈: 전체 장기 시험을 중복 실행하지 않고 동일 소스의 완료된 검증 근거를 유지했다. 원격 반영은 push 뒤 ls-remote로 대조하며, main 병합·배포는 수행하지 않는다.
 
 - 2026-11-15 | 작업: 사용자 커밋·push 승인으로 B01~B08 게시 준비 | 결과: 최종 패키지의 소스945개 지문 일치, 기존 Java642pass/15skip 연결 검증·Python114·브라우저13 근거 유지. refactor/modulith-boundaries 브랜치에 모듈 전환·검증 집계 보강·문서를 구분해 커밋 후 원격 반영 예정 | 이슈: 원본 checkout/main·시험 원자료·로컬 참고 문서 보존. B09/배포/메인 병합은 이번 범위에서 제외.
