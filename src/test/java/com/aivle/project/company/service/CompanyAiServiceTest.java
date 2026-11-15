@@ -1,24 +1,24 @@
-package com.aivle.project.company.service;
+package com.aivle.project.finance.internal.company.service;
 
-import com.aivle.project.company.client.AiServerClient;
-import com.aivle.project.company.dto.AiAnalysisResponse;
-import com.aivle.project.company.entity.CompaniesEntity;
-import com.aivle.project.company.repository.CompaniesRepository;
-import com.aivle.project.file.entity.FileUsageType;
-import com.aivle.project.file.entity.FilesEntity;
-import com.aivle.project.file.repository.FilesRepository;
-import com.aivle.project.file.storage.FileStorageService;
-import com.aivle.project.file.storage.StoredFile;
-import com.aivle.project.metric.entity.MetricsEntity;
-import com.aivle.project.metric.repository.MetricsRepository;
-import com.aivle.project.quarter.entity.QuartersEntity;
-import com.aivle.project.quarter.repository.QuartersRepository;
-import com.aivle.project.report.entity.CompanyReportVersionsEntity;
-import com.aivle.project.report.entity.CompanyReportsEntity;
-import com.aivle.project.report.repository.CompanyReportMetricValuesRepository;
-import com.aivle.project.report.repository.CompanyReportVersionsRepository;
-import com.aivle.project.report.repository.CompanyReportsRepository;
-import com.aivle.project.report.service.CompanyReportVersionIssueService;
+import com.aivle.project.aiintegration.internal.company.client.AiServerClient;
+import com.aivle.project.aiintegration.api.AiAnalysisResponse;
+import com.aivle.project.finance.internal.company.entity.CompaniesEntity;
+import com.aivle.project.finance.internal.company.repository.CompaniesRepository;
+import com.aivle.project.storage.api.FileUsageType;
+import com.aivle.project.storage.internal.file.entity.FilesEntity;
+import com.aivle.project.storage.internal.file.repository.FilesRepository;
+import com.aivle.project.storage.api.FileStorageService;
+import com.aivle.project.storage.api.StoredFile;
+import com.aivle.project.finance.internal.metric.entity.MetricsEntity;
+import com.aivle.project.finance.internal.metric.repository.MetricsRepository;
+import com.aivle.project.finance.internal.quarter.entity.QuartersEntity;
+import com.aivle.project.finance.internal.quarter.repository.QuartersRepository;
+import com.aivle.project.finance.internal.report.entity.CompanyReportVersionsEntity;
+import com.aivle.project.finance.internal.report.entity.CompanyReportsEntity;
+import com.aivle.project.finance.internal.report.repository.CompanyReportMetricValuesRepository;
+import com.aivle.project.finance.internal.report.repository.CompanyReportVersionsRepository;
+import com.aivle.project.finance.internal.report.repository.CompanyReportsRepository;
+import com.aivle.project.finance.internal.report.service.CompanyReportVersionIssueService;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -49,13 +49,13 @@ class CompanyAiServiceTest {
     private CompanyAiService companyAiService;
 
     @Mock
-    private AiServerClient aiServerClient;
+    private com.aivle.project.aiintegration.api.AiGateway aiServerClient;
 
     @Mock
-    private FileStorageService fileStorageService;
+    private com.aivle.project.storage.api.FileStorageService fileStorageService;
 
     @Mock
-    private FilesRepository filesRepository;
+    private com.aivle.project.storage.api.FileCatalog filesRepository;
 
     @Mock
     private CompaniesRepository companiesRepository;
@@ -106,7 +106,7 @@ class CompanyAiServiceTest {
         given(companiesRepository.findById(companyId)).willReturn(Optional.of(company));
         given(companyReportMetricValuesRepository.findMaxActualQuarterKeyByCompanyId(companyId)).willReturn(Optional.of(20253));
         given(companyReportMetricValuesRepository.findLatestMetricsByCompanyIdAndQuarterKeyAndType(
-            eq(companyId), eq(20254), eq(com.aivle.project.metric.entity.MetricValueType.PREDICTED)))
+            eq(companyId), eq(20254), eq(com.aivle.project.finance.api.MetricValueType.PREDICTED)))
             .willReturn(Collections.emptyList());
 
         given(aiServerClient.getPrediction(companyCode)).willReturn(response);
@@ -129,14 +129,14 @@ class CompanyAiServiceTest {
         CompaniesEntity company = CompaniesEntity.create("00000001", "삼성전자", null, companyCode, LocalDate.now());
 
         // Mock DB projection
-        com.aivle.project.report.dto.ReportPredictMetricRowProjection mockProj = org.mockito.Mockito.mock(com.aivle.project.report.dto.ReportPredictMetricRowProjection.class);
+        com.aivle.project.finance.api.ReportPredictMetricRowProjection mockProj = org.mockito.Mockito.mock(com.aivle.project.finance.api.ReportPredictMetricRowProjection.class);
         given(mockProj.getMetricCode()).willReturn("ROA");
         given(mockProj.getMetricValue()).willReturn(java.math.BigDecimal.valueOf(5.5));
 
         given(companiesRepository.findById(companyId)).willReturn(Optional.of(company));
         given(companyReportMetricValuesRepository.findMaxActualQuarterKeyByCompanyId(companyId)).willReturn(Optional.of(20253));
         given(companyReportMetricValuesRepository.findLatestMetricsByCompanyIdAndQuarterKeyAndType(
-            eq(companyId), eq(20254), eq(com.aivle.project.metric.entity.MetricValueType.PREDICTED)))
+            eq(companyId), eq(20254), eq(com.aivle.project.finance.api.MetricValueType.PREDICTED)))
             .willReturn(List.of(mockProj));
 
         // when
@@ -183,7 +183,7 @@ class CompanyAiServiceTest {
             .willReturn(savedEntity);
 
         // when
-        FilesEntity result = companyAiService.generateAndSaveReport(companyId, null, null);
+        var result = companyAiService.generateAndSaveReport(companyId, null, null);
 
         // then
         assertThat(result).isNotNull();
@@ -222,7 +222,7 @@ class CompanyAiServiceTest {
             .willReturn(savedEntity);
 
         // when
-        FilesEntity result = companyAiService.generateAndSaveReport(companyId, null, null);
+        var result = companyAiService.generateAndSaveReport(companyId, null, null);
 
         // then
         assertThat(result).isNotNull();
@@ -267,7 +267,7 @@ class CompanyAiServiceTest {
         given(companyAiReportStoreService.storeAndLinkReport(companyId, year, quarter, pdfContent)).willReturn(savedEntity);
 
         // when
-        FilesEntity result = companyAiService.generateAndSaveReport(companyId, year, quarter);
+        var result = companyAiService.generateAndSaveReport(companyId, year, quarter);
 
         // then
         assertThat(result).isNotNull();
@@ -294,6 +294,8 @@ class CompanyAiServiceTest {
             100L,
             "application/pdf"
         );
+        ReflectionTestUtils.setField(pdfFile, "id", 55L);
+        given(filesRepository.findById(55L)).willReturn(Optional.of(pdfFile));
         CompanyReportVersionsEntity versionWithPdf = CompanyReportVersionsEntity.create(
             report,
             1,
@@ -306,16 +308,16 @@ class CompanyAiServiceTest {
         given(quartersRepository.findByYearAndQuarter(year.shortValue(), quarter.byteValue())).willReturn(Optional.of(quarterEntity));
         given(companyReportsRepository.findByCompanyIdAndQuarterId(companyId, quarterEntity.getId()))
             .willReturn(Optional.of(report));
-        given(companyReportVersionsRepository.findTopByCompanyReportAndPdfFileIsNotNullOrderByVersionNoDesc(report))
+        given(companyReportVersionsRepository.findTopByCompanyReportAndPdfFileIdIsNotNullOrderByVersionNoDesc(report))
             .willReturn(Optional.of(versionWithPdf));
 
         // when
-        FilesEntity result = companyAiService.getReportFileById(companyId, year, quarter);
+        var result = companyAiService.getReportFileById(companyId, year, quarter);
 
         // then
         assertThat(result).isEqualTo(pdfFile);
         verify(companyReportVersionsRepository)
-            .findTopByCompanyReportAndPdfFileIsNotNullOrderByVersionNoDesc(report);
+            .findTopByCompanyReportAndPdfFileIdIsNotNullOrderByVersionNoDesc(report);
         verify(companyReportVersionsRepository, org.mockito.Mockito.never())
             .findTopByCompanyReportOrderByVersionNoDesc(any());
     }
@@ -389,7 +391,7 @@ class CompanyAiServiceTest {
         given(companyAiReportStoreService.storeAndLinkReport(companyId, year, quarter, pdfContent)).willReturn(savedEntity);
 
         // when
-        FilesEntity result = companyAiService.generateAndSaveReport(companyId, year, quarter);
+        var result = companyAiService.generateAndSaveReport(companyId, year, quarter);
 
         // then
         assertThat(result).isNotNull();

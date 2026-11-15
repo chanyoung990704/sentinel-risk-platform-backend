@@ -1,9 +1,11 @@
 package com.aivle.project.company.reportrequest;
+import com.aivle.project.reporting.api.CustomReportCommand;
+import com.aivle.project.reporting.api.AcceptedReportRequest;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import com.aivle.project.company.reportrequest.model.*;
-import com.aivle.project.company.reportrequest.service.ReportRequestService;
-import com.aivle.project.messaging.outbox.OutboxWriter;
+
+import com.aivle.project.reporting.internal.company.reportrequest.service.ReportRequestService;
+import com.aivle.project.reporting.internal.messaging.outbox.OutboxWriter;
 import com.aivle.project.support.CustomReportIntegrationSupport;
 import java.util.*;
 import java.util.concurrent.*;
@@ -57,7 +59,7 @@ class ReportAcceptanceIntegrationTest extends CustomReportIntegrationSupport {
 		var pool=Executors.newFixedThreadPool(20);var futures=new ArrayList<Future<Boolean>>();
 		try {
 			// when
-			for(int i=0;i<20;i++){final int n=i;futures.add(pool.submit(()->{try{accept(users.get(n%2),"quota-key-"+n,"제한 시험");return true;}catch(com.aivle.project.common.error.CommonException full){return false;}}));}
+			for(int i=0;i<20;i++){final int n=i;futures.add(pool.submit(()->{try{accept(users.get(n%2),"quota-key-"+n,"제한 시험");return true;}catch(com.aivle.project.foundation.api.error.CommonException full){return false;}}));}
 			int accepted=0;for(var f:futures)if(f.get(30,TimeUnit.SECONDS))accepted++;
 			// then
 			assertThat(accepted).isEqualTo(5);for(long user:users)assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM report_requests WHERE user_id=?",Integer.class,user)).isLessThanOrEqualTo(3);

@@ -1,8 +1,8 @@
 package com.aivle.project.common.config;
 
-import com.aivle.project.auth.service.TurnstileService;
-import com.aivle.project.auth.token.JwtKeyProvider;
-import com.aivle.project.auth.token.JwtProperties;
+import com.aivle.project.identity.internal.auth.service.TurnstileService;
+import com.aivle.project.identity.internal.auth.token.JwtKeyProvider;
+import com.aivle.project.identity.internal.auth.token.JwtProperties;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;

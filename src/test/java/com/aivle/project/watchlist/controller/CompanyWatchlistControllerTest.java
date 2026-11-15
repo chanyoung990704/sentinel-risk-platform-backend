@@ -1,4 +1,4 @@
-package com.aivle.project.watchlist.controller;
+package com.aivle.project.watchlist.internal.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -11,11 +11,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.aivle.project.common.config.TestSecurityConfig;
-import com.aivle.project.common.error.CommonException;
-import com.aivle.project.watchlist.dto.WatchlistMetricValueRow;
-import com.aivle.project.watchlist.dto.WatchlistMetricValuesResponse;
-import com.aivle.project.watchlist.dto.WatchlistQuarterMetricValues;
-import com.aivle.project.watchlist.error.WatchlistErrorCode;
+import com.aivle.project.foundation.api.error.CommonException;
+import com.aivle.project.finance.api.WatchlistMetricValueRow;
+import com.aivle.project.watchlist.api.WatchlistMetricValuesResponse;
+import com.aivle.project.watchlist.api.WatchlistQuarterMetricValues;
+import com.aivle.project.watchlist.api.WatchlistErrorCode;
 import java.math.BigDecimal;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -40,7 +40,7 @@ class CompanyWatchlistControllerTest {
 	private MockMvc mockMvc;
 
 	@MockBean
-	private com.aivle.project.watchlist.service.CompanyWatchlistService companyWatchlistService;
+	private com.aivle.project.watchlist.internal.service.CompanyWatchlistService companyWatchlistService;
 
 	@Test
 	@DisplayName("워치리스트 등록 요청이 성공하면 200을 반환한다")
@@ -91,9 +91,9 @@ class CompanyWatchlistControllerTest {
 	void getWatchlist_shouldReturnList() throws Exception {
 		// given
 		java.time.LocalDateTime now = java.time.LocalDateTime.now();
-		com.aivle.project.watchlist.dto.WatchlistResponse response = new com.aivle.project.watchlist.dto.WatchlistResponse(List.of(
-			new com.aivle.project.watchlist.dto.WatchlistItem(1L, 10L, "기업A", "00000001", "000001", "메모A", now),
-			new com.aivle.project.watchlist.dto.WatchlistItem(2L, 11L, "기업B", "00000002", "000002", "메모B", now)
+		com.aivle.project.watchlist.api.WatchlistResponse response = new com.aivle.project.watchlist.api.WatchlistResponse(List.of(
+			new com.aivle.project.watchlist.api.WatchlistItem(1L, 10L, "기업A", "00000001", "000001", "메모A", now),
+			new com.aivle.project.watchlist.api.WatchlistItem(2L, 11L, "기업B", "00000002", "000002", "메모B", now)
 		));
 		given(companyWatchlistService.getWatchlist(any()))
 			.willReturn(response);

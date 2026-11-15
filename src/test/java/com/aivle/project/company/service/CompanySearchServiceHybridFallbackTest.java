@@ -1,14 +1,15 @@
 package com.aivle.project.company.service;
+import com.aivle.project.finance.internal.company.service.CompanySearchService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-import com.aivle.project.company.dto.CompanySearchResponse;
-import com.aivle.project.company.entity.CompaniesEntity;
-import com.aivle.project.company.mapper.CompanyMapper;
-import com.aivle.project.company.repository.CompaniesRepository;
+import com.aivle.project.finance.api.CompanySearchResponse;
+import com.aivle.project.finance.internal.company.entity.CompaniesEntity;
+import com.aivle.project.finance.internal.company.mapper.CompanyMapper;
+import com.aivle.project.finance.internal.company.repository.CompaniesRepository;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;

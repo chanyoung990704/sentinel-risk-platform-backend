@@ -1,4 +1,4 @@
-package com.aivle.project.user.service;
+package com.aivle.project.identity.internal.user.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -6,13 +6,13 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-import com.aivle.project.user.entity.RoleEntity;
-import com.aivle.project.user.entity.RoleName;
-import com.aivle.project.user.entity.UserEntity;
-import com.aivle.project.user.entity.UserRoleEntity;
-import com.aivle.project.user.repository.RoleRepository;
-import com.aivle.project.user.repository.UserRepository;
-import com.aivle.project.user.repository.UserRoleRepository;
+import com.aivle.project.identity.internal.user.entity.RoleEntity;
+import com.aivle.project.identity.api.RoleName;
+import com.aivle.project.identity.internal.user.entity.UserEntity;
+import com.aivle.project.identity.internal.user.entity.UserRoleEntity;
+import com.aivle.project.identity.internal.user.repository.RoleRepository;
+import com.aivle.project.identity.internal.user.repository.UserRepository;
+import com.aivle.project.identity.internal.user.repository.UserRoleRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

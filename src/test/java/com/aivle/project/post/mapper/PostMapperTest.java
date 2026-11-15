@@ -1,16 +1,16 @@
-package com.aivle.project.post.mapper;
+package com.aivle.project.community.internal.post.mapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
-import com.aivle.project.category.entity.CategoriesEntity;
-import com.aivle.project.common.util.NameMaskingUtil;
-import com.aivle.project.post.dto.PostResponse;
-import com.aivle.project.post.entity.PostStatus;
-import com.aivle.project.post.entity.PostsEntity;
-import com.aivle.project.user.entity.UserEntity;
-import com.aivle.project.user.entity.UserStatus;
+import com.aivle.project.community.internal.category.entity.CategoriesEntity;
+import com.aivle.project.foundation.api.util.NameMaskingUtil;
+import com.aivle.project.community.internal.post.dto.PostResponse;
+import com.aivle.project.community.api.PostStatus;
+import com.aivle.project.community.internal.post.entity.PostsEntity;
+import com.aivle.project.identity.internal.user.entity.UserEntity;
+import com.aivle.project.identity.api.UserStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;

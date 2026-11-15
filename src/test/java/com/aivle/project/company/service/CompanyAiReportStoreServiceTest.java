@@ -1,4 +1,4 @@
-package com.aivle.project.company.service;
+package com.aivle.project.finance.internal.company.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -6,18 +6,18 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
-import com.aivle.project.company.entity.CompaniesEntity;
-import com.aivle.project.company.repository.CompaniesRepository;
-import com.aivle.project.file.entity.FilesEntity;
-import com.aivle.project.file.repository.FilesRepository;
-import com.aivle.project.file.storage.FileStorageService;
-import com.aivle.project.file.storage.StoredFile;
-import com.aivle.project.quarter.entity.QuartersEntity;
-import com.aivle.project.quarter.repository.QuartersRepository;
-import com.aivle.project.report.entity.CompanyReportVersionsEntity;
-import com.aivle.project.report.entity.CompanyReportsEntity;
-import com.aivle.project.report.repository.CompanyReportsRepository;
-import com.aivle.project.report.service.CompanyReportVersionIssueService;
+import com.aivle.project.finance.internal.company.entity.CompaniesEntity;
+import com.aivle.project.finance.internal.company.repository.CompaniesRepository;
+import com.aivle.project.storage.internal.file.entity.FilesEntity;
+import com.aivle.project.storage.internal.file.repository.FilesRepository;
+import com.aivle.project.storage.api.FileStorageService;
+import com.aivle.project.storage.api.StoredFile;
+import com.aivle.project.finance.internal.quarter.entity.QuartersEntity;
+import com.aivle.project.finance.internal.quarter.repository.QuartersRepository;
+import com.aivle.project.finance.internal.report.entity.CompanyReportVersionsEntity;
+import com.aivle.project.finance.internal.report.entity.CompanyReportsEntity;
+import com.aivle.project.finance.internal.report.repository.CompanyReportsRepository;
+import com.aivle.project.finance.internal.report.service.CompanyReportVersionIssueService;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -38,9 +38,9 @@ class CompanyAiReportStoreServiceTest {
 	@Mock
 	private CompaniesRepository companiesRepository;
 	@Mock
-	private FileStorageService fileStorageService;
+	private com.aivle.project.storage.api.FileStorageService fileStorageService;
 	@Mock
-	private FilesRepository filesRepository;
+	private com.aivle.project.storage.api.FileCatalog filesRepository;
 	@Mock
 	private QuartersRepository quartersRepository;
 	@Mock
@@ -69,7 +69,7 @@ class CompanyAiReportStoreServiceTest {
 			"reports/005930/2026/1/report.pdf"
 		);
 		FilesEntity savedFile = FilesEntity.create(
-			com.aivle.project.file.entity.FileUsageType.REPORT_PDF,
+			com.aivle.project.storage.api.FileUsageType.REPORT_PDF,
 			stored.storageUrl(),
 			stored.storageKey(),
 			stored.originalFilename(),
@@ -79,13 +79,13 @@ class CompanyAiReportStoreServiceTest {
 
 		given(companiesRepository.findById(companyId)).willReturn(Optional.of(company));
 		given(fileStorageService.store(any(), eq("reports/005930/2026/1"))).willReturn(stored);
-		given(filesRepository.save(any(FilesEntity.class))).willReturn(savedFile);
+		given(filesRepository.save(any(com.aivle.project.storage.api.FileMetadata.class))).willReturn(savedFile);
 		given(quartersRepository.findByYearAndQuarter((short) year, (byte) quarter)).willReturn(Optional.of(quarterEntity));
 		given(companyReportsRepository.findByCompanyIdAndQuarterId(companyId, quarterEntity.getId())).willReturn(Optional.of(report));
 		given(companyReportVersionIssueService.issueNextVersion(eq(report), eq(true), eq(savedFile)))
 			.willReturn(CompanyReportVersionsEntity.create(report, 1, LocalDateTime.now(), true, savedFile));
 
-		FilesEntity result = service.storeAndLinkReport(companyId, year, quarter, content);
+		var result = service.storeAndLinkReport(companyId, year, quarter, content);
 
 		assertThat(result).isEqualTo(savedFile);
 		verify(companyReportVersionIssueService).issueNextVersion(eq(report), eq(true), eq(savedFile));

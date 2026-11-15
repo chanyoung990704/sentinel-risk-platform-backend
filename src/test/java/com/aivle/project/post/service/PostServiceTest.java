@@ -1,4 +1,4 @@
-package com.aivle.project.post.service;
+package com.aivle.project.community.internal.post.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -9,33 +9,33 @@ import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
-import com.aivle.project.category.entity.CategoriesEntity;
-import com.aivle.project.category.repository.CategoriesRepository;
-import com.aivle.project.comment.repository.CommentsRepository;
-import com.aivle.project.common.dto.PageRequest;
-import com.aivle.project.common.dto.PageResponse;
-import com.aivle.project.common.error.CommonErrorCode;
-import com.aivle.project.common.error.CommonException;
-import com.aivle.project.file.dto.FileResponse;
-import com.aivle.project.file.entity.FileUsageType;
-import com.aivle.project.file.entity.FilesEntity;
-import com.aivle.project.file.entity.PostFilesEntity;
-import com.aivle.project.file.mapper.FileMapper;
-import com.aivle.project.file.repository.PostFilesRepository;
-import com.aivle.project.post.dto.PostDetailResponse;
-import com.aivle.project.post.dto.PostAdminCreateRequest;
-import com.aivle.project.post.dto.PostAdminUpdateRequest;
-import com.aivle.project.post.dto.PostResponse;
-import com.aivle.project.post.dto.PostUserCreateRequest;
-import com.aivle.project.post.dto.PostUserUpdateRequest;
-import com.aivle.project.post.entity.PostStatus;
-import com.aivle.project.post.entity.PostsEntity;
-import com.aivle.project.post.entity.PostViewCountsEntity;
-import com.aivle.project.post.repository.PostViewCountsRepository;
-import com.aivle.project.post.repository.PostsRepository;
-import com.aivle.project.user.entity.RoleName;
-import com.aivle.project.user.entity.UserEntity;
-import com.aivle.project.user.entity.UserStatus;
+import com.aivle.project.community.internal.category.entity.CategoriesEntity;
+import com.aivle.project.community.internal.category.repository.CategoriesRepository;
+import com.aivle.project.community.internal.comment.repository.CommentsRepository;
+import com.aivle.project.foundation.api.dto.PageRequest;
+import com.aivle.project.foundation.api.dto.PageResponse;
+import com.aivle.project.foundation.api.error.CommonErrorCode;
+import com.aivle.project.foundation.api.error.CommonException;
+import com.aivle.project.community.api.FileResponse;
+import com.aivle.project.storage.api.FileUsageType;
+import com.aivle.project.storage.internal.file.entity.FilesEntity;
+import com.aivle.project.community.internal.file.entity.PostFilesEntity;
+import com.aivle.project.community.internal.file.mapper.FileMapper;
+import com.aivle.project.community.internal.file.repository.PostFilesRepository;
+import com.aivle.project.community.api.PostDetailResponse;
+import com.aivle.project.community.api.PostAdminCreateRequest;
+import com.aivle.project.community.api.PostAdminUpdateRequest;
+import com.aivle.project.community.internal.post.dto.PostResponse;
+import com.aivle.project.community.api.PostUserCreateRequest;
+import com.aivle.project.community.api.PostUserUpdateRequest;
+import com.aivle.project.community.api.PostStatus;
+import com.aivle.project.community.internal.post.entity.PostsEntity;
+import com.aivle.project.community.internal.post.entity.PostViewCountsEntity;
+import com.aivle.project.community.internal.post.repository.PostViewCountsRepository;
+import com.aivle.project.community.internal.post.repository.PostsRepository;
+import com.aivle.project.identity.api.RoleName;
+import com.aivle.project.identity.internal.user.entity.UserEntity;
+import com.aivle.project.identity.api.UserStatus;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -53,6 +53,11 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class PostServiceTest {
+	@org.mockito.Mock
+	private com.aivle.project.storage.api.FileCatalog fileCatalog;
+
+	@Mock
+	private com.aivle.project.identity.api.IdentityQueries identityQueries;
 
 	@InjectMocks
 	private PostService postService;
@@ -70,7 +75,7 @@ class PostServiceTest {
 	private CommentsRepository commentsRepository;
 
 	@Mock
-	private com.aivle.project.post.mapper.PostMapper postMapper;
+	private com.aivle.project.community.internal.post.mapper.PostMapper postMapper;
 
 	@Mock
 	private PostFilesRepository postFilesRepository;
@@ -115,7 +120,7 @@ class PostServiceTest {
 		given(categoriesRepository.findByNameAndDeletedAtIsNull("qna")).willReturn(Optional.of(category));
 		given(postsRepository.findAllByCategoryNameAndUserIdAndStatusAndDeletedAtIsNullOrderByCreatedAtDesc(
 			eq("qna"), eq(1L), eq(PostStatus.PUBLISHED), any(Pageable.class))).willReturn(page);
-		given(commentsRepository.findAnsweredPostIdsByPostIdsAndRole(anyList(), eq(RoleName.ROLE_ADMIN)))
+		given(commentsRepository.findAnsweredPostIdsByPostIdsAndRole(anyList(), eq(Set.<Long>of())))
 			.willReturn(Set.of());
 		given(postMapper.toResponseWithQnaStatus(any(PostsEntity.class), eq("pending")))
 			.willReturn(new PostResponse(100L, "user-1", 2L, "qna", "content", 0, false, PostStatus.PUBLISHED, "pending", null, null));
@@ -174,7 +179,7 @@ class PostServiceTest {
 			ReflectionTestUtils.setField(p, "id", 100L);
 			return p;
 		});
-		given(commentsRepository.countByPostIdAndRole(100L, RoleName.ROLE_ADMIN)).willReturn(0L);
+		given(commentsRepository.countByPostIdAndRole(100L, Set.of())).willReturn(0L);
 		given(postMapper.toResponseWithQnaStatus(any(PostsEntity.class), eq("pending")))
 			.willReturn(new PostResponse(100L, "user-1", 2L, "qna title", "qna content", 0, false, PostStatus.PUBLISHED, "pending", null, null));
 
@@ -198,7 +203,7 @@ class PostServiceTest {
 
 		given(postsRepository.findByIdAndCategoryNameAndDeletedAtIsNull(100L, "qna"))
 			.willReturn(Optional.of(post));
-		given(commentsRepository.countByPostIdAndRole(100L, RoleName.ROLE_ADMIN)).willReturn(0L);
+		given(commentsRepository.countByPostIdAndRole(100L, Set.of())).willReturn(0L);
 		given(postMapper.toResponseWithQnaStatus(post, "pending"))
 			.willReturn(new PostResponse(100L, "user-1", 2L, "updated", "content", 0, false, PostStatus.PUBLISHED, "pending", null, null));
 
@@ -270,7 +275,7 @@ class PostServiceTest {
 
 		given(postsRepository.findByIdAndCategoryNameAndDeletedAtIsNull(100L, "qna"))
 			.willReturn(Optional.of(post));
-		given(commentsRepository.countByPostIdAndRole(100L, RoleName.ROLE_ADMIN)).willReturn(0L);
+		given(commentsRepository.countByPostIdAndRole(100L, Set.of())).willReturn(0L);
 		given(postMapper.toResponseWithQnaStatus(post, "pending"))
 			.willReturn(new PostResponse(100L, "user-1", 2L, "admin updated", "content", 0, true, PostStatus.PUBLISHED, "pending", null, null));
 
@@ -317,16 +322,17 @@ class PostServiceTest {
 		);
 		ReflectionTestUtils.setField(file, "id", 55L);
 		PostFilesEntity mapping = PostFilesEntity.create(post, file);
+		given(fileCatalog.findAllByIds(List.of(55L))).willReturn(java.util.Map.of(55L, file));
 
 		given(postsRepository.findByIdAndCategoryNameAndDeletedAtIsNull(100L, "qna"))
 			.willReturn(Optional.of(post));
-		given(commentsRepository.countByPostIdAndRole(100L, RoleName.ROLE_ADMIN)).willReturn(0L);
+		given(commentsRepository.countByPostIdAndRole(100L, Set.of())).willReturn(0L);
 		given(postMapper.toResponseWithQnaStatus(post, "pending")).willReturn(
 			new PostResponse(100L, "user-1", 2L, "title", "content", 0, false, PostStatus.PUBLISHED, "pending", null, null)
 		);
 		given(postFilesRepository.findAllActiveByPostIdOrderByCreatedAtAsc(100L))
 			.willReturn(List.of(mapping));
-		given(fileMapper.toResponse(eq(100L), any(FilesEntity.class))).willReturn(
+		given(fileMapper.toResponse(eq(100L), any(com.aivle.project.storage.api.FileMetadata.class))).willReturn(
 			new FileResponse(55L, 100L, "url", "file.png", 10L, "image/png", null)
 		);
 

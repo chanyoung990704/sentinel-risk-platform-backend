@@ -1,22 +1,22 @@
-package com.aivle.project.auth.service;
+package com.aivle.project.identity.internal.auth.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.aivle.project.auth.dto.SignupRequest;
-import com.aivle.project.auth.dto.SignupResponse;
-import com.aivle.project.auth.exception.AuthErrorCode;
-import com.aivle.project.auth.exception.AuthException;
-import com.aivle.project.user.entity.RoleEntity;
-import com.aivle.project.user.entity.RoleName;
-import com.aivle.project.user.entity.UserEntity;
-import com.aivle.project.user.entity.UserRoleEntity;
-import com.aivle.project.user.entity.UserStatus;
-import com.aivle.project.user.repository.RoleRepository;
-import com.aivle.project.user.repository.UserRepository;
-import com.aivle.project.user.repository.UserRoleRepository;
+import com.aivle.project.identity.api.SignupRequest;
+import com.aivle.project.identity.internal.auth.dto.SignupResponse;
+import com.aivle.project.identity.api.AuthErrorCode;
+import com.aivle.project.identity.api.AuthException;
+import com.aivle.project.identity.internal.user.entity.RoleEntity;
+import com.aivle.project.identity.api.RoleName;
+import com.aivle.project.identity.internal.user.entity.UserEntity;
+import com.aivle.project.identity.internal.user.entity.UserRoleEntity;
+import com.aivle.project.identity.api.UserStatus;
+import com.aivle.project.identity.internal.user.repository.RoleRepository;
+import com.aivle.project.identity.internal.user.repository.UserRepository;
+import com.aivle.project.identity.internal.user.repository.UserRoleRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,9 +29,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import com.aivle.project.auth.mapper.AuthMapper;
-import com.aivle.project.user.service.EmailVerificationService;
-import com.aivle.project.user.service.UserDomainService;
+import com.aivle.project.identity.internal.auth.mapper.AuthMapper;
+import com.aivle.project.identity.internal.user.service.EmailVerificationService;
+import com.aivle.project.identity.internal.user.service.UserDomainService;
 
 @ExtendWith(MockitoExtension.class)
 class SignUpServiceTest {

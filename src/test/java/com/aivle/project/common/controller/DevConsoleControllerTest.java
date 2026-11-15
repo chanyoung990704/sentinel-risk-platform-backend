@@ -1,4 +1,4 @@
-package com.aivle.project.common.controller;
+package com.aivle.project.app.internal.common.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -7,12 +7,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 
-import com.aivle.project.auth.service.TurnstileService;
-import com.aivle.project.category.dto.CategorySummaryResponse;
-import com.aivle.project.category.entity.CategoriesEntity;
-import com.aivle.project.category.mapper.CategoryMapper;
-import com.aivle.project.category.repository.CategoriesRepository;
-import com.aivle.project.user.repository.UserRepository;
+import com.aivle.project.identity.internal.auth.service.TurnstileService;
+import com.aivle.project.community.api.CategorySummaryResponse;
+import com.aivle.project.community.internal.category.entity.CategoriesEntity;
+import com.aivle.project.community.internal.category.mapper.CategoryMapper;
+import com.aivle.project.community.internal.category.repository.CategoriesRepository;
+import com.aivle.project.identity.internal.user.repository.UserRepository;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,12 +28,15 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureMockMvc(addFilters = false)
 @ActiveProfiles({"test", "dev"})
 class DevConsoleControllerTest {
+	@org.springframework.test.context.bean.override.mockito.MockitoBean
+	private com.aivle.project.community.api.CategoryQueries categories;
+
 
 	@Autowired
 	private MockMvc mockMvc;
 
 	@MockBean
-	private TurnstileService turnstileService;
+	private com.aivle.project.identity.api.TurnstileVerification turnstileService;
 
 	@MockBean
 	private CategoriesRepository categoriesRepository;
@@ -53,10 +56,7 @@ class DevConsoleControllerTest {
 		CategoriesEntity category = CategoriesEntity.create("공지", "공지사항", 1, true);
 		CategorySummaryResponse response = new CategorySummaryResponse(1L, "공지", "공지사항", 1, true);
 
-		given(categoriesRepository.findAllByDeletedAtIsNullOrderBySortOrderAscIdAsc())
-			.willReturn(List.of(category));
-		given(categoryMapper.toSummaryResponse(any(CategoriesEntity.class)))
-			.willReturn(response);
+		given(categories.list()).willReturn(List.of(response));
 
 		mockMvc.perform(get("/dev/categories"))
 			.andExpect(status().isOk())

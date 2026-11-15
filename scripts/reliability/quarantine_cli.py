@@ -13,6 +13,6 @@ def main():
     runtime.sync_workspace();runtime.setup()
     subprocess.run(['bash','./gradlew','prepareCustomReportCli','--console=plain','--no-daemon'],cwd=runtime.WORKSPACE,env=runtime.environment(),check=True)
     classpath=(runtime.WORKSPACE/'build/portfolio-report-classpath.txt').read_text().strip();os.chdir(runtime.WORKSPACE)
-    os.execvpe('java',['java','-Xmx128m','-cp',classpath,'com.aivle.project.messaging.quarantine.QuarantineReplayCommand']+args,runtime.environment())
+    os.execvpe('java',['java','-Xmx128m','-cp',classpath,'com.aivle.project.reporting.internal.messaging.quarantine.QuarantineReplayCommand']+args,runtime.environment())
 
 if __name__=='__main__':main()

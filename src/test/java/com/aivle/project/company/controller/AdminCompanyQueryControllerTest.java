@@ -1,4 +1,4 @@
-package com.aivle.project.company.controller;
+package com.aivle.project.finance.internal.company.controller;
 
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
@@ -11,19 +11,19 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.aivle.project.common.config.TestSecurityConfig;
-import com.aivle.project.common.error.CommonErrorCode;
-import com.aivle.project.common.error.CommonException;
-import com.aivle.project.company.dto.CompanyInfoDto;
-import com.aivle.project.company.dto.CompanyOverviewResponseDto;
-import com.aivle.project.company.dto.CompanySectorDto;
-import com.aivle.project.company.entity.CompaniesEntity;
-import com.aivle.project.company.insight.dto.CompanyInsightDto;
-import com.aivle.project.company.insight.dto.CompanyInsightType;
-import com.aivle.project.company.insight.service.CompanyInsightService;
-import com.aivle.project.company.repository.CompaniesRepository;
-import com.aivle.project.company.service.CompanyOverviewService;
-import com.aivle.project.user.service.AdminUserQueryService;
-import com.aivle.project.watchlist.service.CompanyWatchlistService;
+import com.aivle.project.foundation.api.error.CommonErrorCode;
+import com.aivle.project.foundation.api.error.CommonException;
+import com.aivle.project.finance.api.CompanyInfoDto;
+import com.aivle.project.finance.api.CompanyOverviewResponseDto;
+import com.aivle.project.finance.api.CompanySectorDto;
+import com.aivle.project.finance.internal.company.entity.CompaniesEntity;
+import com.aivle.project.insight.api.CompanyInsightDto;
+import com.aivle.project.insight.api.CompanyInsightType;
+import com.aivle.project.insight.internal.company.insight.service.CompanyInsightService;
+import com.aivle.project.finance.internal.company.repository.CompaniesRepository;
+import com.aivle.project.finance.internal.company.service.CompanyOverviewService;
+import com.aivle.project.identity.internal.user.service.AdminUserQueryService;
+import com.aivle.project.watchlist.internal.service.CompanyWatchlistService;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -49,19 +49,19 @@ class AdminCompanyQueryControllerTest {
 	private MockMvc mockMvc;
 
 	@MockBean
-	private AdminUserQueryService adminUserQueryService;
+	private com.aivle.project.identity.api.AdminUserQueries adminUserQueryService;
 
 	@MockBean
-	private CompanyWatchlistService companyWatchlistService;
+	private com.aivle.project.watchlist.api.WatchlistOperations companyWatchlistService;
 
 	@MockBean
-	private CompanyOverviewService companyOverviewService;
+	private com.aivle.project.finance.api.CompanyOverviewQueries companyOverviewService;
 
 	@MockBean
-	private CompanyInsightService companyInsightService;
+	private com.aivle.project.insight.api.CompanyInsights companyInsightService;
 
 	@MockBean
-	private CompaniesRepository companiesRepository;
+	private com.aivle.project.finance.api.CompanyDirectory companiesRepository;
 
 	@Test
 	@DisplayName("ROLE_ADMIN은 userId 기준 워치리스트 기업 목록을 조회할 수 있다")
@@ -132,7 +132,7 @@ class AdminCompanyQueryControllerTest {
 		);
 		given(companyInsightService.ensureInsightData(eq(100L), eq(false))).willReturn(null);
 		given(companyInsightService.loadInsights(eq(100L), anyInt(), anyInt(), anyInt(), anyInt(), org.mockito.ArgumentMatchers.isNull()))
-			.willReturn(new CompanyInsightService.InsightResult(items, BigDecimal.valueOf(12.34), false));
+			.willReturn(new com.aivle.project.insight.api.CompanyInsightResult(items, BigDecimal.valueOf(12.34), false));
 
 		// when & then
 		mockMvc.perform(get("/api/admin/companies/100/insights")
@@ -152,7 +152,7 @@ class AdminCompanyQueryControllerTest {
 		// given
 		given(companyInsightService.ensureInsightData(eq(100L), eq(false))).willReturn(null);
 		given(companyInsightService.loadInsights(eq(100L), anyInt(), anyInt(), anyInt(), anyInt(), org.mockito.ArgumentMatchers.isNull()))
-			.willReturn(new CompanyInsightService.InsightResult(List.of(), null, true));
+			.willReturn(new com.aivle.project.insight.api.CompanyInsightResult(List.of(), null, true));
 
 		// when & then
 		mockMvc.perform(get("/api/admin/companies/100/insights")

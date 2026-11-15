@@ -16,7 +16,7 @@ from pathlib import Path
 
 SOURCE = Path(__file__).resolve().parents[2]
 def namespace_config(name):
-    if name not in ('portfolio','operations','restore'):
+    if name not in ('portfolio','operations','restore','modulith'):
         raise ValueError('허용된 실행 namespace 확인 필요')
     root=Path.home()/'.local/share/sentinel'
     return dict(project='sentinel-'+name,state=root/name,

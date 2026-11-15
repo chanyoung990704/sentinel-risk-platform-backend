@@ -1,4 +1,4 @@
-package com.aivle.project.perf;
+package com.aivle.project.app.internal.perf;
 
 import static org.assertj.core.api.Assertions.*;
 import com.p6spy.engine.common.PreparedStatementInformation;

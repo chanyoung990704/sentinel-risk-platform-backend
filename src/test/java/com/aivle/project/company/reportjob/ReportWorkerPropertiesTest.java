@@ -1,6 +1,6 @@
 package com.aivle.project.company.reportjob;
 import static org.assertj.core.api.Assertions.*;
-import com.aivle.project.company.reportjob.config.ReportWorkerProperties;
+import com.aivle.project.reporting.internal.company.reportjob.config.ReportWorkerProperties;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;

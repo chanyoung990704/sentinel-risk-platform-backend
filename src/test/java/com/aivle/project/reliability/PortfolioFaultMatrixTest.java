@@ -1,11 +1,12 @@
 package com.aivle.project.reliability;
 import static org.assertj.core.api.Assertions.*;
 import com.aivle.project.support.ReportFlowIntegrationSupport;
-import com.aivle.project.company.reportjob.model.*;
-import com.aivle.project.company.reportjob.service.ReportResultService;
-import com.aivle.project.company.reportrequest.cache.ReportStatusCache;
-import com.aivle.project.company.reportrequest.model.CustomReportCommand;
-import com.aivle.project.company.reportrequest.service.ReportRequestQueryService;
+import com.aivle.project.reporting.internal.company.reportjob.model.*;
+import com.aivle.project.reporting.api.CompletionDecision;
+import com.aivle.project.reporting.internal.company.reportjob.service.ReportResultService;
+import com.aivle.project.reporting.internal.company.reportrequest.cache.ReportStatusCache;
+import com.aivle.project.reporting.api.CustomReportCommand;
+import com.aivle.project.reporting.internal.company.reportrequest.service.ReportRequestQueryService;
 import java.net.URI;
 import java.net.http.*;
 import java.nio.file.*;
@@ -49,7 +50,7 @@ class PortfolioFaultMatrixTest extends ReportFlowIntegrationSupport {
     }
     @Test void ownedCacheNamespaceLossRebuildsAllStatusesFromDatabase()throws Exception {
         // given: 시험 소유 사용자 키 열 개만 대상으로 한다.
-        var ids=new ArrayList<UUID>();long owner=users.getFirst();var before=new HashMap<UUID,ReportRequestQueryService.Status>();
+        var ids=new ArrayList<UUID>();long owner=users.getFirst();var before=new HashMap<UUID,com.aivle.project.reporting.api.ReportRequestView>();
         for(int n=0;n<10;n++){var id=requests.accept(owner,company,"namespace-"+UUID.randomUUID(),new CustomReportCommand(null,"캐시 소실 검증")).requestId();ids.add(id);before.put(id,queries.getOwned(owner,id));assertThat(cache.getOwnedStatus(owner,id)).isPresent();}
         // when: 다른 사용자/인증 Redis 키를 지우지 않고 이 시험의 전체 키를 유실시킨다.
         for(UUID id:ids)cache.evict(owner,id);

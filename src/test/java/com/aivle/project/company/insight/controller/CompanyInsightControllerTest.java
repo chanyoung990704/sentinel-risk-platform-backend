@@ -1,10 +1,10 @@
-package com.aivle.project.company.insight.controller;
+package com.aivle.project.insight.internal.company.insight.controller;
 
-import com.aivle.project.common.dto.ApiResponse;
-import com.aivle.project.company.insight.dto.CompanyInsightDto;
-import com.aivle.project.company.insight.dto.CompanyInsightResponseDto;
-import com.aivle.project.company.insight.dto.CompanyInsightType;
-import com.aivle.project.company.insight.service.CompanyInsightService;
+import com.aivle.project.foundation.api.dto.ApiResponse;
+import com.aivle.project.insight.api.CompanyInsightDto;
+import com.aivle.project.insight.api.CompanyInsightResponseDto;
+import com.aivle.project.insight.api.CompanyInsightType;
+import com.aivle.project.insight.internal.company.insight.service.CompanyInsightService;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -71,7 +71,7 @@ class ㅋCompanyInsightControllerTest {
 
 		when(companyInsightService.ensureInsightData(eq(companyId), eq(false))).thenReturn(null);
 		when(companyInsightService.loadInsights(eq(companyId), anyInt(), anyInt(), anyInt(), anyInt(), isNull()))
-			.thenReturn(new com.aivle.project.company.insight.service.CompanyInsightService.InsightResult(
+			.thenReturn(new com.aivle.project.insight.api.CompanyInsightResult(
 				items,
 				BigDecimal.valueOf(12.34),
 				false

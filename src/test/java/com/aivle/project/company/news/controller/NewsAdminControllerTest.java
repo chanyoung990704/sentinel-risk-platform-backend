@@ -1,10 +1,10 @@
-package com.aivle.project.company.news.controller;
+package com.aivle.project.news.internal.company.news.controller;
 
-import com.aivle.project.common.dto.ApiResponse;
-import com.aivle.project.company.news.dto.NewsAnalysisResponse;
-import com.aivle.project.company.news.dto.NewsRefreshResponse;
-import com.aivle.project.company.news.service.NewsService;
-import com.aivle.project.company.service.CompanyReputationScoreService;
+import com.aivle.project.foundation.api.dto.ApiResponse;
+import com.aivle.project.news.api.NewsAnalysisResponse;
+import com.aivle.project.news.api.NewsRefreshResponse;
+import com.aivle.project.news.internal.company.news.service.NewsService;
+import com.aivle.project.finance.internal.company.service.CompanyReputationScoreService;
 import java.time.OffsetDateTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,7 +28,7 @@ class NewsAdminControllerTest {
 	private NewsService newsService;
 
 	@Mock
-	private CompanyReputationScoreService companyReputationScoreService;
+	private com.aivle.project.finance.api.ReputationOperations companyReputationScoreService;
 
 	@InjectMocks
 	private NewsAdminController newsAdminController;

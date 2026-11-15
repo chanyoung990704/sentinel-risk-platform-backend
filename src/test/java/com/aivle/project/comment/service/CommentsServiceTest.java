@@ -1,4 +1,4 @@
-package com.aivle.project.comment.service;
+package com.aivle.project.community.internal.comment.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -6,16 +6,16 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
-import com.aivle.project.comment.dto.CommentCreateRequest;
-import com.aivle.project.comment.dto.CommentResponse;
-import com.aivle.project.comment.dto.CommentUpdateRequest;
-import com.aivle.project.comment.entity.CommentsEntity;
-import com.aivle.project.comment.repository.CommentsRepository;
-import com.aivle.project.common.error.CommonException;
-import com.aivle.project.post.entity.PostsEntity;
-import com.aivle.project.post.repository.PostsRepository;
-import com.aivle.project.post.service.PostReadAccessPolicy;
-import com.aivle.project.user.entity.UserEntity;
+import com.aivle.project.community.api.CommentCreateRequest;
+import com.aivle.project.community.internal.comment.dto.CommentResponse;
+import com.aivle.project.community.api.CommentUpdateRequest;
+import com.aivle.project.community.internal.comment.entity.CommentsEntity;
+import com.aivle.project.community.internal.comment.repository.CommentsRepository;
+import com.aivle.project.foundation.api.error.CommonException;
+import com.aivle.project.community.internal.post.entity.PostsEntity;
+import com.aivle.project.community.internal.post.repository.PostsRepository;
+import com.aivle.project.community.internal.post.service.PostReadAccessPolicy;
+import com.aivle.project.identity.internal.user.entity.UserEntity;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -28,6 +28,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 @ExtendWith(MockitoExtension.class)
 class CommentsServiceTest {
+	@Mock
+	private com.aivle.project.identity.api.IdentityQueries identityQueries;
 
 	@InjectMocks
 	private CommentsService commentsService;
@@ -42,7 +44,7 @@ class CommentsServiceTest {
 	private PostReadAccessPolicy postReadAccessPolicy;
 
 	@Mock
-	private com.aivle.project.comment.mapper.CommentMapper commentMapper;
+	private com.aivle.project.community.internal.comment.mapper.CommentMapper commentMapper;
 
 	@Test
 	@DisplayName("댓글 목록 조회 성공")

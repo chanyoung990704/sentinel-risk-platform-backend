@@ -1,4 +1,4 @@
-package com.aivle.project.category.controller;
+package com.aivle.project.community.internal.category.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -6,11 +6,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.aivle.project.category.dto.CategorySummaryResponse;
-import com.aivle.project.category.entity.CategoriesEntity;
-import com.aivle.project.category.mapper.CategoryMapper;
-import com.aivle.project.category.repository.CategoriesRepository;
-import com.aivle.project.user.repository.UserRepository;
+import com.aivle.project.community.api.CategorySummaryResponse;
+import com.aivle.project.community.internal.category.entity.CategoriesEntity;
+import com.aivle.project.community.internal.category.mapper.CategoryMapper;
+import com.aivle.project.community.internal.category.repository.CategoriesRepository;
+import com.aivle.project.identity.internal.user.repository.UserRepository;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,8 +1,9 @@
 package com.aivle.project.company.reportjob;
 import static org.assertj.core.api.Assertions.*;
 import com.aivle.project.support.ReportFlowIntegrationSupport;
-import com.aivle.project.company.reportjob.service.*;
-import com.aivle.project.company.reportjob.model.*;
+import com.aivle.project.reporting.internal.company.reportjob.service.*;
+import com.aivle.project.reporting.internal.company.reportjob.model.*;
+import com.aivle.project.reporting.api.CompletionDecision;
 import java.util.*;
 import java.util.concurrent.*;
 import org.junit.jupiter.api.*;
@@ -46,7 +47,7 @@ class ReportManualRecoveryIntegrationTest extends ReportFlowIntegrationSupport {
 		// given
 		var id=enqueue();var l=fail(id);String initial=jdbc.queryForObject("SELECT payload FROM outbox_events WHERE aggregateid=? AND type='REQUEST_ACCEPTED'",String.class,id.toString());
 		// when / then
-		assertThat(inbox.accept(mapper.readValue(initial,com.aivle.project.messaging.outbox.ReportEvent.class)).name()).isEqualTo("DUPLICATE");assertThat(jdbc.queryForObject("SELECT state FROM report_jobs WHERE request_id=?",String.class,id.toString())).isEqualTo("FAILED");recovery.recover(users.getLast(),id,UUID.randomUUID(),"재개");var next=claim();results.storeAndComplete(next,generate(next));assertThatThrownBy(()->recovery.recover(users.getLast(),id,UUID.randomUUID(),"또 재개")).hasMessageContaining("CONFLICT");
+		assertThat(inbox.accept(mapper.readValue(initial,com.aivle.project.reporting.internal.messaging.outbox.ReportEvent.class)).name()).isEqualTo("DUPLICATE");assertThat(jdbc.queryForObject("SELECT state FROM report_jobs WHERE request_id=?",String.class,id.toString())).isEqualTo("FAILED");recovery.recover(users.getLast(),id,UUID.randomUUID(),"재개");var next=claim();results.storeAndComplete(next,generate(next));assertThatThrownBy(()->recovery.recover(users.getLast(),id,UUID.randomUUID(),"또 재개")).hasMessageContaining("CONFLICT");
 	}
 	@Test void exhaustedThreeAttemptsRemainInHistoryAfterRecovery()throws Exception {
 		// given
@@ -74,7 +75,7 @@ class ReportManualRecoveryIntegrationTest extends ReportFlowIntegrationSupport {
 			java.nio.file.Path log=java.nio.file.Files.createTempFile("sentinel-recovery-cli-", ".log");
 			try {
 				// when
-				var builder=new ProcessBuilder(java.nio.file.Path.of(System.getProperty("java.home"),"bin","java").toString(),"-Xmx128m","-cp",classpath,"com.aivle.project.company.reportjob.cli.ReportRecoveryCommand",id.toString(),command.toString(),users.getLast().toString(),"CLI 원인 제거 후 재개");
+				var builder=new ProcessBuilder(java.nio.file.Path.of(System.getProperty("java.home"),"bin","java").toString(),"-Xmx128m","-cp",classpath,"com.aivle.project.reporting.internal.company.reportjob.cli.ReportRecoveryCommand",id.toString(),command.toString(),users.getLast().toString(),"CLI 원인 제거 후 재개");
 				var env=builder.environment();env.clear();for(String name:List.of("PATH","HOME","USER","LANG","JAVA_HOME"))if(System.getenv(name)!=null)env.put(name,System.getenv(name));env.put("SPRING_PROFILES_ACTIVE","local");env.put("PORTFOLIO_SECRET_DIR",com.aivle.project.support.PortfolioSecretPaths.directory().toString());var process=builder.redirectErrorStream(true).redirectOutput(log.toFile()).start();
 				// then
 				assertThat(process.waitFor(20,TimeUnit.SECONDS)).isTrue();assertThat(process.exitValue()).withFailMessage(java.nio.file.Files.readString(log)).isZero();assertThat(java.nio.file.Files.readString(log)).contains("\"generation\":2").doesNotContain("CLI 원인 제거 후 재개");

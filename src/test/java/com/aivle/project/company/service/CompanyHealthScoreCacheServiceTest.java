@@ -1,23 +1,24 @@
-package com.aivle.project.company.service;
+package com.aivle.project.insight.internal.company.service;
+import com.aivle.project.finance.internal.company.service.CompanyHealthScoreCacheService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verifyNoInteractions;
 
-import com.aivle.project.common.config.QuerydslConfig;
-import com.aivle.project.company.client.AiServerClient;
-import com.aivle.project.company.dto.AiHealthScoreResponse;
-import com.aivle.project.company.entity.CompaniesEntity;
-import com.aivle.project.company.keymetric.entity.CompanyKeyMetricEntity;
-import com.aivle.project.company.keymetric.entity.CompanyKeyMetricRiskLevel;
-import com.aivle.project.company.keymetric.repository.CompanyKeyMetricRepository;
-import com.aivle.project.company.repository.CompaniesRepository;
-import com.aivle.project.industry.entity.IndustryEntity;
-import com.aivle.project.industry.entity.IndustryRepository;
-import com.aivle.project.quarter.entity.QuartersEntity;
-import com.aivle.project.quarter.repository.QuartersRepository;
-import com.aivle.project.quarter.support.QuarterCalculator;
-import com.aivle.project.quarter.support.YearQuarter;
+import com.aivle.project.app.internal.common.config.QuerydslConfig;
+import com.aivle.project.aiintegration.internal.company.client.AiServerClient;
+import com.aivle.project.aiintegration.api.AiHealthScoreResponse;
+import com.aivle.project.finance.internal.company.entity.CompaniesEntity;
+import com.aivle.project.finance.internal.company.keymetric.entity.CompanyKeyMetricEntity;
+import com.aivle.project.finance.api.CompanyKeyMetricRiskLevel;
+import com.aivle.project.finance.internal.company.keymetric.repository.CompanyKeyMetricRepository;
+import com.aivle.project.finance.internal.company.repository.CompaniesRepository;
+import com.aivle.project.finance.internal.industry.entity.IndustryEntity;
+import com.aivle.project.finance.internal.industry.entity.IndustryRepository;
+import com.aivle.project.finance.internal.quarter.entity.QuartersEntity;
+import com.aivle.project.finance.internal.quarter.repository.QuartersRepository;
+import com.aivle.project.finance.api.QuarterCalculator;
+import com.aivle.project.finance.api.YearQuarter;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -31,6 +32,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 @DataJpaTest
+@com.aivle.project.common.config.EnableJpaReadAdapters
 @ActiveProfiles("test")
 @Import({QuerydslConfig.class, CompanyHealthScoreCacheService.class})
 class CompanyHealthScoreCacheServiceTest {
@@ -51,7 +53,7 @@ class CompanyHealthScoreCacheServiceTest {
 	private CompanyKeyMetricRepository companyKeyMetricRepository;
 
 	@MockBean
-	private AiServerClient aiServerClient;
+	private com.aivle.project.aiintegration.api.AiGateway aiServerClient;
 
 	@Test
 	@DisplayName("재무건전성 점수가 없으면 AI 응답을 캐시하고 저장한다")

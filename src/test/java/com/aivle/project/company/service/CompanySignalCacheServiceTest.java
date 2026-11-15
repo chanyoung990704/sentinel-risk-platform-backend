@@ -1,30 +1,31 @@
-package com.aivle.project.company.service;
+package com.aivle.project.insight.internal.company.service;
+import com.aivle.project.finance.internal.company.service.CompanySignalCacheService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verifyNoInteractions;
 
-import com.aivle.project.common.config.QuerydslConfig;
-import com.aivle.project.company.client.AiServerClient;
-import com.aivle.project.company.dto.AiSignalResponse;
-import com.aivle.project.company.entity.CompaniesEntity;
-import com.aivle.project.company.repository.CompaniesRepository;
-import com.aivle.project.industry.entity.IndustryEntity;
-import com.aivle.project.industry.entity.IndustryRepository;
-import com.aivle.project.metric.entity.MetricValueType;
-import com.aivle.project.metric.entity.MetricsEntity;
-import com.aivle.project.metric.repository.MetricsRepository;
-import com.aivle.project.quarter.entity.QuartersEntity;
-import com.aivle.project.quarter.repository.QuartersRepository;
-import com.aivle.project.quarter.support.QuarterCalculator;
-import com.aivle.project.quarter.support.YearQuarter;
-import com.aivle.project.report.entity.CompanyReportMetricValuesEntity;
-import com.aivle.project.report.entity.CompanyReportVersionsEntity;
-import com.aivle.project.report.entity.CompanyReportsEntity;
-import com.aivle.project.report.entity.SignalColor;
-import com.aivle.project.report.repository.CompanyReportMetricValuesRepository;
-import com.aivle.project.report.repository.CompanyReportVersionsRepository;
-import com.aivle.project.report.repository.CompanyReportsRepository;
+import com.aivle.project.app.internal.common.config.QuerydslConfig;
+import com.aivle.project.aiintegration.internal.company.client.AiServerClient;
+import com.aivle.project.aiintegration.api.AiSignalResponse;
+import com.aivle.project.finance.internal.company.entity.CompaniesEntity;
+import com.aivle.project.finance.internal.company.repository.CompaniesRepository;
+import com.aivle.project.finance.internal.industry.entity.IndustryEntity;
+import com.aivle.project.finance.internal.industry.entity.IndustryRepository;
+import com.aivle.project.finance.api.MetricValueType;
+import com.aivle.project.finance.internal.metric.entity.MetricsEntity;
+import com.aivle.project.finance.internal.metric.repository.MetricsRepository;
+import com.aivle.project.finance.internal.quarter.entity.QuartersEntity;
+import com.aivle.project.finance.internal.quarter.repository.QuartersRepository;
+import com.aivle.project.finance.api.QuarterCalculator;
+import com.aivle.project.finance.api.YearQuarter;
+import com.aivle.project.finance.internal.report.entity.CompanyReportMetricValuesEntity;
+import com.aivle.project.finance.internal.report.entity.CompanyReportVersionsEntity;
+import com.aivle.project.finance.internal.report.entity.CompanyReportsEntity;
+import com.aivle.project.finance.api.SignalColor;
+import com.aivle.project.finance.internal.report.repository.CompanyReportMetricValuesRepository;
+import com.aivle.project.finance.internal.report.repository.CompanyReportVersionsRepository;
+import com.aivle.project.finance.internal.report.repository.CompanyReportsRepository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -38,6 +39,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 @DataJpaTest
+@com.aivle.project.common.config.EnableJpaReadAdapters
 @ActiveProfiles("test")
 @Import({QuerydslConfig.class, CompanySignalCacheService.class})
 class CompanySignalCacheServiceTest {
@@ -67,7 +69,7 @@ class CompanySignalCacheServiceTest {
 	private MetricsRepository metricsRepository;
 
 	@MockBean
-	private AiServerClient aiServerClient;
+	private com.aivle.project.aiintegration.api.AiGateway aiServerClient;
 
 	@Test
 	@DisplayName("최신 ACTUAL 분기 요청 시 신호등이 없으면 AI 호출 후 저장한다")

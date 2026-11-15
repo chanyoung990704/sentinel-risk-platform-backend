@@ -1,8 +1,8 @@
-package com.aivle.project.report.importer;
+package com.aivle.project.finance.internal.report.importer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.aivle.project.report.dto.CompanyMetricValueCommand;
+import com.aivle.project.finance.api.CompanyMetricValueCommand;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.List;

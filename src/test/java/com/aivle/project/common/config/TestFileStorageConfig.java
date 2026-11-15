@@ -1,7 +1,7 @@
 package com.aivle.project.common.config;
 
-import com.aivle.project.file.storage.FileStorageService;
-import com.aivle.project.file.storage.StoredFile;
+import com.aivle.project.storage.api.FileStorageService;
+import com.aivle.project.storage.api.StoredFile;
 import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

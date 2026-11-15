@@ -1,15 +1,15 @@
-package com.aivle.project.user.security;
+package com.aivle.project.identity.internal.user.security;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.aivle.project.user.entity.RoleEntity;
-import com.aivle.project.user.entity.RoleName;
-import com.aivle.project.user.entity.UserEntity;
-import com.aivle.project.user.entity.UserRoleEntity;
-import com.aivle.project.user.entity.UserStatus;
-import com.aivle.project.user.repository.RoleRepository;
-import com.aivle.project.user.repository.UserRepository;
-import com.aivle.project.user.repository.UserRoleRepository;
+import com.aivle.project.identity.internal.user.entity.RoleEntity;
+import com.aivle.project.identity.api.RoleName;
+import com.aivle.project.identity.internal.user.entity.UserEntity;
+import com.aivle.project.identity.internal.user.entity.UserRoleEntity;
+import com.aivle.project.identity.api.UserStatus;
+import com.aivle.project.identity.internal.user.repository.RoleRepository;
+import com.aivle.project.identity.internal.user.repository.UserRepository;
+import com.aivle.project.identity.internal.user.repository.UserRoleRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.DisplayName;

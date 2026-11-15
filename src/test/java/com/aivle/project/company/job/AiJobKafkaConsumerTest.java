@@ -1,11 +1,14 @@
-package com.aivle.project.company.job;
+package com.aivle.project.reporting.internal.company.job;
+import com.aivle.project.app.internal.messaging.AiJobKafkaConsumer;
+import com.aivle.project.aiintegration.api.AiJobType;
+import com.aivle.project.aiintegration.api.AiJobMessage;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
-import com.aivle.project.company.service.CompanyAiCommentService;
-import com.aivle.project.company.service.CompanyAiService;
+import com.aivle.project.finance.internal.company.service.CompanyAiCommentService;
+import com.aivle.project.finance.internal.company.service.CompanyAiService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.OffsetDateTime;
 import org.junit.jupiter.api.DisplayName;
@@ -22,10 +25,10 @@ class AiJobKafkaConsumerTest {
 	private AiJobKafkaConsumer consumer;
 
 	@Mock
-	private CompanyAiService companyAiService;
+	private com.aivle.project.finance.api.LegacyFinancialAi companyAiService;
 
 	@Mock
-	private CompanyAiCommentService companyAiCommentService;
+	private com.aivle.project.finance.api.AiCommentOperations companyAiCommentService;
 
 	@Mock
 	private ObjectMapper objectMapper;

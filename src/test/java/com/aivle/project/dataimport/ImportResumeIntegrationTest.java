@@ -1,12 +1,15 @@
 package com.aivle.project.dataimport;
 
 import static org.assertj.core.api.Assertions.*;
-import com.aivle.project.dataimport.model.*;
-import com.aivle.project.dataimport.model.CanonicalMetricCell.*;
-import com.aivle.project.dataimport.model.ImportPreflightResult.*;
-import com.aivle.project.dataimport.model.ImportStartCommand.QuarantinePolicy;
-import com.aivle.project.dataimport.service.*;
-import com.aivle.project.dataimport.repository.ImportJournalRepository;
+import com.aivle.project.finance.internal.dataimport.model.*;
+import com.aivle.project.finance.internal.dataimport.model.ImportStartCommand;
+import com.aivle.project.finance.internal.dataimport.model.ImportStartCommand;
+import com.aivle.project.finance.api.CanonicalMetricCell;
+import com.aivle.project.finance.api.CanonicalMetricCell.*;
+import com.aivle.project.finance.internal.dataimport.model.ImportPreflightResult.*;
+import com.aivle.project.finance.internal.dataimport.model.ImportStartCommand.QuarantinePolicy;
+import com.aivle.project.finance.internal.dataimport.service.*;
+import com.aivle.project.finance.internal.dataimport.repository.ImportJournalRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.nio.file.*;
@@ -176,7 +179,7 @@ class ImportResumeIntegrationTest {
 	@Test void interruptedInputPreparationCanBeReuploadedWithoutDuplicatePlan() {
 		// given: 준비 6번째 묶음에서 저장 전 예외를 주입한다.
 		var original=command();String actor="prepare-"+UUID.randomUUID();var command=new ImportStartCommand(original.input(),actor,10,QuarantinePolicy.STRICT);
-		doAnswer(call->{com.aivle.project.dataimport.entity.ImportChunkEntity c=call.getArgument(2);if(c.number()==6)throw new IllegalStateException("injected preparation failure");return call.callRealMethod();}).when(repository).plan(any(),any(),any());
+		doAnswer(call->{com.aivle.project.finance.internal.dataimport.entity.ImportChunkEntity c=call.getArgument(2);if(c.number()==6)throw new IllegalStateException("injected preparation failure");return call.callRealMethod();}).when(repository).plan(any(),any(),any());
 		// when
 		assertThatThrownBy(()->service.start(command)).isInstanceOf(IllegalStateException.class);
 		UUID old=UUID.fromString(jdbc.queryForObject("SELECT id FROM import_runs WHERE submitted_by=?",String.class,actor));UUID snapshot=service.status(old).snapshotId();

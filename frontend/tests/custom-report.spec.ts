@@ -3,7 +3,7 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 
-const fixturePath = join(homedir(), '.local/share/sentinel/portfolio/r07-m04/browser-fixture.json');
+const fixturePath = process.env.SENTINEL_BROWSER_FIXTURE || join(homedir(), '.local/share/sentinel/portfolio/r07-m04/browser-fixture.json');
 const fixture = () => JSON.parse(readFileSync(fixturePath, 'utf8'));
 async function loginBrowser(page, user) {
   await page.goto('/', { waitUntil: 'domcontentloaded' });

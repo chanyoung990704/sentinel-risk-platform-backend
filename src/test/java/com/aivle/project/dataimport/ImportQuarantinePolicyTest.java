@@ -1,10 +1,12 @@
 package com.aivle.project.dataimport;
 
 import static org.assertj.core.api.Assertions.*;
-import com.aivle.project.dataimport.model.*;
-import com.aivle.project.dataimport.model.ImportPreflightResult.*;
-import com.aivle.project.dataimport.model.ImportStartCommand.QuarantinePolicy;
-import com.aivle.project.dataimport.service.ImportInputValidator;
+import com.aivle.project.finance.internal.dataimport.model.*;
+import com.aivle.project.finance.internal.dataimport.model.ImportStartCommand;
+import com.aivle.project.finance.internal.dataimport.model.ImportStartCommand;
+import com.aivle.project.finance.internal.dataimport.model.ImportPreflightResult.*;
+import com.aivle.project.finance.internal.dataimport.model.ImportStartCommand.QuarantinePolicy;
+import com.aivle.project.finance.internal.dataimport.service.ImportInputValidator;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.*;

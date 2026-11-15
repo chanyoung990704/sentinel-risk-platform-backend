@@ -1,11 +1,11 @@
-package com.aivle.project.company.service;
+package com.aivle.project.finance.internal.company.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.aivle.project.common.config.QuerydslConfig;
-import com.aivle.project.company.dto.CompanySearchResponse;
-import com.aivle.project.company.entity.CompaniesEntity;
-import com.aivle.project.company.repository.CompaniesRepository;
+import com.aivle.project.app.internal.common.config.QuerydslConfig;
+import com.aivle.project.finance.api.CompanySearchResponse;
+import com.aivle.project.finance.internal.company.entity.CompaniesEntity;
+import com.aivle.project.finance.internal.company.repository.CompaniesRepository;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 @DataJpaTest
+@com.aivle.project.common.config.EnableJpaReadAdapters
 @ActiveProfiles("test")
 @Import({QuerydslConfig.class, CompanySearchService.class})
 class CompanySearchServiceTest {
@@ -27,7 +28,7 @@ class CompanySearchServiceTest {
 	private CompaniesRepository companiesRepository;
 
 	@org.springframework.boot.test.mock.mockito.MockBean
-	private com.aivle.project.company.mapper.CompanyMapper companyMapper;
+	private com.aivle.project.finance.internal.company.mapper.CompanyMapper companyMapper;
 
 	@Test
 	@DisplayName("회사명 또는 영문명으로 기업을 검색한다")

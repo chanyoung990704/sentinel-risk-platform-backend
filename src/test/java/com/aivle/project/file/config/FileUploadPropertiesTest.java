@@ -1,4 +1,4 @@
-package com.aivle.project.file.config;
+package com.aivle.project.storage.internal.file.config;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

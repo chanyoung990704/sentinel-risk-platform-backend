@@ -1,11 +1,13 @@
 package com.aivle.project.company.reportjob;
+import com.aivle.project.reporting.api.CustomReportCommand;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import com.aivle.project.company.reportrequest.model.*;
-import com.aivle.project.company.reportrequest.service.ReportRequestService;
-import com.aivle.project.company.reportjob.repository.ReportJobRepository;
-import com.aivle.project.messaging.inbox.*;
-import com.aivle.project.messaging.outbox.*;
+
+import com.aivle.project.reporting.internal.company.reportrequest.service.ReportRequestService;
+import com.aivle.project.reporting.internal.company.reportjob.repository.ReportJobRepository;
+import com.aivle.project.reporting.internal.messaging.inbox.*;
+import com.aivle.project.reporting.api.InboxAcceptance;
+import com.aivle.project.reporting.internal.messaging.outbox.*;
 import com.aivle.project.support.CustomReportIntegrationSupport;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.*;

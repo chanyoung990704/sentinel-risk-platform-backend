@@ -25,6 +25,6 @@ logging:
     p6spy: OFF
     org.hibernate.SQL: OFF
     org.hibernate.orm.jdbc.bind: OFF
-    com.aivle.project.company.service.CompanySearchService: WARN
-    com.aivle.project.common.logging.ApiLoggingAspect: WARN
-    com.aivle.project.common.logging.ApiLogProcessor: WARN
+    com.aivle.project.finance.internal.company.service.CompanySearchService: WARN
+    com.aivle.project.app.internal.common.logging.ApiLoggingAspect: WARN
+    com.aivle.project.app.internal.common.logging.ApiLogProcessor: WARN

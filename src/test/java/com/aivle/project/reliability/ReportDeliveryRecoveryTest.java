@@ -1,8 +1,9 @@
 package com.aivle.project.reliability;
+import com.aivle.project.reporting.api.CustomReportCommand;
 import static org.assertj.core.api.Assertions.*;
 import com.aivle.project.support.ReportFlowIntegrationSupport;
-import com.aivle.project.company.reportjob.service.ReportRecoveryService;
-import com.aivle.project.messaging.CustomReportTopics;
+import com.aivle.project.reporting.internal.company.reportjob.service.ReportRecoveryService;
+import com.aivle.project.reporting.api.CustomReportTopics;
 import java.net.*;
 import java.net.http.*;
 import java.nio.charset.StandardCharsets;
@@ -92,7 +93,7 @@ class ReportDeliveryRecoveryTest extends ReportFlowIntegrationSupport {
 	}
 	@Test void inboxCommitThenActualJvmHaltBeforeAckRedeliversSameOffset()throws Exception {
 		// given: 소비 JVM의 Inbox commit 이후/실제 ACK 직전 경계에서 종료한다.
-		UUID id=requests.accept(users.getFirst(),company,"ack-halt-"+UUID.randomUUID(),new com.aivle.project.company.reportrequest.model.CustomReportCommand(null,"ACK commit 경계")).requestId();acceptedCheckpoint("ack-process-halt",List.of(id));ackBoundary=true;ackTarget=id;start();
+		UUID id=requests.accept(users.getFirst(),company,"ack-halt-"+UUID.randomUUID(),new com.aivle.project.reporting.api.CustomReportCommand(null,"ACK commit 경계")).requestId();acceptedCheckpoint("ack-process-halt",List.of(id));ackBoundary=true;ackTarget=id;start();
 		// when
 		assertThat(child.waitFor(60,TimeUnit.SECONDS)).isTrue();assertThat(child.exitValue()).isEqualTo(95);child=null;
 		assertThat(countFor("report_jobs",id)).isEqualTo(1);var gate=mapper.readTree(Files.readString(root.resolve("ack-gate.json")));
@@ -197,10 +198,10 @@ class ReportDeliveryRecoveryTest extends ReportFlowIntegrationSupport {
 	String status(UUID id){return jdbc.queryForObject("SELECT status FROM report_requests WHERE id=?",String.class,id.toString());}
 	long countFor(String table,UUID id){return jdbc.queryForObject("SELECT COUNT(*) FROM "+table+" WHERE request_id=?",Long.class,id.toString());}
 	void awaitSuccess(List<UUID> ids)throws Exception {await(()->ids.stream().allMatch(id->status(id).equals("SUCCEEDED")),180,"보고서 완료");}
-	com.aivle.project.company.reportjob.service.ReportReconciliationService.Result reconcile(List<UUID> ids){return new com.aivle.project.company.reportjob.service.ReportReconciliationService(jdbc,root.resolve("uploads").toString()).reconcile(ids);}
+	com.aivle.project.reporting.internal.company.reportjob.service.ReportReconciliationService.Result reconcile(List<UUID> ids){return new com.aivle.project.reporting.internal.company.reportjob.service.ReportReconciliationService(jdbc,root.resolve("uploads").toString()).reconcile(ids);}
 	void assertReconciled(List<UUID> ids){assertReconciled(ids,0);}
 	void assertReconciled(List<UUID> ids,int expectedOrphans){for(UUID id:ids){assertThat(status(id)).isEqualTo("SUCCEEDED");assertThat(countFor("report_jobs",id)).isEqualTo(1);assertThat(countFor("report_artifacts",id)).isEqualTo(1);assertThat(jdbc.queryForObject("SELECT admission_slot_held FROM report_requests WHERE id=?",Boolean.class,id.toString())).isFalse();}var result=reconcile(ids);assertThat(result.accepted()).isEqualTo(ids.size());assertThat(result.succeeded()).isEqualTo(ids.size());assertThat(result.missingRequests()+result.missingJobs()+result.duplicateArtifacts()+result.missingArtifacts()+result.missingFiles()+result.invalidArtifacts()).isZero();assertThat(result.unlinkedFiles()).isEqualTo(expectedOrphans);assertThat(jdbc.queryForObject("SELECT used_count FROM report_admission WHERE scope_key=?",Integer.class,"USER:"+users.getFirst())).isZero();}
-	void assertPdf(UUID id)throws Exception {var state=get("/api/report-requests/"+id);assertThat(state.statusCode()).isEqualTo(200);assertThat(mapper.readTree(state.body()).path("data").path("status").asText()).isEqualTo("SUCCEEDED");var response=get("/api/report-requests/"+id+"/file");assertThat(response.statusCode()).isEqualTo(200);assertThat(new String(response.body(),0,5,StandardCharsets.US_ASCII)).isEqualTo("%PDF-");String sha=com.aivle.project.dataimport.service.ImportPreflightService.sha256(response.body());assertThat(jdbc.queryForObject("SELECT sha256 FROM report_artifacts WHERE request_id=?",String.class,id.toString())).isEqualTo(sha);}
+	void assertPdf(UUID id)throws Exception {var state=get("/api/report-requests/"+id);assertThat(state.statusCode()).isEqualTo(200);assertThat(mapper.readTree(state.body()).path("data").path("status").asText()).isEqualTo("SUCCEEDED");var response=get("/api/report-requests/"+id+"/file");assertThat(response.statusCode()).isEqualTo(200);assertThat(new String(response.body(),0,5,StandardCharsets.US_ASCII)).isEqualTo("%PDF-");String sha=com.aivle.project.finance.internal.dataimport.service.ImportPreflightService.sha256(response.body());assertThat(jdbc.queryForObject("SELECT sha256 FROM report_artifacts WHERE request_id=?",String.class,id.toString())).isEqualTo(sha);}
 	long calls(UUID id)throws Exception {var response=http.send(HttpRequest.newBuilder(URI.create("http://127.0.0.1:18081/journal")).timeout(Duration.ofSeconds(10)).GET().build(),HttpResponse.BodyHandlers.ofString());long count=0;for(var row:mapper.readTree(response.body()))if(row.path("requestId").asText().equals(id.toString()))count++;return count;}
 	void mock(int delay,int failures)throws Exception {var response=http.send(HttpRequest.newBuilder(URI.create("http://127.0.0.1:18081/control/custom-reports")).timeout(Duration.ofSeconds(10)).header("Content-Type","application/json").POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(Map.of("delay_ms",delay,"fail_first",failures,"response_mode","valid")))).build(),HttpResponse.BodyHandlers.discarding());assertThat(response.statusCode()).isEqualTo(200);}
 	void holdResponse(boolean hold)throws Exception {var response=http.send(HttpRequest.newBuilder(URI.create("http://127.0.0.1:18081/control/custom-reports")).timeout(Duration.ofSeconds(10)).header("Content-Type","application/json").POST(HttpRequest.BodyPublishers.ofString(mapper.writeValueAsString(Map.of("hold_response",hold)))).build(),HttpResponse.BodyHandlers.discarding());assertThat(response.statusCode()).as("모의 응답 보류 제어").isEqualTo(200);}

@@ -1,12 +1,12 @@
-package com.aivle.project.metricaverage.batch;
+package com.aivle.project.finance.internal.metricaverage.batch;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.anyString;
 
-import com.aivle.project.metricaverage.service.MetricAverageBatchSaveResult;
-import com.aivle.project.metricaverage.service.MetricAverageBatchService;
+import com.aivle.project.finance.internal.metricaverage.service.MetricAverageBatchSaveResult;
+import com.aivle.project.finance.internal.metricaverage.service.MetricAverageBatchService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

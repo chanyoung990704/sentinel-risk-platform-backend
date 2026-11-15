@@ -1,9 +1,11 @@
 package com.aivle.project.perf;
+import com.aivle.project.app.internal.perf.PortfolioMetrics;
+import com.aivle.project.app.internal.perf.QueryCountProbe;
 
 import static org.assertj.core.api.Assertions.*;
 import com.aivle.project.support.CustomReportIntegrationSupport;
-import com.aivle.project.company.reportrequest.model.CustomReportCommand;
-import com.aivle.project.company.reportrequest.service.ReportRequestService;
+import com.aivle.project.reporting.api.CustomReportCommand;
+import com.aivle.project.reporting.internal.company.reportrequest.service.ReportRequestService;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,13 +1,13 @@
-package com.aivle.project.user.service;
+package com.aivle.project.identity.internal.user.service;
 
 import com.aivle.project.common.config.TestSecurityConfig;
-import com.aivle.project.auth.service.VerificationResendRateLimiter;
-import com.aivle.project.user.entity.EmailVerificationEntity;
-import com.aivle.project.user.entity.UserEntity;
-import com.aivle.project.user.entity.UserStatus;
-import com.aivle.project.user.entity.VerificationStatus;
-import com.aivle.project.user.repository.EmailVerificationRepository;
-import com.aivle.project.user.repository.UserRepository;
+import com.aivle.project.identity.internal.auth.service.VerificationResendRateLimiter;
+import com.aivle.project.identity.internal.user.entity.EmailVerificationEntity;
+import com.aivle.project.identity.internal.user.entity.UserEntity;
+import com.aivle.project.identity.api.UserStatus;
+import com.aivle.project.identity.api.VerificationStatus;
+import com.aivle.project.identity.internal.user.repository.EmailVerificationRepository;
+import com.aivle.project.identity.internal.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

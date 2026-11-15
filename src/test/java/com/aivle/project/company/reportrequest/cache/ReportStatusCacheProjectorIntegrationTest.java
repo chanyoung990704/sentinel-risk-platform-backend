@@ -1,10 +1,12 @@
-package com.aivle.project.company.reportrequest.cache;
+package com.aivle.project.reporting.internal.company.reportrequest.cache;
+import com.aivle.project.reporting.api.CustomReportCommand;
 
 import static org.assertj.core.api.Assertions.*;
-import com.aivle.project.company.reportrequest.model.*;
-import com.aivle.project.company.reportrequest.service.*;
-import com.aivle.project.messaging.CustomReportTopics;
-import com.aivle.project.messaging.quarantine.QuarantineReplayService;
+
+import com.aivle.project.reporting.api.ReportRequestException;
+import com.aivle.project.reporting.internal.company.reportrequest.service.*;
+import com.aivle.project.reporting.api.CustomReportTopics;
+import com.aivle.project.reporting.internal.messaging.quarantine.QuarantineReplayService;
 import com.aivle.project.support.ReportFlowIntegrationSupport;
 import java.nio.charset.StandardCharsets;
 import java.util.*;

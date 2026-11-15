@@ -1,17 +1,17 @@
-package com.aivle.project.company.controller;
+package com.aivle.project.finance.internal.company.controller;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.aivle.project.company.dto.CompanyInfoDto;
-import com.aivle.project.company.dto.CompanyOverviewResponseDto;
-import com.aivle.project.company.dto.CompanySectorDto;
-import com.aivle.project.company.repository.CompaniesRepository;
-import com.aivle.project.company.service.CompanyOverviewService;
-import com.aivle.project.common.security.CurrentUserArgumentResolver;
-import com.aivle.project.user.repository.UserRepository;
+import com.aivle.project.finance.api.CompanyInfoDto;
+import com.aivle.project.finance.api.CompanyOverviewResponseDto;
+import com.aivle.project.finance.api.CompanySectorDto;
+import com.aivle.project.finance.internal.company.repository.CompaniesRepository;
+import com.aivle.project.finance.internal.company.service.CompanyOverviewService;
+import com.aivle.project.identity.internal.common.security.CurrentUserArgumentResolver;
+import com.aivle.project.identity.internal.user.repository.UserRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,8 +75,8 @@ class CompanyOverviewTempControllerTest {
 			"AI 코멘트"
 		);
 
-		com.aivle.project.company.entity.CompaniesEntity company = org.mockito.Mockito.mock(
-			com.aivle.project.company.entity.CompaniesEntity.class
+		com.aivle.project.finance.internal.company.entity.CompaniesEntity company = org.mockito.Mockito.mock(
+			com.aivle.project.finance.internal.company.entity.CompaniesEntity.class
 		);
 		given(company.getId()).willReturn(1L);
 		given(companiesRepository.findByStockCode("000020"))
@@ -114,8 +114,8 @@ class CompanyOverviewTempControllerTest {
 			"AI 코멘트"
 		);
 
-		com.aivle.project.company.entity.CompaniesEntity company = org.mockito.Mockito.mock(
-			com.aivle.project.company.entity.CompaniesEntity.class
+		com.aivle.project.finance.internal.company.entity.CompaniesEntity company = org.mockito.Mockito.mock(
+			com.aivle.project.finance.internal.company.entity.CompaniesEntity.class
 		);
 		given(company.getId()).willReturn(1L);
 		given(companiesRepository.findByStockCode("000020"))

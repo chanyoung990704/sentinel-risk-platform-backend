@@ -1,4 +1,4 @@
-package com.aivle.project.common.logging;
+package com.aivle.project.app.internal.common.logging;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;

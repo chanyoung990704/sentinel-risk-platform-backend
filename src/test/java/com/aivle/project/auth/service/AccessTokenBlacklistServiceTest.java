@@ -1,11 +1,11 @@
-package com.aivle.project.auth.service;
+package com.aivle.project.identity.internal.auth.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-import com.aivle.project.auth.token.JwtProperties;
+import com.aivle.project.identity.internal.auth.token.JwtProperties;
 import java.time.Duration;
 import java.time.Instant;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,4 +1,5 @@
-package com.aivle.project.watchlist.service;
+package com.aivle.project.watchlist.internal.service;
+import com.aivle.project.app.internal.watchlist.CompanyWatchlistAsyncHandler;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.doThrow;
@@ -6,17 +7,17 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-import com.aivle.project.company.entity.CompaniesEntity;
-import com.aivle.project.company.job.AiJobDispatchService;
-import com.aivle.project.company.repository.CompaniesRepository;
-import com.aivle.project.company.service.CompanyAiCommentService;
-import com.aivle.project.company.service.CompanyHealthScoreCacheService;
-import com.aivle.project.company.service.CompanyPredictionCacheService;
-import com.aivle.project.company.service.CompanyReputationScoreService;
-import com.aivle.project.company.service.CompanySignalCacheService;
-import com.aivle.project.common.error.ExternalAiUnavailableException;
-import com.aivle.project.report.repository.CompanyReportMetricValuesRepository;
-import com.aivle.project.watchlist.event.CompanyWatchlistCreatedEvent;
+import com.aivle.project.finance.internal.company.entity.CompaniesEntity;
+import com.aivle.project.aiintegration.internal.job.AiJobDispatchService;
+import com.aivle.project.finance.internal.company.repository.CompaniesRepository;
+import com.aivle.project.finance.internal.company.service.CompanyAiCommentService;
+import com.aivle.project.finance.internal.company.service.CompanyHealthScoreCacheService;
+import com.aivle.project.finance.internal.company.service.CompanyPredictionCacheService;
+import com.aivle.project.finance.internal.company.service.CompanyReputationScoreService;
+import com.aivle.project.finance.internal.company.service.CompanySignalCacheService;
+import com.aivle.project.aiintegration.api.ExternalAiUnavailableException;
+import com.aivle.project.finance.internal.report.repository.CompanyReportMetricValuesRepository;
+import com.aivle.project.watchlist.api.CompanyWatchlistCreatedEvent;
 import java.time.LocalDate;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -30,28 +31,28 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class CompanyWatchlistAsyncHandlerTest {
 
 	@Mock
-	private CompaniesRepository companiesRepository;
+	private com.aivle.project.finance.api.CompanyDirectory companiesRepository;
 
 	@Mock
-	private CompanyReportMetricValuesRepository companyReportMetricValuesRepository;
+	private com.aivle.project.finance.api.FinancialReferenceQueries companyReportMetricValuesRepository;
 
 	@Mock
-	private CompanyHealthScoreCacheService companyHealthScoreCacheService;
+	private com.aivle.project.finance.api.HealthScoreWarmup companyHealthScoreCacheService;
 
 	@Mock
-	private CompanyAiCommentService companyAiCommentService;
+	private com.aivle.project.finance.api.AiCommentOperations companyAiCommentService;
 
 	@Mock
-	private CompanyPredictionCacheService companyPredictionCacheService;
+	private com.aivle.project.finance.api.PredictionWarmup companyPredictionCacheService;
 
 	@Mock
-	private CompanySignalCacheService companySignalCacheService;
+	private com.aivle.project.finance.api.SignalWarmup companySignalCacheService;
 
 	@Mock
-	private CompanyReputationScoreService companyReputationScoreService;
+	private com.aivle.project.finance.api.ReputationOperations companyReputationScoreService;
 
 	@Mock
-	private AiJobDispatchService aiJobDispatchService;
+	private com.aivle.project.aiintegration.api.AiJobs aiJobDispatchService;
 
 	@InjectMocks
 	private CompanyWatchlistAsyncHandler companyWatchlistAsyncHandler;

@@ -1,14 +1,14 @@
-package com.aivle.project.company.service;
+package com.aivle.project.finance.internal.company.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.aivle.project.common.config.QuerydslConfig;
-import com.aivle.project.company.dto.CompanySectorDto;
-import com.aivle.project.company.entity.CompaniesEntity;
-import com.aivle.project.company.repository.CompaniesRepository;
-import com.aivle.project.industry.entity.IndustryEntity;
-import com.aivle.project.industry.entity.IndustryRepository;
+import com.aivle.project.app.internal.common.config.QuerydslConfig;
+import com.aivle.project.finance.api.CompanySectorDto;
+import com.aivle.project.finance.internal.company.entity.CompaniesEntity;
+import com.aivle.project.finance.internal.company.repository.CompaniesRepository;
+import com.aivle.project.finance.internal.industry.entity.IndustryEntity;
+import com.aivle.project.finance.internal.industry.entity.IndustryRepository;
 import java.time.LocalDate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 @DataJpaTest
+@com.aivle.project.common.config.EnableJpaReadAdapters
 @ActiveProfiles("test")
 @Import({QuerydslConfig.class, CompanySectorService.class})
 class CompanySectorServiceTest {

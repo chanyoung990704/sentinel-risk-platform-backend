@@ -1,4 +1,4 @@
-package com.aivle.project.auth.service;
+package com.aivle.project.identity.internal.auth.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -10,13 +10,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.aivle.project.auth.entity.RefreshTokenEntity;
-import com.aivle.project.auth.repository.RefreshTokenRepository;
-import com.aivle.project.auth.token.JwtTokenService;
-import com.aivle.project.auth.token.RefreshTokenCache;
-import com.aivle.project.common.security.TokenHashProperties;
-import com.aivle.project.common.security.TokenHashService;
-import com.aivle.project.user.security.CustomUserDetails;
+import com.aivle.project.identity.internal.auth.entity.RefreshTokenEntity;
+import com.aivle.project.identity.internal.auth.repository.RefreshTokenRepository;
+import com.aivle.project.identity.internal.auth.token.JwtTokenService;
+import com.aivle.project.identity.internal.auth.token.RefreshTokenCache;
+import com.aivle.project.identity.internal.common.security.TokenHashProperties;
+import com.aivle.project.identity.internal.common.security.TokenHashService;
+import com.aivle.project.identity.internal.user.security.CustomUserDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Duration;
 import java.time.LocalDateTime;

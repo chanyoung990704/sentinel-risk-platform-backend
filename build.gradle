@@ -26,6 +26,10 @@ repositories {
 }
 
 dependencies {
+	// Boot 3.5 계열과 호환되는 모듈 경계 검증만 도입한다. 영속 이벤트 경로는 기존 CDC를 유지한다.
+	implementation platform('org.springframework.modulith:spring-modulith-bom:1.4.14')
+	implementation 'org.springframework.modulith:spring-modulith-api'
+	testImplementation 'org.springframework.modulith:spring-modulith-starter-test'
 	// Web & Security & JPA
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
@@ -152,13 +156,17 @@ def portfolioTest = { String taskName, List<String> included, List<String> exclu
 	}
 }
 
-portfolioTest('fastTest', [], ['integration', 'realinfra', 'cdc', 'reliability']).configure {
+portfolioTest('fastTest', [], ['integration', 'realinfra', 'cdc', 'reliability', 'modulith']).configure {
 	systemProperty 'spring.kafka.listener.auto-startup', 'false'
 	systemProperty 'spring.kafka.admin.auto-create', 'false'
 }
-portfolioTest('realInfraTest', ['integration', 'realinfra'], ['cdc', 'reliability'])
+portfolioTest('realInfraTest', ['integration', 'realinfra'], ['cdc', 'reliability']).configure {
+	// 보관한 각 컨텍스트가 pool10을 유지하므로 MySQL 연결 한도를 넘지 않도록 제한한다.
+	systemProperty 'spring.test.context.cache.maxSize', '8'
+}
 portfolioTest('cdcTest', ['cdc'], [])
 portfolioTest('reliabilityTest', ['reliability'], [])
+portfolioTest('modulithTest', ['modulith'], [])
 
 // DB/서버 기동 없이 지정한 원본 파일만 검증한다. 오류 격리는 종료 코드 2다.
 tasks.register('prepareCustomReportCli') {
@@ -187,7 +195,7 @@ tasks.register('prepareImportCli') {
 tasks.register('importPreflight', JavaExec) {
 	group = 'verification'
 	classpath = sourceSets.main.runtimeClasspath
-	mainClass = 'com.aivle.project.dataimport.cli.ImportPreflightCommand'
+	mainClass = 'com.aivle.project.finance.internal.dataimport.cli.ImportPreflightCommand'
 	maxHeapSize = '1g'
 	doFirst {
 		if (!project.hasProperty('sourceDir') || !project.hasProperty('outputDir')) {
@@ -198,7 +206,7 @@ tasks.register('importPreflight', JavaExec) {
 }
 
 def outboxMode = providers.gradleProperty('outboxMode').getOrElse('undecided')
-def requiredPortfolioTests = ['fastTest', 'realInfraTest', 'reliabilityTest']
+def requiredPortfolioTests = ['modulithTest', 'fastTest', 'realInfraTest', 'reliabilityTest']
 if (outboxMode == 'cdc') requiredPortfolioTests += 'cdcTest'
 def verificationStartedAt = System.currentTimeMillis() / 1000.0
 

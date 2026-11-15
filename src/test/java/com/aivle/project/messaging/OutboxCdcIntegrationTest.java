@@ -1,10 +1,11 @@
-package com.aivle.project.messaging;
+package com.aivle.project.reporting.internal.messaging;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import com.aivle.project.support.ReportFlowIntegrationSupport;
-import com.aivle.project.company.reportrequest.model.CustomReportCommand;
-import com.aivle.project.messaging.outbox.*;
+import com.aivle.project.reporting.api.CustomReportCommand;
+import com.aivle.project.reporting.internal.messaging.outbox.*;
+import com.aivle.project.reporting.api.ReportEventType;
 import com.fasterxml.jackson.databind.JsonNode;
 import java.nio.file.*;
 import java.nio.charset.StandardCharsets;

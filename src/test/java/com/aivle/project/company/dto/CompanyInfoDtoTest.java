@@ -1,4 +1,6 @@
-package com.aivle.project.company.dto;
+package com.aivle.project.finance.internal.company.dto;
+import com.aivle.project.finance.api.CompanySectorDto;
+import com.aivle.project.finance.api.CompanyInfoDto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

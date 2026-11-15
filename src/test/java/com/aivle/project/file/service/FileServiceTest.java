@@ -1,4 +1,4 @@
-package com.aivle.project.file.service;
+package com.aivle.project.community.internal.file.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -10,22 +10,22 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.times;
 
-import com.aivle.project.common.error.CommonException;
-import com.aivle.project.category.entity.CategoriesEntity;
-import com.aivle.project.file.dto.FileResponse;
-import com.aivle.project.file.entity.FileUsageType;
-import com.aivle.project.file.entity.FilesEntity;
-import com.aivle.project.file.entity.PostFilesEntity;
-import com.aivle.project.file.repository.FilesRepository;
-import com.aivle.project.file.repository.PostFilesRepository;
-import com.aivle.project.file.storage.FileStorageService;
-import com.aivle.project.file.storage.StoredFile;
-import com.aivle.project.file.validator.FileValidator;
-import com.aivle.project.post.entity.PostsEntity;
-import com.aivle.project.post.repository.PostsRepository;
-import com.aivle.project.post.service.PostReadAccessPolicy;
-import com.aivle.project.user.entity.UserEntity;
-import com.aivle.project.user.entity.UserStatus;
+import com.aivle.project.foundation.api.error.CommonException;
+import com.aivle.project.community.internal.category.entity.CategoriesEntity;
+import com.aivle.project.community.api.FileResponse;
+import com.aivle.project.storage.api.FileUsageType;
+import com.aivle.project.storage.internal.file.entity.FilesEntity;
+import com.aivle.project.community.internal.file.entity.PostFilesEntity;
+import com.aivle.project.storage.internal.file.repository.FilesRepository;
+import com.aivle.project.community.internal.file.repository.PostFilesRepository;
+import com.aivle.project.storage.api.FileStorageService;
+import com.aivle.project.storage.api.StoredFile;
+import com.aivle.project.storage.internal.file.validator.FileValidator;
+import com.aivle.project.community.internal.post.entity.PostsEntity;
+import com.aivle.project.community.internal.post.repository.PostsRepository;
+import com.aivle.project.community.internal.post.service.PostReadAccessPolicy;
+import com.aivle.project.identity.internal.user.entity.UserEntity;
+import com.aivle.project.identity.api.UserStatus;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -48,13 +48,13 @@ class FileServiceTest {
 	private FileService fileService;
 
 	@Mock
-	private FileStorageService fileStorageService;
+	private com.aivle.project.storage.api.FileStorageService fileStorageService;
 
 	@Mock
-	private FileValidator fileValidator;
+	private com.aivle.project.storage.api.UploadValidation fileValidator;
 
 	@Mock
-	private FilesRepository filesRepository;
+	private com.aivle.project.storage.api.FileCatalog filesRepository;
 
 	@Mock
 	private PostFilesRepository postFilesRepository;
@@ -66,7 +66,7 @@ class FileServiceTest {
 	private PostReadAccessPolicy postReadAccessPolicy;
 
 	@Mock
-	private com.aivle.project.file.mapper.FileMapper fileMapper;
+	private com.aivle.project.community.internal.file.mapper.FileMapper fileMapper;
 
 	@Test
 	@DisplayName("게시글 파일을 업로드하면 메타데이터가 저장된다")
@@ -96,15 +96,16 @@ class FileServiceTest {
 				);
 			});
 
-		given(filesRepository.save(any(FilesEntity.class))).willAnswer(invocation -> {
-			FilesEntity entity = invocation.getArgument(0);
-			ReflectionTestUtils.setField(entity, "id", sequence.getAndIncrement());
-			return entity;
+		given(filesRepository.save(any(com.aivle.project.storage.api.FileMetadata.class))).willAnswer(invocation -> {
+			com.aivle.project.storage.api.FileMetadata entity = invocation.getArgument(0);
+			return new com.aivle.project.storage.api.FileMetadataSnapshot(sequence.getAndIncrement(),
+				entity.getUsageType(), entity.getStorageUrl(), entity.getStorageKey(), entity.getOriginalFilename(),
+				entity.getFileSize(), entity.getContentType(), entity.getCreatedAt(), entity.isDeleted());
 		});
 		given(postFilesRepository.save(any())).willAnswer(invocation -> invocation.getArgument(0));
 
-		given(fileMapper.toResponse(eq(postId), any(FilesEntity.class))).willAnswer(invocation -> {
-			FilesEntity entity = invocation.getArgument(1);
+		given(fileMapper.toResponse(eq(postId), any(com.aivle.project.storage.api.FileMetadata.class))).willAnswer(invocation -> {
+			com.aivle.project.storage.api.FileMetadata entity = invocation.getArgument(1);
 			return new FileResponse(entity.getId(), postId, entity.getStorageUrl(), entity.getOriginalFilename(), entity.getFileSize(), entity.getContentType(), null);
 		});
 
@@ -179,9 +180,10 @@ class FileServiceTest {
 		PostFilesEntity mapping = PostFilesEntity.create(post, file);
 
 		given(postFilesRepository.findByFileId(fileId)).willReturn(Optional.of(mapping));
+		given(filesRepository.findById(fileId)).willReturn(Optional.of(file));
 
 		// when
-		FilesEntity result = fileService.getFile(fileId, other);
+		var result = fileService.getFile(fileId, other);
 
 		// then
 		assertThat(result).isSameAs(file);
@@ -208,6 +210,7 @@ class FileServiceTest {
 		ReflectionTestUtils.setField(file, "id", fileId);
 		PostFilesEntity mapping = PostFilesEntity.create(post, file);
 		given(postFilesRepository.findByFileId(fileId)).willReturn(Optional.of(mapping));
+		given(filesRepository.findById(fileId)).willReturn(Optional.of(file));
 
 		// when & then
 		assertThatThrownBy(() -> fileService.getFile(fileId, other))
@@ -234,6 +237,7 @@ class FileServiceTest {
 		PostFilesEntity mapping = PostFilesEntity.create(post, file);
 
 		given(postFilesRepository.findByFileId(fileId)).willReturn(Optional.of(mapping));
+		given(filesRepository.findById(fileId)).willReturn(Optional.of(file));
 
 		// when & then
 		assertThatThrownBy(() -> fileService.getFile(fileId, null))
@@ -260,9 +264,10 @@ class FileServiceTest {
 		PostFilesEntity mapping = PostFilesEntity.create(post, file);
 
 		given(postsRepository.findByIdAndDeletedAtIsNull(postId)).willReturn(Optional.of(post));
+		given(filesRepository.findAllByIds(List.of(file.getId()))).willReturn(java.util.Map.of(file.getId(), file));
 		given(postFilesRepository.findAllActiveByPostIdOrderByCreatedAtAsc(postId))
 			.willReturn(List.of(mapping));
-		given(fileMapper.toResponse(eq(postId), any(FilesEntity.class)))
+		given(fileMapper.toResponse(eq(postId), any(com.aivle.project.storage.api.FileMetadata.class)))
 			.willReturn(new FileResponse(file.getId(), postId, file.getStorageUrl(), file.getOriginalFilename(),
 				file.getFileSize(), file.getContentType(), null));
 
@@ -311,7 +316,7 @@ class FileServiceTest {
 			ctor.setAccessible(true);
 			PostsEntity post = ctor.newInstance();
 			ReflectionTestUtils.setField(post, "id", id);
-			ReflectionTestUtils.setField(post, "user", user);
+			ReflectionTestUtils.setField(post, "userId", user.getId());
 			return post;
 		} catch (ReflectiveOperationException ex) {
 			throw new IllegalStateException("PostsEntity 생성에 실패했습니다", ex);

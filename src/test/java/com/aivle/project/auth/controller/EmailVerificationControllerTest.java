@@ -1,4 +1,4 @@
-package com.aivle.project.auth.controller;
+package com.aivle.project.identity.internal.auth.controller;
 
 import static org.mockito.BDDMockito.doThrow;
 import static org.mockito.BDDMockito.willDoNothing;
@@ -9,8 +9,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
-import com.aivle.project.user.repository.UserRepository;
-import com.aivle.project.user.service.EmailVerificationService;
+import com.aivle.project.identity.internal.user.repository.UserRepository;
+import com.aivle.project.identity.internal.user.service.EmailVerificationService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,19 +1,19 @@
-package com.aivle.project.report.service;
+package com.aivle.project.finance.internal.report.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.aivle.project.company.entity.CompaniesEntity;
-import com.aivle.project.company.repository.CompaniesRepository;
+import com.aivle.project.finance.internal.company.entity.CompaniesEntity;
+import com.aivle.project.finance.internal.company.repository.CompaniesRepository;
 import com.aivle.project.common.config.TestSecurityConfig;
-import com.aivle.project.quarter.entity.QuartersEntity;
-import com.aivle.project.quarter.repository.QuartersRepository;
-import com.aivle.project.report.dto.CompanyMetricValueCommand;
-import com.aivle.project.report.dto.ReportImportResult;
-import com.aivle.project.report.entity.CompanyReportVersionsEntity;
-import com.aivle.project.report.entity.CompanyReportsEntity;
-import com.aivle.project.report.repository.CompanyReportMetricValuesRepository;
-import com.aivle.project.report.repository.CompanyReportVersionsRepository;
-import com.aivle.project.report.repository.CompanyReportsRepository;
+import com.aivle.project.finance.internal.quarter.entity.QuartersEntity;
+import com.aivle.project.finance.internal.quarter.repository.QuartersRepository;
+import com.aivle.project.finance.api.CompanyMetricValueCommand;
+import com.aivle.project.finance.api.ReportImportResult;
+import com.aivle.project.finance.internal.report.entity.CompanyReportVersionsEntity;
+import com.aivle.project.finance.internal.report.entity.CompanyReportsEntity;
+import com.aivle.project.finance.internal.report.repository.CompanyReportMetricValuesRepository;
+import com.aivle.project.finance.internal.report.repository.CompanyReportVersionsRepository;
+import com.aivle.project.finance.internal.report.repository.CompanyReportsRepository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -136,10 +136,10 @@ class CompanyReportMetricImportServiceTest {
 			2025,
 			3,
 			20253,
-			com.aivle.project.quarter.support.QuarterCalculator.startDate(
-				com.aivle.project.quarter.support.QuarterCalculator.parseQuarterKey(20253)),
-			com.aivle.project.quarter.support.QuarterCalculator.endDate(
-				com.aivle.project.quarter.support.QuarterCalculator.parseQuarterKey(20253))
+			com.aivle.project.finance.api.QuarterCalculator.startDate(
+				com.aivle.project.finance.api.QuarterCalculator.parseQuarterKey(20253)),
+			com.aivle.project.finance.api.QuarterCalculator.endDate(
+				com.aivle.project.finance.api.QuarterCalculator.parseQuarterKey(20253))
 		));
 		CompanyReportsEntity report = companyReportsRepository.save(CompanyReportsEntity.create(company, quarter, null));
 		CompanyReportVersionsEntity existingVersion = companyReportVersionsRepository.save(CompanyReportVersionsEntity.create(

@@ -1,9 +1,9 @@
-package com.aivle.project.auth.token;
+package com.aivle.project.identity.internal.auth.token;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-import com.aivle.project.auth.service.AccessTokenBlacklistService;
+import com.aivle.project.identity.internal.auth.service.AccessTokenBlacklistService;
 import java.time.Instant;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

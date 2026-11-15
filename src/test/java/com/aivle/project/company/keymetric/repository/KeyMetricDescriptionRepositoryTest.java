@@ -1,9 +1,9 @@
-package com.aivle.project.company.keymetric.repository;
+package com.aivle.project.finance.internal.company.keymetric.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.aivle.project.common.config.QuerydslConfig;
-import com.aivle.project.company.keymetric.entity.KeyMetricDescriptionEntity;
+import com.aivle.project.app.internal.common.config.QuerydslConfig;
+import com.aivle.project.finance.internal.company.keymetric.entity.KeyMetricDescriptionEntity;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 @DataJpaTest
+@com.aivle.project.common.config.EnableJpaReadAdapters
 @ActiveProfiles("test")
 @Import(QuerydslConfig.class)
 class KeyMetricDescriptionRepositoryTest {

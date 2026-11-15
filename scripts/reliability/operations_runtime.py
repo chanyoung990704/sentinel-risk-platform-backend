@@ -18,10 +18,22 @@ JOIN metrics m ON m.id=v.metric_id JOIN quarters q ON q.id=v.quarter_id
 ORDER BY c.stock_code,m.metric_code,q.quarter_key,v.value_type"""
 
 def require_experiment():
-    if runtime.NAMESPACE not in ('operations','restore'):raise ValueError('원본 환경 변경 거부')
+    if runtime.NAMESPACE not in ('operations','restore','modulith'):raise ValueError('원본 환경 변경 거부')
     expected=runtime.namespace_config(runtime.NAMESPACE)
     if runtime.PROJECT!=expected['project'] or runtime.STATE.resolve()!=expected['state'].resolve() or runtime.WORKSPACE.resolve()!=expected['workspace'].resolve():
         raise ValueError('시험 환경 소유 경로 불일치')
+
+def require_idle():
+    """전체 회귀가 이전 실행의 대기 작업을 claim하지 않도록 시작 전에 거절한다."""
+    require_experiment()
+    queries={
+        'heldSlots': "SELECT COALESCE(MAX(used_count),0) FROM report_admission WHERE scope_key='GLOBAL'",
+        'nonterminalRequests': "SELECT COUNT(*) FROM report_requests WHERE status NOT IN ('SUCCEEDED','FAILED')",
+        'unfinishedJobs': "SELECT COUNT(*) FROM report_jobs WHERE state IN ('READY','RUNNING','RETRY_WAIT')"}
+    counts={key:int(sql(statement).strip()) for key,statement in queries.items()}
+    if any(counts.values()):
+        raise RuntimeError('기존 미종결/실행 중 작업이 있어 회귀 시작을 거부합니다: '+json.dumps(counts,sort_keys=True))
+    return counts
 
 def validate_topology(rows,project):
     expected={'mysql':('3306/tcp',13306),'redis':('6379/tcp',16379),'status-cache-redis':('6379/tcp',16380),'kafka':('9094/tcp',19092),'mock-ai':('8080/tcp',18081),'connect':('8083/tcp',18083)}

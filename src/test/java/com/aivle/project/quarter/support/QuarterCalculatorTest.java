@@ -1,4 +1,6 @@
-package com.aivle.project.quarter.support;
+package com.aivle.project.finance.internal.quarter.support;
+import com.aivle.project.finance.api.YearQuarter;
+import com.aivle.project.finance.api.QuarterCalculator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

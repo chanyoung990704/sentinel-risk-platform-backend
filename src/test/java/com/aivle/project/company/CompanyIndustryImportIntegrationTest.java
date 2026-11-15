@@ -1,10 +1,10 @@
 package com.aivle.project.company;
 
-import com.aivle.project.company.entity.CompaniesEntity;
-import com.aivle.project.company.repository.CompaniesRepository;
-import com.aivle.project.company.service.CompanyIndustryImportService;
-import com.aivle.project.industry.entity.IndustryEntity;
-import com.aivle.project.industry.entity.IndustryRepository;
+import com.aivle.project.finance.internal.company.entity.CompaniesEntity;
+import com.aivle.project.finance.internal.company.repository.CompaniesRepository;
+import com.aivle.project.finance.internal.company.service.CompanyIndustryImportService;
+import com.aivle.project.finance.internal.industry.entity.IndustryEntity;
+import com.aivle.project.finance.internal.industry.entity.IndustryRepository;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;

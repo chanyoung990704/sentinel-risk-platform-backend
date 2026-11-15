@@ -1,4 +1,4 @@
-package com.aivle.project.file.controller;
+package com.aivle.project.community.internal.file.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -7,14 +7,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.aivle.project.file.entity.FileUsageType;
-import com.aivle.project.file.entity.FilesEntity;
-import com.aivle.project.file.service.FileService;
-import com.aivle.project.file.storage.FileDownloadUrlResolver;
-import com.aivle.project.file.storage.FileStreamService;
-import com.aivle.project.user.entity.UserEntity;
-import com.aivle.project.user.entity.UserStatus;
-import com.aivle.project.user.repository.UserRepository;
+import com.aivle.project.storage.api.FileUsageType;
+import com.aivle.project.storage.internal.file.entity.FilesEntity;
+import com.aivle.project.community.internal.file.service.FileService;
+import com.aivle.project.storage.internal.file.storage.FileDownloadUrlResolver;
+import com.aivle.project.storage.api.FileStreamService;
+import com.aivle.project.identity.internal.user.entity.UserEntity;
+import com.aivle.project.identity.api.UserStatus;
+import com.aivle.project.identity.internal.user.repository.UserRepository;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.DisplayName;
@@ -25,7 +25,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
-import com.aivle.project.common.security.CurrentUserArgumentResolver;
+import com.aivle.project.identity.internal.common.security.CurrentUserArgumentResolver;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 
 @WebMvcTest(
@@ -52,7 +52,7 @@ class FileDownloadControllerTest {
 	private FileDownloadUrlResolver fileDownloadUrlResolver;
 
 	@org.springframework.boot.test.mock.mockito.MockBean
-	private FileStreamService fileStreamService;
+	private com.aivle.project.storage.api.FileStreamService fileStreamService;
 
 	@org.springframework.boot.test.mock.mockito.MockBean
 	private UserRepository userRepository;

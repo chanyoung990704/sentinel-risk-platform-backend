@@ -1,4 +1,4 @@
-package com.aivle.project.common.util;
+package com.aivle.project.foundation.api.util;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

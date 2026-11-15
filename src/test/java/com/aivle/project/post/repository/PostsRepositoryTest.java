@@ -1,13 +1,13 @@
-package com.aivle.project.post.repository;
+package com.aivle.project.community.internal.post.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.aivle.project.common.config.QuerydslConfig;
-import com.aivle.project.category.entity.CategoriesEntity;
-import com.aivle.project.post.entity.PostStatus;
-import com.aivle.project.post.entity.PostsEntity;
-import com.aivle.project.user.entity.UserEntity;
-import com.aivle.project.user.entity.UserStatus;
+import com.aivle.project.app.internal.common.config.QuerydslConfig;
+import com.aivle.project.community.internal.category.entity.CategoriesEntity;
+import com.aivle.project.community.api.PostStatus;
+import com.aivle.project.community.internal.post.entity.PostsEntity;
+import com.aivle.project.identity.internal.user.entity.UserEntity;
+import com.aivle.project.identity.api.UserStatus;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.time.LocalDateTime;
@@ -21,6 +21,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 @ActiveProfiles("test")
 @DataJpaTest
+@com.aivle.project.common.config.EnableJpaReadAdapters
 @Import(QuerydslConfig.class)
 class PostsRepositoryTest {
 

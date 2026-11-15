@@ -1,4 +1,4 @@
-package com.aivle.project.common.config;
+package com.aivle.project.insight.internal.config;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

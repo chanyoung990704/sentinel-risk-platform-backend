@@ -2,16 +2,16 @@ package com.aivle.project.comment.integration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.aivle.project.category.entity.CategoriesEntity;
-import com.aivle.project.comment.dto.CommentCreateRequest;
-import com.aivle.project.comment.dto.CommentResponse;
-import com.aivle.project.comment.service.CommentsService;
+import com.aivle.project.community.internal.category.entity.CategoriesEntity;
+import com.aivle.project.community.api.CommentCreateRequest;
+import com.aivle.project.community.internal.comment.dto.CommentResponse;
+import com.aivle.project.community.internal.comment.service.CommentsService;
 import com.aivle.project.common.config.TestSecurityConfig;
-import com.aivle.project.common.util.NameMaskingUtil;
-import com.aivle.project.post.entity.PostStatus;
-import com.aivle.project.post.entity.PostsEntity;
-import com.aivle.project.user.entity.UserEntity;
-import com.aivle.project.user.entity.UserStatus;
+import com.aivle.project.foundation.api.util.NameMaskingUtil;
+import com.aivle.project.community.api.PostStatus;
+import com.aivle.project.community.internal.post.entity.PostsEntity;
+import com.aivle.project.identity.internal.user.entity.UserEntity;
+import com.aivle.project.identity.api.UserStatus;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.util.List;

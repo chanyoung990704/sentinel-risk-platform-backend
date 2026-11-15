@@ -1,4 +1,4 @@
-package com.aivle.project.tag.entity;
+package com.aivle.project.community.internal.tag.entity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

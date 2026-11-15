@@ -1,4 +1,15 @@
-package com.aivle.project.company.dto;
+package com.aivle.project.finance.internal.company.dto;
+import com.aivle.project.finance.api.CompanySectorDto;
+import com.aivle.project.finance.api.CompanyOverviewTooltipDto;
+import com.aivle.project.finance.api.CompanyOverviewSignalLevel;
+import com.aivle.project.finance.api.CompanyOverviewResponseDto;
+import com.aivle.project.finance.api.CompanyOverviewMetricSeriesDto;
+import com.aivle.project.finance.api.CompanyOverviewMetricDto;
+import com.aivle.project.finance.api.CompanyOverviewKeyMetricDto;
+import com.aivle.project.finance.api.CompanyOverviewForecastDto;
+import com.aivle.project.finance.api.CompanyOverviewDataType;
+import com.aivle.project.finance.api.CompanyOverviewDataPointDto;
+import com.aivle.project.finance.api.CompanyInfoDto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

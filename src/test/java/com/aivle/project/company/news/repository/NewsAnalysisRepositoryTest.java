@@ -1,8 +1,8 @@
-package com.aivle.project.company.news.repository;
+package com.aivle.project.news.internal.company.news.repository;
 
-import com.aivle.project.company.entity.CompaniesEntity;
-import com.aivle.project.company.news.entity.NewsAnalysisEntity;
-import com.aivle.project.company.news.entity.NewsArticleEntity;
+import com.aivle.project.finance.internal.company.entity.CompaniesEntity;
+import com.aivle.project.news.internal.company.news.entity.NewsAnalysisEntity;
+import com.aivle.project.news.internal.company.news.entity.NewsArticleEntity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ class NewsAnalysisRepositoryTest {
     private NewsArticleRepository newsArticleRepository;
 
     @Autowired
-    private com.aivle.project.company.repository.CompaniesRepository companiesRepository;
+    private com.aivle.project.finance.internal.company.repository.CompaniesRepository companiesRepository;
 
     @BeforeEach
     void setUp() {

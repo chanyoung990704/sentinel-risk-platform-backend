@@ -8,11 +8,12 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.context.annotation.Import;
 
-import com.aivle.project.common.config.QuerydslConfig;
+import com.aivle.project.app.internal.common.config.QuerydslConfig;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
+@com.aivle.project.common.config.EnableJpaReadAdapters
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import(QuerydslConfig.class)
 class KeyMetricMigrationTest {

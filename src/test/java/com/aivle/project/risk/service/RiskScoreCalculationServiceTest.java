@@ -1,25 +1,25 @@
-package com.aivle.project.risk.service;
+package com.aivle.project.finance.internal.risk.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.aivle.project.common.config.QuerydslConfig;
-import com.aivle.project.company.entity.CompaniesEntity;
-import com.aivle.project.company.repository.CompaniesRepository;
-import com.aivle.project.metric.entity.MetricValueType;
-import com.aivle.project.metric.entity.MetricsEntity;
-import com.aivle.project.metric.repository.MetricsRepository;
-import com.aivle.project.quarter.entity.QuartersEntity;
-import com.aivle.project.quarter.repository.QuartersRepository;
-import com.aivle.project.report.entity.CompanyReportMetricValuesEntity;
-import com.aivle.project.report.entity.CompanyReportVersionsEntity;
-import com.aivle.project.report.entity.CompanyReportsEntity;
-import com.aivle.project.report.repository.CompanyReportMetricValuesRepository;
-import com.aivle.project.report.repository.CompanyReportVersionsRepository;
-import com.aivle.project.report.repository.CompanyReportsRepository;
-import com.aivle.project.risk.dto.RiskAggregationResult;
-import com.aivle.project.risk.entity.RiskLevel;
-import com.aivle.project.risk.entity.RiskScoreSummaryEntity;
-import com.aivle.project.risk.repository.RiskScoreSummaryRepository;
+import com.aivle.project.app.internal.common.config.QuerydslConfig;
+import com.aivle.project.finance.internal.company.entity.CompaniesEntity;
+import com.aivle.project.finance.internal.company.repository.CompaniesRepository;
+import com.aivle.project.finance.api.MetricValueType;
+import com.aivle.project.finance.internal.metric.entity.MetricsEntity;
+import com.aivle.project.finance.internal.metric.repository.MetricsRepository;
+import com.aivle.project.finance.internal.quarter.entity.QuartersEntity;
+import com.aivle.project.finance.internal.quarter.repository.QuartersRepository;
+import com.aivle.project.finance.internal.report.entity.CompanyReportMetricValuesEntity;
+import com.aivle.project.finance.internal.report.entity.CompanyReportVersionsEntity;
+import com.aivle.project.finance.internal.report.entity.CompanyReportsEntity;
+import com.aivle.project.finance.internal.report.repository.CompanyReportMetricValuesRepository;
+import com.aivle.project.finance.internal.report.repository.CompanyReportVersionsRepository;
+import com.aivle.project.finance.internal.report.repository.CompanyReportsRepository;
+import com.aivle.project.finance.api.RiskAggregationResult;
+import com.aivle.project.finance.api.RiskLevel;
+import com.aivle.project.finance.internal.risk.entity.RiskScoreSummaryEntity;
+import com.aivle.project.finance.internal.risk.repository.RiskScoreSummaryRepository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -32,6 +32,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 
 @DataJpaTest
+@com.aivle.project.common.config.EnableJpaReadAdapters
 @ActiveProfiles("test")
 @Import({QuerydslConfig.class, RiskScoreCalculationService.class})
 class RiskScoreCalculationServiceTest {

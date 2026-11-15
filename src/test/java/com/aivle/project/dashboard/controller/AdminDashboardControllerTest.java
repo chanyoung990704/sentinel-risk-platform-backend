@@ -1,4 +1,4 @@
-package com.aivle.project.dashboard.controller;
+package com.aivle.project.app.internal.dashboard.controller;
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -9,11 +9,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.aivle.project.common.config.TestSecurityConfig;
-import com.aivle.project.dashboard.dto.DashboardSummaryResponse;
-import com.aivle.project.dashboard.dto.RiskStatusDistributionDto;
-import com.aivle.project.dashboard.dto.RiskStatusDistributionPercentDto;
-import com.aivle.project.dashboard.service.DashboardSummaryService;
-import com.aivle.project.user.service.AdminUserQueryService;
+import com.aivle.project.app.api.DashboardSummaryResponse;
+import com.aivle.project.app.api.RiskStatusDistributionDto;
+import com.aivle.project.app.api.RiskStatusDistributionPercentDto;
+import com.aivle.project.app.internal.dashboard.service.DashboardSummaryService;
+import com.aivle.project.identity.internal.user.service.AdminUserQueryService;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,7 +39,7 @@ class AdminDashboardControllerTest {
 	private DashboardSummaryService dashboardSummaryService;
 
 	@MockBean
-	private AdminUserQueryService adminUserQueryService;
+	private com.aivle.project.identity.api.AdminUserQueries adminUserQueryService;
 
 	@Test
 	@DisplayName("ROLE_ADMIN은 userId 기준으로 대시보드 요약을 조회할 수 있다")

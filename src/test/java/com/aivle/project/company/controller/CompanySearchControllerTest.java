@@ -1,4 +1,4 @@
-package com.aivle.project.company.controller;
+package com.aivle.project.finance.internal.company.controller;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -7,10 +7,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import com.aivle.project.company.dto.CompanyInfoDto;
-import com.aivle.project.company.dto.CompanySectorDto;
-import com.aivle.project.company.entity.CompaniesEntity;
-import com.aivle.project.company.repository.CompaniesRepository;
+import com.aivle.project.finance.api.CompanyInfoDto;
+import com.aivle.project.finance.api.CompanySectorDto;
+import com.aivle.project.finance.internal.company.entity.CompaniesEntity;
+import com.aivle.project.finance.internal.company.repository.CompaniesRepository;
 import com.aivle.project.common.config.TestSecurityConfig;
 import java.time.LocalDate;
 import java.util.List;
@@ -40,7 +40,7 @@ class CompanySearchControllerTest {
 	private CompaniesRepository companiesRepository;
 
 	@MockBean
-	private com.aivle.project.watchlist.service.CompanyWatchlistService companyWatchlistService;
+	private com.aivle.project.watchlist.api.WatchlistOperations companyWatchlistService;
 
 	@Test
 	@DisplayName("ROLE_USER로 워치리스트 기업 목록을 조회한다")

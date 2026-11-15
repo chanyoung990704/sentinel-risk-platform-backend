@@ -1,7 +1,7 @@
 package com.aivle.project.perf;
 
 import static org.assertj.core.api.Assertions.*;
-import com.aivle.project.company.service.CompanyOverviewService;
+import com.aivle.project.finance.internal.company.service.CompanyOverviewService;
 import com.aivle.project.support.PortfolioIntegrationSupport;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.p6spy.engine.common.PreparedStatementInformation;

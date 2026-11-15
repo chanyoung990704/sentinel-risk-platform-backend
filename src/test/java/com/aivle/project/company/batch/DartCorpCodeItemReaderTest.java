@@ -1,8 +1,8 @@
-package com.aivle.project.company.batch;
+package com.aivle.project.finance.internal.company.batch;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.aivle.project.company.config.DartProperties;
+import com.aivle.project.finance.internal.company.config.DartProperties;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;

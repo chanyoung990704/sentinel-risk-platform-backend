@@ -1,9 +1,9 @@
 package com.aivle.project.reliability;
 
 import static org.assertj.core.api.Assertions.*;
-import com.aivle.project.company.reportrequest.cache.ReportStatusCache;
-import com.aivle.project.company.reportjob.service.ReportWorkerLifecycle;
-import com.aivle.project.messaging.CustomReportTopics;
+import com.aivle.project.reporting.internal.company.reportrequest.cache.ReportStatusCache;
+import com.aivle.project.reporting.internal.company.reportjob.service.ReportWorkerLifecycle;
+import com.aivle.project.reporting.api.CustomReportTopics;
 import com.aivle.project.support.ReportFlowIntegrationSupport;
 import io.micrometer.core.instrument.MeterRegistry;
 import java.net.*;
@@ -71,7 +71,7 @@ class StatusCacheFailureTest extends ReportFlowIntegrationSupport {
                 await(()->counter("retry")>retryBefore,30,"projector cache 실패 관측");assertThat(committed(admin,partition)).isLessThan(metadata.offset()+1);
                 // then: 자기 group만 재개하고 오래된 wire 상태 대신 현재 DB를 재구성한다.
                 long restarted=System.currentTimeMillis();cacheControl("up");cacheStopped=false;
-                var projected=new java.util.concurrent.atomic.AtomicReference<com.aivle.project.company.reportrequest.service.ReportRequestQueryService.Status>();
+                var projected=new java.util.concurrent.atomic.AtomicReference<com.aivle.project.reporting.api.ReportRequestView>();
                 await(()-> {
                     var value=cache.getOwnedStatus(users.getFirst(),id);
                     if(value.isPresent()&&value.get().status().equals("SUCCEEDED")&&committed(admin,partition)>=metadata.offset()+1){projected.set(value.get());return true;}

@@ -1,10 +1,11 @@
 package com.aivle.project.company.reportjob;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import com.aivle.project.company.reportjob.service.*;
-import com.aivle.project.company.reportjob.adapter.LocalReportArtifactStore;
-import com.aivle.project.company.reportjob.model.*;
-import com.aivle.project.messaging.outbox.OutboxWriter;
+import com.aivle.project.reporting.internal.company.reportjob.service.*;
+import com.aivle.project.reporting.internal.company.reportjob.adapter.LocalReportArtifactStore;
+import com.aivle.project.reporting.internal.company.reportjob.model.*;
+import com.aivle.project.reporting.api.CompletionDecision;
+import com.aivle.project.reporting.internal.messaging.outbox.OutboxWriter;
 import com.aivle.project.support.ReportFlowIntegrationSupport;
 import java.nio.file.*;
 import java.nio.file.attribute.FileTime;

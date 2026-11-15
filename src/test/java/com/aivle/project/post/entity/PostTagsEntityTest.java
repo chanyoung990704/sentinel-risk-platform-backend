@@ -1,12 +1,12 @@
-package com.aivle.project.post.entity;
+package com.aivle.project.community.internal.post.entity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.aivle.project.category.entity.CategoriesEntity;
+import com.aivle.project.community.internal.category.entity.CategoriesEntity;
 import com.aivle.project.common.config.TestSecurityConfig;
-import com.aivle.project.tag.entity.TagsEntity;
-import com.aivle.project.user.entity.UserEntity;
-import com.aivle.project.user.entity.UserStatus;
+import com.aivle.project.community.internal.tag.entity.TagsEntity;
+import com.aivle.project.identity.internal.user.entity.UserEntity;
+import com.aivle.project.identity.api.UserStatus;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.DisplayName;
@@ -72,7 +72,7 @@ class PostTagsEntityTest {
 
 	private PostsEntity givenPost(UserEntity user, CategoriesEntity category) {
 		PostsEntity post = newEntity(PostsEntity.class);
-		setField(post, "user", user);
+		setField(post, "userId", user.getId());
 		setField(post, "category", category);
 		setField(post, "title", DEFAULT_TITLE);
 		setField(post, "content", DEFAULT_CONTENT);

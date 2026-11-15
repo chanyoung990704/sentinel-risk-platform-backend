@@ -1,4 +1,4 @@
-package com.aivle.project.report.controller;
+package com.aivle.project.finance.internal.report.controller;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -7,10 +7,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.aivle.project.common.config.TestSecurityConfig;
-import com.aivle.project.file.entity.FileUsageType;
-import com.aivle.project.file.entity.FilesEntity;
-import com.aivle.project.file.repository.FilesRepository;
-import com.aivle.project.file.storage.FileStreamService;
+import com.aivle.project.storage.api.FileUsageType;
+import com.aivle.project.storage.internal.file.entity.FilesEntity;
+import com.aivle.project.storage.internal.file.repository.FilesRepository;
+import com.aivle.project.storage.api.FileStreamService;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.DisplayName;
@@ -40,7 +40,7 @@ class ReportFileDownloadControllerTest {
 	private FilesRepository filesRepository;
 
 	@MockBean
-	private FileStreamService fileStreamService;
+	private com.aivle.project.storage.api.FileStreamService fileStreamService;
 
 	@Test
 	@DisplayName("ROLE_USER 보고서 PDF 다운로드는 스트리밍 응답으로 반환된다")

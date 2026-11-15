@@ -1,12 +1,13 @@
-package com.aivle.project.messaging;
+package com.aivle.project.reporting.internal.messaging;
+import com.aivle.project.reporting.api.CustomReportTopics;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import com.aivle.project.support.ReportFlowIntegrationSupport;
-import com.aivle.project.company.reportrequest.model.CustomReportCommand;
-import com.aivle.project.messaging.consumer.CustomReportKafkaConsumer;
-import com.aivle.project.messaging.outbox.*;
-import com.aivle.project.messaging.quarantine.QuarantineReplayService;
-import com.aivle.project.dataimport.service.ImportPreflightService;
+import com.aivle.project.reporting.api.CustomReportCommand;
+import com.aivle.project.reporting.internal.messaging.consumer.CustomReportKafkaConsumer;
+import com.aivle.project.reporting.internal.messaging.outbox.*;
+import com.aivle.project.reporting.internal.messaging.quarantine.QuarantineReplayService;
+import com.aivle.project.finance.internal.dataimport.service.ImportPreflightService;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -77,7 +78,7 @@ class ReportQuarantineIntegrationTest extends ReportFlowIntegrationSupport {
 			java.nio.file.Path log=java.nio.file.Files.createTempFile("sentinel-replay-cli-", ".log");Process process=null;
 			try{
 				// when
-				var builder=new ProcessBuilder(java.nio.file.Path.of(System.getProperty("java.home"),"bin","java").toString(),"-Xmx128m","-cp",classpath,"com.aivle.project.messaging.quarantine.QuarantineReplayCommand",q.toString(),command.toString(),users.getLast().toString(),id.toString(),"격리 원인 제거 후 재전달");var env=builder.environment();env.clear();for(String name:List.of("PATH","HOME","USER","LANG","JAVA_HOME"))if(System.getenv(name)!=null)env.put(name,System.getenv(name));env.put("SPRING_PROFILES_ACTIVE","local");env.put("PORTFOLIO_SECRET_DIR",com.aivle.project.support.PortfolioSecretPaths.directory().toString());process=builder.redirectErrorStream(true).redirectOutput(log.toFile()).start();
+				var builder=new ProcessBuilder(java.nio.file.Path.of(System.getProperty("java.home"),"bin","java").toString(),"-Xmx128m","-cp",classpath,"com.aivle.project.reporting.internal.messaging.quarantine.QuarantineReplayCommand",q.toString(),command.toString(),users.getLast().toString(),id.toString(),"격리 원인 제거 후 재전달");var env=builder.environment();env.clear();for(String name:List.of("PATH","HOME","USER","LANG","JAVA_HOME"))if(System.getenv(name)!=null)env.put(name,System.getenv(name));env.put("SPRING_PROFILES_ACTIVE","local");env.put("PORTFOLIO_SECRET_DIR",com.aivle.project.support.PortfolioSecretPaths.directory().toString());process=builder.redirectErrorStream(true).redirectOutput(log.toFile()).start();
 				// then
 				assertThat(process.waitFor(20,TimeUnit.SECONDS)).isTrue();assertThat(process.exitValue()).withFailMessage(java.nio.file.Files.readString(log)).isZero();assertThat(java.nio.file.Files.readString(log)).contains("REPLAYED").doesNotContain("격리 원인 제거 후 재전달");
 			}finally{if(process!=null&&process.isAlive()){process.destroyForcibly();process.waitFor(5,TimeUnit.SECONDS);}java.nio.file.Files.deleteIfExists(log);}

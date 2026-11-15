@@ -8,17 +8,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.aivle.project.category.entity.CategoriesEntity;
-import com.aivle.project.comment.dto.CommentCreateRequest;
-import com.aivle.project.comment.dto.CommentResponse;
-import com.aivle.project.comment.dto.CommentUpdateRequest;
-import com.aivle.project.comment.service.CommentsService;
+import com.aivle.project.community.internal.category.entity.CategoriesEntity;
+import com.aivle.project.community.api.CommentCreateRequest;
+import com.aivle.project.community.internal.comment.dto.CommentResponse;
+import com.aivle.project.community.api.CommentUpdateRequest;
+import com.aivle.project.community.internal.comment.service.CommentsService;
 import com.aivle.project.common.config.TestSecurityConfig;
-import com.aivle.project.common.dto.ApiResponse;
-import com.aivle.project.post.entity.PostStatus;
-import com.aivle.project.post.entity.PostsEntity;
-import com.aivle.project.user.entity.UserEntity;
-import com.aivle.project.user.entity.UserStatus;
+import com.aivle.project.foundation.api.dto.ApiResponse;
+import com.aivle.project.community.api.PostStatus;
+import com.aivle.project.community.internal.post.entity.PostsEntity;
+import com.aivle.project.identity.internal.user.entity.UserEntity;
+import com.aivle.project.identity.api.UserStatus;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
@@ -205,7 +205,7 @@ class CommentControllerIntegrationTest {
 			.andExpect(status().isOk());
 
 		// then
-		var comment = entityManager.find(com.aivle.project.comment.entity.CommentsEntity.class, created.id());
+		var comment = entityManager.find(com.aivle.project.community.internal.comment.entity.CommentsEntity.class, created.id());
 		assertThat(comment.getDeletedAt()).isNotNull();
 	}
 

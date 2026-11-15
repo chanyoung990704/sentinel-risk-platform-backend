@@ -1,4 +1,5 @@
 package com.aivle.project.common.config;
+import com.aivle.project.identity.internal.common.config.SecurityConfig;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -12,16 +13,16 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import com.aivle.project.auth.service.AccessTokenBlacklistService;
-import com.aivle.project.common.security.RestAccessDeniedHandler;
-import com.aivle.project.common.security.RestAuthenticationEntryPoint;
-import com.aivle.project.user.repository.UserRepository;
+import com.aivle.project.identity.internal.auth.service.AccessTokenBlacklistService;
+import com.aivle.project.app.internal.common.security.RestAccessDeniedHandler;
+import com.aivle.project.app.internal.common.security.RestAuthenticationEntryPoint;
+import com.aivle.project.identity.internal.user.repository.UserRepository;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 @WebMvcTest(controllers = TestHealthController.class)
 @AutoConfigureMockMvc
-@Import({SecurityConfig.class, TestSecurityConfig.class})
+@Import({SecurityConfig.class, com.aivle.project.app.internal.common.config.ResourceSecurityConfig.class, TestSecurityConfig.class})
 @org.springframework.test.context.TestPropertySource(properties = {
 	"jwt.issuer=test-issuer",
 	"jwt.access-token.expiration=1800",

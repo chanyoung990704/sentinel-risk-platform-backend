@@ -1,8 +1,8 @@
-package com.aivle.project.company.client;
+package com.aivle.project.aiintegration.internal.company.client;
 
-import com.aivle.project.company.dto.AiAnalysisResponse;
-import com.aivle.project.company.dto.AiCommentResponse;
-import com.aivle.project.common.error.ExternalAiUnavailableException;
+import com.aivle.project.aiintegration.api.AiAnalysisResponse;
+import com.aivle.project.aiintegration.api.AiCommentResponse;
+import com.aivle.project.aiintegration.api.ExternalAiUnavailableException;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterEach;

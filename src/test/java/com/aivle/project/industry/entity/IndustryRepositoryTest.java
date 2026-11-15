@@ -1,10 +1,10 @@
-package com.aivle.project.industry.entity;
+package com.aivle.project.finance.internal.industry.entity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.aivle.project.common.config.QuerydslConfig;
-import com.aivle.project.company.entity.CompaniesEntity;
-import com.aivle.project.company.repository.CompaniesRepository;
+import com.aivle.project.app.internal.common.config.QuerydslConfig;
+import com.aivle.project.finance.internal.company.entity.CompaniesEntity;
+import com.aivle.project.finance.internal.company.repository.CompaniesRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.time.LocalDate;
@@ -19,6 +19,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 @ActiveProfiles("test")
 @DataJpaTest
+@com.aivle.project.common.config.EnableJpaReadAdapters
 @Import(QuerydslConfig.class)
 class IndustryRepositoryTest {
 

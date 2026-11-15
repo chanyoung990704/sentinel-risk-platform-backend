@@ -1,40 +1,40 @@
-package com.aivle.project.watchlist.service;
+package com.aivle.project.watchlist.internal.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.aivle.project.common.config.QuerydslConfig;
-import com.aivle.project.company.entity.CompaniesEntity;
-import com.aivle.project.company.repository.CompaniesRepository;
-import com.aivle.project.company.service.CompanyInfoService;
-import com.aivle.project.metric.entity.MetricValueType;
-import com.aivle.project.common.error.CommonException;
-import com.aivle.project.metric.entity.MetricsEntity;
-import com.aivle.project.metric.repository.MetricsRepository;
-import com.aivle.project.metricaverage.repository.MetricAverageRepository;
-import com.aivle.project.quarter.entity.QuartersEntity;
-import com.aivle.project.quarter.repository.QuartersRepository;
-import com.aivle.project.report.entity.CompanyReportMetricValuesEntity;
-import com.aivle.project.report.entity.CompanyReportVersionsEntity;
-import com.aivle.project.report.entity.CompanyReportsEntity;
-import com.aivle.project.report.repository.CompanyReportMetricValuesRepository;
-import com.aivle.project.report.repository.CompanyReportVersionsRepository;
-import com.aivle.project.report.repository.CompanyReportsRepository;
-import com.aivle.project.risk.entity.RiskLevel;
-import com.aivle.project.risk.entity.RiskScoreSummaryEntity;
-import com.aivle.project.risk.repository.RiskScoreSummaryRepository;
-import com.aivle.project.user.entity.RoleEntity;
-import com.aivle.project.user.entity.RoleName;
-import com.aivle.project.user.entity.UserEntity;
-import com.aivle.project.user.entity.UserRoleEntity;
-import com.aivle.project.user.entity.UserStatus;
-import com.aivle.project.user.repository.RoleRepository;
-import com.aivle.project.user.repository.UserRepository;
-import com.aivle.project.user.repository.UserRoleRepository;
-import com.aivle.project.watchlist.dto.WatchlistDashboardResponse;
-import com.aivle.project.watchlist.dto.WatchlistMetricAveragesResponse;
-import com.aivle.project.watchlist.dto.WatchlistMetricValuesResponse;
-import com.aivle.project.watchlist.error.WatchlistErrorCode;
+import com.aivle.project.app.internal.common.config.QuerydslConfig;
+import com.aivle.project.finance.internal.company.entity.CompaniesEntity;
+import com.aivle.project.finance.internal.company.repository.CompaniesRepository;
+import com.aivle.project.finance.internal.company.service.CompanyInfoService;
+import com.aivle.project.finance.api.MetricValueType;
+import com.aivle.project.foundation.api.error.CommonException;
+import com.aivle.project.finance.internal.metric.entity.MetricsEntity;
+import com.aivle.project.finance.internal.metric.repository.MetricsRepository;
+import com.aivle.project.finance.internal.metricaverage.repository.MetricAverageRepository;
+import com.aivle.project.finance.internal.quarter.entity.QuartersEntity;
+import com.aivle.project.finance.internal.quarter.repository.QuartersRepository;
+import com.aivle.project.finance.internal.report.entity.CompanyReportMetricValuesEntity;
+import com.aivle.project.finance.internal.report.entity.CompanyReportVersionsEntity;
+import com.aivle.project.finance.internal.report.entity.CompanyReportsEntity;
+import com.aivle.project.finance.internal.report.repository.CompanyReportMetricValuesRepository;
+import com.aivle.project.finance.internal.report.repository.CompanyReportVersionsRepository;
+import com.aivle.project.finance.internal.report.repository.CompanyReportsRepository;
+import com.aivle.project.finance.api.RiskLevel;
+import com.aivle.project.finance.internal.risk.entity.RiskScoreSummaryEntity;
+import com.aivle.project.finance.internal.risk.repository.RiskScoreSummaryRepository;
+import com.aivle.project.identity.internal.user.entity.RoleEntity;
+import com.aivle.project.identity.api.RoleName;
+import com.aivle.project.identity.internal.user.entity.UserEntity;
+import com.aivle.project.identity.internal.user.entity.UserRoleEntity;
+import com.aivle.project.identity.api.UserStatus;
+import com.aivle.project.identity.internal.user.repository.RoleRepository;
+import com.aivle.project.identity.internal.user.repository.UserRepository;
+import com.aivle.project.identity.internal.user.repository.UserRoleRepository;
+import com.aivle.project.watchlist.api.WatchlistDashboardResponse;
+import com.aivle.project.watchlist.api.WatchlistMetricAveragesResponse;
+import com.aivle.project.watchlist.api.WatchlistMetricValuesResponse;
+import com.aivle.project.watchlist.api.WatchlistErrorCode;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -47,6 +47,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 @DataJpaTest
+@com.aivle.project.common.config.EnableJpaReadAdapters
 @ActiveProfiles("test")
 @Import({QuerydslConfig.class, CompanyWatchlistService.class})
 class CompanyWatchlistServiceTest {
@@ -61,7 +62,7 @@ class CompanyWatchlistServiceTest {
 	@Autowired CompanyReportMetricValuesRepository metricValuesRepository;
 	@Autowired MetricsRepository metricsRepository;
 	@Autowired RiskScoreSummaryRepository riskScoreSummaryRepository;
-	@MockBean CompanyInfoService companyInfoService;
+	@MockBean com.aivle.project.finance.api.CompanyInformationBatches companyInfoService;
 
 	@Test
 	@DisplayName("사용자의 워치리스트 기업 목록을 조회한다")
@@ -78,7 +79,7 @@ class CompanyWatchlistServiceTest {
 		service.addWatchlist(user.getId(), companyB.getId(), "메모B");
 
 		// when
-		com.aivle.project.watchlist.dto.WatchlistResponse response = service.getWatchlist(user.getId());
+		com.aivle.project.watchlist.api.WatchlistResponse response = service.getWatchlist(user.getId());
 
 		// then
 		assertThat(response.items()).hasSize(2);
@@ -120,7 +121,7 @@ class CompanyWatchlistServiceTest {
 		service.addWatchlist(user.getId(), company.getId(), "second");
 
 		// then
-		com.aivle.project.watchlist.dto.WatchlistResponse response = service.getWatchlist(user.getId());
+		com.aivle.project.watchlist.api.WatchlistResponse response = service.getWatchlist(user.getId());
 		assertThat(response.items()).hasSize(1);
 		assertThat(response.items().get(0).note()).isEqualTo("second");
 	}

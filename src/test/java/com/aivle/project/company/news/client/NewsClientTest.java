@@ -1,11 +1,12 @@
-package com.aivle.project.company.news.client;
+package com.aivle.project.aiintegration.internal;
+import com.aivle.project.aiintegration.internal.NewsClient;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.aivle.project.common.error.ExternalAiUnavailableException;
-import com.aivle.project.company.news.dto.NewsApiResponse;
-import com.aivle.project.company.reportanalysis.dto.ReportApiResponse;
+import com.aivle.project.aiintegration.api.ExternalAiUnavailableException;
+import com.aivle.project.aiintegration.api.NewsApiResponse;
+import com.aivle.project.aiintegration.api.ReportApiResponse;
 import java.util.concurrent.TimeUnit;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;

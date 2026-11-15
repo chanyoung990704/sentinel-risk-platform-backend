@@ -1,13 +1,15 @@
 package com.aivle.project.dataimport;
 
 import static org.assertj.core.api.Assertions.*;
-import static com.aivle.project.dataimport.model.ImportDatasetCommand.Role.*;
+import static com.aivle.project.finance.api.ImportDatasetCommand.Role.*;
 
-import com.aivle.project.dataimport.model.*;
-import com.aivle.project.dataimport.model.ImportDatasetCommand.Role;
-import com.aivle.project.dataimport.model.ImportDatasetCommand.Source;
-import com.aivle.project.dataimport.service.*;
-import com.aivle.project.dataimport.cli.ImportPreflightCommand;
+import com.aivle.project.finance.internal.dataimport.model.*;
+import com.aivle.project.finance.api.ImportDatasetCommand;
+import com.aivle.project.finance.api.CanonicalMetricCell;
+import com.aivle.project.finance.api.ImportDatasetCommand.Role;
+import com.aivle.project.finance.api.ImportDatasetCommand.Source;
+import com.aivle.project.finance.internal.dataimport.service.*;
+import com.aivle.project.finance.internal.dataimport.cli.ImportPreflightCommand;
 import java.io.OutputStream;
 import java.nio.file.*;
 import java.util.*;

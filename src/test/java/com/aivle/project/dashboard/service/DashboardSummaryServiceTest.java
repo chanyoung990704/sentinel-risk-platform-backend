@@ -1,34 +1,34 @@
-package com.aivle.project.dashboard.service;
+package com.aivle.project.app.internal.dashboard.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.aivle.project.common.config.QuerydslConfig;
-import com.aivle.project.company.entity.CompaniesEntity;
-import com.aivle.project.company.keymetric.entity.CompanyKeyMetricEntity;
-import com.aivle.project.company.keymetric.entity.CompanyKeyMetricRiskLevel;
-import com.aivle.project.company.keymetric.repository.CompanyKeyMetricRepository;
-import com.aivle.project.company.repository.CompaniesRepository;
-import com.aivle.project.dashboard.dto.CompanyQuarterRiskDto;
-import com.aivle.project.dashboard.dto.DashboardSummaryResponse;
-import com.aivle.project.dashboard.dto.KpiCardDto;
-import com.aivle.project.industry.entity.IndustryEntity;
-import com.aivle.project.industry.entity.IndustryRepository;
-import com.aivle.project.metric.entity.MetricValueType;
-import com.aivle.project.metric.entity.MetricsEntity;
-import com.aivle.project.metric.repository.MetricsRepository;
-import com.aivle.project.quarter.entity.QuartersEntity;
-import com.aivle.project.quarter.repository.QuartersRepository;
-import com.aivle.project.report.entity.CompanyReportMetricValuesEntity;
-import com.aivle.project.report.entity.CompanyReportVersionsEntity;
-import com.aivle.project.report.entity.CompanyReportsEntity;
-import com.aivle.project.report.repository.CompanyReportMetricValuesRepository;
-import com.aivle.project.report.repository.CompanyReportVersionsRepository;
-import com.aivle.project.report.repository.CompanyReportsRepository;
-import com.aivle.project.user.entity.UserEntity;
-import com.aivle.project.user.entity.UserStatus;
-import com.aivle.project.user.repository.UserRepository;
-import com.aivle.project.watchlist.entity.CompanyWatchlistEntity;
-import com.aivle.project.watchlist.repository.CompanyWatchlistRepository;
+import com.aivle.project.app.internal.common.config.QuerydslConfig;
+import com.aivle.project.finance.internal.company.entity.CompaniesEntity;
+import com.aivle.project.finance.internal.company.keymetric.entity.CompanyKeyMetricEntity;
+import com.aivle.project.finance.api.CompanyKeyMetricRiskLevel;
+import com.aivle.project.finance.internal.company.keymetric.repository.CompanyKeyMetricRepository;
+import com.aivle.project.finance.internal.company.repository.CompaniesRepository;
+import com.aivle.project.app.api.CompanyQuarterRiskDto;
+import com.aivle.project.app.api.DashboardSummaryResponse;
+import com.aivle.project.app.api.KpiCardDto;
+import com.aivle.project.finance.internal.industry.entity.IndustryEntity;
+import com.aivle.project.finance.internal.industry.entity.IndustryRepository;
+import com.aivle.project.finance.api.MetricValueType;
+import com.aivle.project.finance.internal.metric.entity.MetricsEntity;
+import com.aivle.project.finance.internal.metric.repository.MetricsRepository;
+import com.aivle.project.finance.internal.quarter.entity.QuartersEntity;
+import com.aivle.project.finance.internal.quarter.repository.QuartersRepository;
+import com.aivle.project.finance.internal.report.entity.CompanyReportMetricValuesEntity;
+import com.aivle.project.finance.internal.report.entity.CompanyReportVersionsEntity;
+import com.aivle.project.finance.internal.report.entity.CompanyReportsEntity;
+import com.aivle.project.finance.internal.report.repository.CompanyReportMetricValuesRepository;
+import com.aivle.project.finance.internal.report.repository.CompanyReportVersionsRepository;
+import com.aivle.project.finance.internal.report.repository.CompanyReportsRepository;
+import com.aivle.project.identity.internal.user.entity.UserEntity;
+import com.aivle.project.identity.api.UserStatus;
+import com.aivle.project.identity.internal.user.repository.UserRepository;
+import com.aivle.project.watchlist.internal.entity.CompanyWatchlistEntity;
+import com.aivle.project.watchlist.internal.repository.CompanyWatchlistRepository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -44,6 +44,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 @DataJpaTest
+@com.aivle.project.common.config.EnableJpaReadAdapters
 @ActiveProfiles("test")
 @Import({QuerydslConfig.class, DashboardSummaryService.class})
 class DashboardSummaryServiceTest {

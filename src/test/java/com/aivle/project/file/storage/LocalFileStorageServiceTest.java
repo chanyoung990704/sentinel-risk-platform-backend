@@ -1,11 +1,12 @@
-package com.aivle.project.file.storage;
+package com.aivle.project.storage.internal.file.storage;
+import com.aivle.project.storage.api.StoredFile;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.aivle.project.file.config.FileUploadProperties;
-import com.aivle.project.file.exception.FileErrorCode;
-import com.aivle.project.file.exception.FileException;
+import com.aivle.project.storage.internal.file.config.FileUploadProperties;
+import com.aivle.project.storage.api.FileErrorCode;
+import com.aivle.project.storage.api.FileException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;

@@ -1,8 +1,8 @@
-package com.aivle.project.company.news.controller;
+package com.aivle.project.news.internal.company.news.controller;
 
-import com.aivle.project.common.dto.ApiResponse;
-import com.aivle.project.company.news.dto.NewsAnalysisResponse;
-import com.aivle.project.company.news.service.NewsService;
+import com.aivle.project.foundation.api.dto.ApiResponse;
+import com.aivle.project.news.api.NewsAnalysisResponse;
+import com.aivle.project.news.internal.company.news.service.NewsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

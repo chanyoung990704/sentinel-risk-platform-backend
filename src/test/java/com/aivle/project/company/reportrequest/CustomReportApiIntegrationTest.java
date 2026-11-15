@@ -4,9 +4,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import com.aivle.project.support.ReportFlowIntegrationSupport;
-import com.aivle.project.company.reportjob.service.ReportResultService;
-import com.aivle.project.company.reportrequest.model.CustomReportCommand;
-import com.aivle.project.common.logging.ApiLogProcessor;
+import com.aivle.project.reporting.internal.company.reportjob.service.ReportResultService;
+import com.aivle.project.reporting.api.CustomReportCommand;
+import com.aivle.project.app.internal.common.logging.ApiLogProcessor;
 import java.util.UUID;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;

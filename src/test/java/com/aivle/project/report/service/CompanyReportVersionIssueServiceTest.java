@@ -1,4 +1,4 @@
-package com.aivle.project.report.service;
+package com.aivle.project.finance.internal.report.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -6,14 +6,14 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-import com.aivle.project.company.entity.CompaniesEntity;
-import com.aivle.project.file.entity.FileUsageType;
-import com.aivle.project.file.entity.FilesEntity;
-import com.aivle.project.quarter.entity.QuartersEntity;
-import com.aivle.project.report.entity.CompanyReportVersionsEntity;
-import com.aivle.project.report.entity.CompanyReportsEntity;
-import com.aivle.project.report.repository.CompanyReportVersionsRepository;
-import com.aivle.project.report.repository.CompanyReportsRepository;
+import com.aivle.project.finance.internal.company.entity.CompaniesEntity;
+import com.aivle.project.storage.api.FileUsageType;
+import com.aivle.project.storage.internal.file.entity.FilesEntity;
+import com.aivle.project.finance.internal.quarter.entity.QuartersEntity;
+import com.aivle.project.finance.internal.report.entity.CompanyReportVersionsEntity;
+import com.aivle.project.finance.internal.report.entity.CompanyReportsEntity;
+import com.aivle.project.finance.internal.report.repository.CompanyReportVersionsRepository;
+import com.aivle.project.finance.internal.report.repository.CompanyReportsRepository;
 import java.time.LocalDate;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -72,7 +72,7 @@ class CompanyReportVersionIssueServiceTest {
 		verify(companyReportsRepository).findByIdForUpdate(10L);
 		assertThat(issued.getVersionNo()).isEqualTo(4);
 		assertThat(issued.isPublished()).isTrue();
-		assertThat(issued.getPdfFile()).isEqualTo(pdfFile);
+		assertThat(issued.getPdfFile().getStorageKey()).isEqualTo(pdfFile.getStorageKey());
 	}
 
 	@Test

@@ -1,36 +1,40 @@
-package com.aivle.project.company.service;
+package com.aivle.project.finance.internal.company.service;
+import com.aivle.project.finance.internal.company.service.CompanyHealthScoreCacheService;
+import com.aivle.project.finance.internal.company.service.CompanyPredictionCacheService;
+import com.aivle.project.finance.internal.company.service.CompanyReputationScoreService;
+import com.aivle.project.finance.internal.company.service.CompanySignalCacheService;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.aivle.project.common.config.QuerydslConfig;
-import com.aivle.project.company.client.AiServerClient;
-import com.aivle.project.company.dto.CompanyOverviewResponseDto;
-import com.aivle.project.company.entity.CompaniesEntity;
-import com.aivle.project.company.keymetric.entity.CompanyKeyMetricEntity;
-import com.aivle.project.company.keymetric.entity.CompanyKeyMetricRiskLevel;
-import com.aivle.project.company.keymetric.entity.KeyMetricDescriptionEntity;
-import com.aivle.project.company.keymetric.repository.CompanyKeyMetricRepository;
-import com.aivle.project.company.keymetric.repository.KeyMetricDescriptionRepository;
-import com.aivle.project.company.repository.CompaniesRepository;
-import com.aivle.project.industry.entity.IndustryEntity;
-import com.aivle.project.industry.entity.IndustryRepository;
-import com.aivle.project.metric.entity.MetricValueType;
-import com.aivle.project.metric.entity.MetricsEntity;
-import com.aivle.project.metric.repository.MetricDescriptionRepository;
-import com.aivle.project.metric.repository.MetricsRepository;
-import com.aivle.project.metric.entity.MetricDescriptionEntity;
-import com.aivle.project.quarter.entity.QuartersEntity;
-import com.aivle.project.quarter.repository.QuartersRepository;
-import com.aivle.project.quarter.support.QuarterCalculator;
-import com.aivle.project.quarter.support.YearQuarter;
-import com.aivle.project.report.entity.CompanyReportMetricValuesEntity;
-import com.aivle.project.report.entity.CompanyReportVersionsEntity;
-import com.aivle.project.report.entity.CompanyReportsEntity;
-import com.aivle.project.report.entity.SignalColor;
-import com.aivle.project.report.repository.CompanyReportMetricValuesRepository;
-import com.aivle.project.report.repository.CompanyReportVersionsRepository;
-import com.aivle.project.report.repository.CompanyReportsRepository;
-import com.aivle.project.report.service.CompanyReportVersionIssueService;
+import com.aivle.project.app.internal.common.config.QuerydslConfig;
+import com.aivle.project.aiintegration.internal.company.client.AiServerClient;
+import com.aivle.project.finance.api.CompanyOverviewResponseDto;
+import com.aivle.project.finance.internal.company.entity.CompaniesEntity;
+import com.aivle.project.finance.internal.company.keymetric.entity.CompanyKeyMetricEntity;
+import com.aivle.project.finance.api.CompanyKeyMetricRiskLevel;
+import com.aivle.project.finance.internal.company.keymetric.entity.KeyMetricDescriptionEntity;
+import com.aivle.project.finance.internal.company.keymetric.repository.CompanyKeyMetricRepository;
+import com.aivle.project.finance.internal.company.keymetric.repository.KeyMetricDescriptionRepository;
+import com.aivle.project.finance.internal.company.repository.CompaniesRepository;
+import com.aivle.project.finance.internal.industry.entity.IndustryEntity;
+import com.aivle.project.finance.internal.industry.entity.IndustryRepository;
+import com.aivle.project.finance.api.MetricValueType;
+import com.aivle.project.finance.internal.metric.entity.MetricsEntity;
+import com.aivle.project.finance.internal.metric.repository.MetricDescriptionRepository;
+import com.aivle.project.finance.internal.metric.repository.MetricsRepository;
+import com.aivle.project.finance.internal.metric.entity.MetricDescriptionEntity;
+import com.aivle.project.finance.internal.quarter.entity.QuartersEntity;
+import com.aivle.project.finance.internal.quarter.repository.QuartersRepository;
+import com.aivle.project.finance.api.QuarterCalculator;
+import com.aivle.project.finance.api.YearQuarter;
+import com.aivle.project.finance.internal.report.entity.CompanyReportMetricValuesEntity;
+import com.aivle.project.finance.internal.report.entity.CompanyReportVersionsEntity;
+import com.aivle.project.finance.internal.report.entity.CompanyReportsEntity;
+import com.aivle.project.finance.api.SignalColor;
+import com.aivle.project.finance.internal.report.repository.CompanyReportMetricValuesRepository;
+import com.aivle.project.finance.internal.report.repository.CompanyReportVersionsRepository;
+import com.aivle.project.finance.internal.report.repository.CompanyReportsRepository;
+import com.aivle.project.finance.internal.report.service.CompanyReportVersionIssueService;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -43,6 +47,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 @DataJpaTest
+@com.aivle.project.common.config.EnableJpaReadAdapters
 @ActiveProfiles("test")
 @Import({
 	QuerydslConfig.class,

@@ -1,12 +1,12 @@
-package com.aivle.project.file.storage;
+package com.aivle.project.storage.internal.file.storage;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.aivle.project.file.entity.FileUsageType;
-import com.aivle.project.file.entity.FilesEntity;
-import com.aivle.project.file.exception.FileErrorCode;
-import com.aivle.project.file.exception.FileException;
+import com.aivle.project.storage.api.FileUsageType;
+import com.aivle.project.storage.internal.file.entity.FilesEntity;
+import com.aivle.project.storage.api.FileErrorCode;
+import com.aivle.project.storage.api.FileException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;

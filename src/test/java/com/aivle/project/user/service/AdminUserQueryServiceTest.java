@@ -1,17 +1,17 @@
-package com.aivle.project.user.service;
+package com.aivle.project.identity.internal.user.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
-import com.aivle.project.common.error.CommonErrorCode;
-import com.aivle.project.common.error.CommonException;
-import com.aivle.project.common.util.NameMaskingUtil;
-import com.aivle.project.user.dto.AdminUserListItemDto;
-import com.aivle.project.user.entity.RoleName;
-import com.aivle.project.user.entity.UserStatus;
-import com.aivle.project.user.repository.UserRepository;
+import com.aivle.project.foundation.api.error.CommonErrorCode;
+import com.aivle.project.foundation.api.error.CommonException;
+import com.aivle.project.foundation.api.util.NameMaskingUtil;
+import com.aivle.project.identity.api.AdminUserListItemDto;
+import com.aivle.project.identity.api.RoleName;
+import com.aivle.project.identity.api.UserStatus;
+import com.aivle.project.identity.internal.user.repository.UserRepository;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

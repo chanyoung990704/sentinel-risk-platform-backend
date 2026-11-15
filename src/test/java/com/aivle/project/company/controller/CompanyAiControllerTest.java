@@ -1,4 +1,4 @@
-package com.aivle.project.company.controller;
+package com.aivle.project.app.internal.company.controller;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
@@ -8,13 +8,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.aivle.project.company.dto.AiAnalysisResponse;
-import com.aivle.project.company.job.AiJobDispatchService;
-import com.aivle.project.company.service.CompanyAiService;
-import com.aivle.project.file.entity.FileUsageType;
-import com.aivle.project.file.entity.FilesEntity;
+import com.aivle.project.aiintegration.api.AiAnalysisResponse;
+import com.aivle.project.aiintegration.internal.job.AiJobDispatchService;
+import com.aivle.project.finance.internal.company.service.CompanyAiService;
+import com.aivle.project.storage.api.FileUsageType;
+import com.aivle.project.storage.internal.file.entity.FilesEntity;
 import com.aivle.project.common.config.TestSecurityConfig;
-import com.aivle.project.file.storage.FileStreamService;
+import com.aivle.project.storage.api.FileStreamService;
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -39,13 +39,13 @@ class CompanyAiControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
-    private CompanyAiService companyAiService;
+    private com.aivle.project.finance.api.LegacyFinancialAi companyAiService;
 
     @MockBean
-    private FileStreamService fileStreamService;
+    private com.aivle.project.storage.api.FileStreamService fileStreamService;
 
     @MockBean
-    private AiJobDispatchService aiJobDispatchService;
+    private com.aivle.project.aiintegration.api.AiJobs aiJobDispatchService;
 
     @Test
     @DisplayName("ROLE_USER로 기업 AI 분석을 조회한다")

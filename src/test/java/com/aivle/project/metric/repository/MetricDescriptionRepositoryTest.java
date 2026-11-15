@@ -1,10 +1,10 @@
-package com.aivle.project.metric.repository;
+package com.aivle.project.finance.internal.metric.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.aivle.project.common.config.QuerydslConfig;
-import com.aivle.project.metric.entity.MetricDescriptionEntity;
-import com.aivle.project.metric.entity.MetricsEntity;
+import com.aivle.project.app.internal.common.config.QuerydslConfig;
+import com.aivle.project.finance.internal.metric.entity.MetricDescriptionEntity;
+import com.aivle.project.finance.internal.metric.entity.MetricsEntity;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +13,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 @DataJpaTest
+@com.aivle.project.common.config.EnableJpaReadAdapters
 @ActiveProfiles("test")
 @Import(QuerydslConfig.class)
 class MetricDescriptionRepositoryTest {

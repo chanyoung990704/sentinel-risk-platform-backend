@@ -1,14 +1,14 @@
-package com.aivle.project.user.repository;
+package com.aivle.project.identity.internal.user.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.aivle.project.common.config.QuerydslConfig;
-import com.aivle.project.user.dto.AdminUserListItemDto;
-import com.aivle.project.user.entity.RoleEntity;
-import com.aivle.project.user.entity.RoleName;
-import com.aivle.project.user.entity.UserEntity;
-import com.aivle.project.user.entity.UserRoleEntity;
-import com.aivle.project.user.entity.UserStatus;
+import com.aivle.project.app.internal.common.config.QuerydslConfig;
+import com.aivle.project.identity.api.AdminUserListItemDto;
+import com.aivle.project.identity.internal.user.entity.RoleEntity;
+import com.aivle.project.identity.api.RoleName;
+import com.aivle.project.identity.internal.user.entity.UserEntity;
+import com.aivle.project.identity.internal.user.entity.UserRoleEntity;
+import com.aivle.project.identity.api.UserStatus;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,6 +20,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test")
 @DataJpaTest
+@com.aivle.project.common.config.EnableJpaReadAdapters
 @Import(QuerydslConfig.class)
 class UserRepositoryTest {
 

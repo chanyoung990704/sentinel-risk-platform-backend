@@ -1,4 +1,4 @@
-package com.aivle.project.user.controller;
+package com.aivle.project.identity.internal.user.controller;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
@@ -7,8 +7,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.aivle.project.common.config.TestSecurityConfig;
-import com.aivle.project.user.dto.AdminUserListItemDto;
-import com.aivle.project.user.service.AdminUserQueryService;
+import com.aivle.project.identity.api.AdminUserListItemDto;
+import com.aivle.project.identity.internal.user.service.AdminUserQueryService;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

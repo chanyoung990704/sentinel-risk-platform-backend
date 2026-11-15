@@ -5,15 +5,15 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.aivle.project.category.entity.CategoriesEntity;
+import com.aivle.project.community.internal.category.entity.CategoriesEntity;
 import com.aivle.project.common.config.TestSecurityConfig;
-import com.aivle.project.file.entity.FilesEntity;
-import com.aivle.project.file.entity.PostFilesEntity;
-import com.aivle.project.file.repository.PostFilesRepository;
-import com.aivle.project.post.entity.PostStatus;
-import com.aivle.project.post.entity.PostsEntity;
-import com.aivle.project.user.entity.UserEntity;
-import com.aivle.project.user.entity.UserStatus;
+import com.aivle.project.storage.internal.file.entity.FilesEntity;
+import com.aivle.project.community.internal.file.entity.PostFilesEntity;
+import com.aivle.project.community.internal.file.repository.PostFilesRepository;
+import com.aivle.project.community.api.PostStatus;
+import com.aivle.project.community.internal.post.entity.PostsEntity;
+import com.aivle.project.identity.internal.user.entity.UserEntity;
+import com.aivle.project.identity.api.UserStatus;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.nio.charset.StandardCharsets;
@@ -91,7 +91,7 @@ class FileControllerIntegrationTest {
 		assertThat(saved).hasSize(2);
 
 		for (PostFilesEntity mapping : saved) {
-			FilesEntity file = mapping.getFile();
+			var file = mapping.getFile();
 			assertThat(file.getStorageUrl()).startsWith("memory://posts/");
 			assertThat(file.getStorageKey()).startsWith("posts/");
 		}

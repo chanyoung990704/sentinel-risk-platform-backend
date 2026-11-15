@@ -1,4 +1,4 @@
-package com.aivle.project.auth.service;
+package com.aivle.project.identity.internal.auth.service;
 
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;

@@ -1,12 +1,12 @@
-package com.aivle.project.company.news.service;
+package com.aivle.project.news.internal.company.news.service;
 
-import com.aivle.project.company.entity.CompaniesEntity;
-import com.aivle.project.company.news.client.NewsClient;
-import com.aivle.project.company.news.dto.NewsApiResponse;
-import com.aivle.project.company.news.dto.NewsItemResponse;
-import com.aivle.project.company.news.dto.NewsRefreshResponse;
-import com.aivle.project.company.news.repository.NewsAnalysisRepository;
-import com.aivle.project.company.news.repository.NewsArticleRepository;
+import com.aivle.project.finance.internal.company.entity.CompaniesEntity;
+import com.aivle.project.aiintegration.internal.NewsClient;
+import com.aivle.project.aiintegration.api.NewsApiResponse;
+import com.aivle.project.aiintegration.api.NewsItemResponse;
+import com.aivle.project.news.api.NewsRefreshResponse;
+import com.aivle.project.news.internal.company.news.repository.NewsAnalysisRepository;
+import com.aivle.project.news.internal.company.news.repository.NewsArticleRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -34,10 +34,10 @@ class NewsServiceTest {
     private NewsArticleRepository newsArticleRepository;
 
     @Mock
-    private NewsClient newsClient;
+    private com.aivle.project.aiintegration.api.NewsGateway newsClient;
 
     @Mock
-    private com.aivle.project.company.repository.CompaniesRepository companiesRepository;
+    private com.aivle.project.finance.api.CompanyDirectory companiesRepository;
 
     @InjectMocks
     private NewsService newsService;
@@ -85,13 +85,13 @@ class NewsServiceTest {
         when(companiesRepository.findByStockCode(stockCode)).thenReturn(Optional.of(company));
         when(newsClient.fetchNews(stockCode, companyName)).thenReturn(apiResponse);
         when(newsAnalysisRepository.save(any())).thenAnswer(invocation -> {
-            com.aivle.project.company.news.entity.NewsAnalysisEntity saved = invocation.getArgument(0);
+            com.aivle.project.news.internal.company.news.entity.NewsAnalysisEntity saved = invocation.getArgument(0);
             setId(saved, 10L);
             setCreatedAt(saved);
             return saved;
         });
         when(newsArticleRepository.saveAll(anyList())).thenAnswer(invocation -> {
-            List<com.aivle.project.company.news.entity.NewsArticleEntity> articles = invocation.getArgument(0);
+            List<com.aivle.project.news.internal.company.news.entity.NewsArticleEntity> articles = invocation.getArgument(0);
             articles.forEach(NewsServiceTest::setCreatedAt);
             return articles;
         });
@@ -145,7 +145,7 @@ class NewsServiceTest {
         setId(company, 1L);
 
         LocalDateTime analyzedAt = LocalDateTime.now().minusDays(1);
-        var analysis = com.aivle.project.company.news.entity.NewsAnalysisEntity.create(
+        var analysis = com.aivle.project.news.internal.company.news.entity.NewsAnalysisEntity.create(
                 company,
                 companyName,
                 1,
@@ -164,7 +164,7 @@ class NewsServiceTest {
                 "NEU"
         );
 
-        var article = com.aivle.project.company.news.entity.NewsArticleEntity.create(
+        var article = com.aivle.project.news.internal.company.news.entity.NewsArticleEntity.create(
                 analysis,
                 newsItem.title(),
                 newsItem.summary(),
@@ -243,7 +243,7 @@ class NewsServiceTest {
         LocalDateTime end = LocalDateTime.now();
         LocalDateTime analyzedAt = LocalDateTime.now().minusDays(1);
 
-        var analysis = com.aivle.project.company.news.entity.NewsAnalysisEntity.create(
+        var analysis = com.aivle.project.news.internal.company.news.entity.NewsAnalysisEntity.create(
                 company,
                 companyName,
                 1,
@@ -262,7 +262,7 @@ class NewsServiceTest {
                 "NEU"
         );
 
-        var article = com.aivle.project.company.news.entity.NewsArticleEntity.create(
+        var article = com.aivle.project.news.internal.company.news.entity.NewsArticleEntity.create(
                 analysis,
                 newsItem.title(),
                 newsItem.summary(),
@@ -336,20 +336,20 @@ class NewsServiceTest {
 		when(companiesRepository.findByStockCode(stockCode)).thenReturn(Optional.of(company));
 		when(newsClient.fetchNews(stockCode, companyName)).thenReturn(apiResponse);
 		when(newsAnalysisRepository.save(any())).thenAnswer(invocation -> {
-			com.aivle.project.company.news.entity.NewsAnalysisEntity saved = invocation.getArgument(0);
+			com.aivle.project.news.internal.company.news.entity.NewsAnalysisEntity saved = invocation.getArgument(0);
 			setId(saved, 10L);
 			setCreatedAt(saved);
 			return saved;
 		});
 			when(newsArticleRepository.saveAll(anyList())).thenAnswer(invocation -> {
-				List<com.aivle.project.company.news.entity.NewsArticleEntity> articles = invocation.getArgument(0);
+				List<com.aivle.project.news.internal.company.news.entity.NewsArticleEntity> articles = invocation.getArgument(0);
 				articles.forEach(NewsServiceTest::setCreatedAt);
 				return articles;
 			});
 
 		// NewsService 내부에서 findById 호출 시 저장된 엔티티를 반환하도록 스텁
-		com.aivle.project.company.news.entity.NewsAnalysisEntity savedAnalysis =
-			com.aivle.project.company.news.entity.NewsAnalysisEntity.create(
+		com.aivle.project.news.internal.company.news.entity.NewsAnalysisEntity savedAnalysis =
+			com.aivle.project.news.internal.company.news.entity.NewsAnalysisEntity.create(
 				company,
 				companyName,
 				2,
@@ -360,7 +360,7 @@ class NewsServiceTest {
 		setCreatedAt(savedAnalysis);
 		when(newsAnalysisRepository.findById(10L)).thenReturn(Optional.of(savedAnalysis));
 
-			var article1 = com.aivle.project.company.news.entity.NewsArticleEntity.create(
+			var article1 = com.aivle.project.news.internal.company.news.entity.NewsArticleEntity.create(
 				savedAnalysis,
 				"기사1",
 				"요약1",
@@ -370,7 +370,7 @@ class NewsServiceTest {
 				"POS"
 			);
 			setCreatedAt(article1);
-			var article2 = com.aivle.project.company.news.entity.NewsArticleEntity.create(
+			var article2 = com.aivle.project.news.internal.company.news.entity.NewsArticleEntity.create(
 				savedAnalysis,
 				"기사2",
 			"요약2",

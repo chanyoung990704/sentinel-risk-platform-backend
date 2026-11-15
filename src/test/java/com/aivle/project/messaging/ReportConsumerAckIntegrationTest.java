@@ -1,11 +1,12 @@
-package com.aivle.project.messaging;
+package com.aivle.project.reporting.internal.messaging;
+import com.aivle.project.reporting.api.CustomReportTopics;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import com.aivle.project.support.ReportFlowIntegrationSupport;
-import com.aivle.project.messaging.consumer.ReportDeliveryObserver;
-import com.aivle.project.company.reportjob.repository.ReportJobRepository;
-import com.aivle.project.company.reportrequest.model.CustomReportCommand;
+import com.aivle.project.reporting.internal.messaging.consumer.ReportDeliveryObserver;
+import com.aivle.project.reporting.internal.company.reportjob.repository.ReportJobRepository;
+import com.aivle.project.reporting.api.CustomReportCommand;
 import java.nio.file.*;
 import java.nio.charset.StandardCharsets;
 import java.time.*;

@@ -1,7 +1,7 @@
 package com.aivle.project.dataimport;
 
-import com.aivle.project.dataimport.repository.ImportJournalRepository;
-import com.aivle.project.dataimport.service.*;
+import com.aivle.project.finance.internal.dataimport.repository.ImportJournalRepository;
+import com.aivle.project.finance.internal.dataimport.service.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zaxxer.hikari.*;
 import java.nio.file.*;

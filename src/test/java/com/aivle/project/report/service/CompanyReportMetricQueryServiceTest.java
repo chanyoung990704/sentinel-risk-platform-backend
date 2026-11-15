@@ -1,23 +1,23 @@
-package com.aivle.project.report.service;
+package com.aivle.project.finance.internal.report.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.aivle.project.common.config.QuerydslConfig;
-import com.aivle.project.company.entity.CompaniesEntity;
-import com.aivle.project.company.repository.CompaniesRepository;
-import com.aivle.project.metric.entity.MetricValueType;
-import com.aivle.project.metric.entity.MetricsEntity;
-import com.aivle.project.metric.repository.MetricsRepository;
-import com.aivle.project.quarter.entity.QuartersEntity;
-import com.aivle.project.quarter.repository.QuartersRepository;
-import com.aivle.project.report.dto.ReportMetricRowDto;
-import com.aivle.project.report.dto.ReportMetricGroupedResponse;
-import com.aivle.project.report.entity.CompanyReportMetricValuesEntity;
-import com.aivle.project.report.entity.CompanyReportVersionsEntity;
-import com.aivle.project.report.entity.CompanyReportsEntity;
-import com.aivle.project.report.repository.CompanyReportMetricValuesRepository;
-import com.aivle.project.report.repository.CompanyReportVersionsRepository;
-import com.aivle.project.report.repository.CompanyReportsRepository;
+import com.aivle.project.app.internal.common.config.QuerydslConfig;
+import com.aivle.project.finance.internal.company.entity.CompaniesEntity;
+import com.aivle.project.finance.internal.company.repository.CompaniesRepository;
+import com.aivle.project.finance.api.MetricValueType;
+import com.aivle.project.finance.internal.metric.entity.MetricsEntity;
+import com.aivle.project.finance.internal.metric.repository.MetricsRepository;
+import com.aivle.project.finance.internal.quarter.entity.QuartersEntity;
+import com.aivle.project.finance.internal.quarter.repository.QuartersRepository;
+import com.aivle.project.finance.api.ReportMetricRowDto;
+import com.aivle.project.finance.api.ReportMetricGroupedResponse;
+import com.aivle.project.finance.internal.report.entity.CompanyReportMetricValuesEntity;
+import com.aivle.project.finance.internal.report.entity.CompanyReportVersionsEntity;
+import com.aivle.project.finance.internal.report.entity.CompanyReportsEntity;
+import com.aivle.project.finance.internal.report.repository.CompanyReportMetricValuesRepository;
+import com.aivle.project.finance.internal.report.repository.CompanyReportVersionsRepository;
+import com.aivle.project.finance.internal.report.repository.CompanyReportsRepository;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -30,6 +30,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 @DataJpaTest
+@com.aivle.project.common.config.EnableJpaReadAdapters
 @ActiveProfiles("test")
 @Import({QuerydslConfig.class, CompanyReportMetricQueryService.class})
 class CompanyReportMetricQueryServiceTest {
@@ -56,7 +57,7 @@ class CompanyReportMetricQueryServiceTest {
 	private MetricsRepository metricsRepository;
 
 	@org.springframework.boot.test.mock.mockito.MockBean
-	private com.aivle.project.report.mapper.ReportMapper reportMapper;
+	private com.aivle.project.finance.internal.report.mapper.ReportMapper reportMapper;
 
 	@Test
 	@DisplayName("기업코드를 정규화하고 최신 버전 지표를 반환한다")
@@ -111,7 +112,7 @@ class CompanyReportMetricQueryServiceTest {
 		));
 
 		org.mockito.BDDMockito.given(reportMapper.toRowDto(org.mockito.ArgumentMatchers.any())).willAnswer(invocation -> {
-			com.aivle.project.report.dto.ReportMetricRowProjection p = invocation.getArgument(0);
+			com.aivle.project.finance.api.ReportMetricRowProjection p = invocation.getArgument(0);
 			return new ReportMetricRowDto(
 				p.getCorpName(), p.getStockCode(), p.getMetricCode(), p.getMetricNameKo(),
 				p.getMetricValue(), p.getValueType(), p.getQuarterKey(), p.getVersionNo(), p.getGeneratedAt()
@@ -168,7 +169,7 @@ class CompanyReportMetricQueryServiceTest {
 		));
 
 		org.mockito.BDDMockito.given(reportMapper.toRowDto(org.mockito.ArgumentMatchers.any())).willAnswer(invocation -> {
-			com.aivle.project.report.dto.ReportMetricRowProjection p = invocation.getArgument(0);
+			com.aivle.project.finance.api.ReportMetricRowProjection p = invocation.getArgument(0);
 			return new ReportMetricRowDto(
 				p.getCorpName(), p.getStockCode(), p.getMetricCode(), p.getMetricNameKo(),
 				p.getMetricValue(), p.getValueType(), p.getQuarterKey(), p.getVersionNo(), p.getGeneratedAt()
@@ -242,7 +243,7 @@ class CompanyReportMetricQueryServiceTest {
 		));
 
 		org.mockito.BDDMockito.given(reportMapper.toRowDto(org.mockito.ArgumentMatchers.any())).willAnswer(invocation -> {
-			com.aivle.project.report.dto.ReportMetricRowProjection p = invocation.getArgument(0);
+			com.aivle.project.finance.api.ReportMetricRowProjection p = invocation.getArgument(0);
 			return new ReportMetricRowDto(
 				p.getCorpName(), p.getStockCode(), p.getMetricCode(), p.getMetricNameKo(),
 				p.getMetricValue(), p.getValueType(), p.getQuarterKey(), p.getVersionNo(), p.getGeneratedAt()
@@ -250,7 +251,7 @@ class CompanyReportMetricQueryServiceTest {
 		});
 		org.mockito.BDDMockito.given(reportMapper.toItemDto(org.mockito.ArgumentMatchers.any())).willAnswer(invocation -> {
 			ReportMetricRowDto row = invocation.getArgument(0);
-			return new com.aivle.project.report.dto.ReportMetricItemDto(
+			return new com.aivle.project.finance.api.ReportMetricItemDto(
 				row.metricCode(), row.metricNameKo(), row.metricValue(), row.valueType()
 			);
 		});

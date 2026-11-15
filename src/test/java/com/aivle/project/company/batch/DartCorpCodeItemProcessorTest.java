@@ -1,4 +1,4 @@
-package com.aivle.project.company.batch;
+package com.aivle.project.finance.internal.company.batch;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

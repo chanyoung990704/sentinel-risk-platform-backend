@@ -1,4 +1,4 @@
-package com.aivle.project.metricaverage.controller;
+package com.aivle.project.finance.internal.metricaverage.controller;
 
 import static org.mockito.BDDMockito.given;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -8,8 +8,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.aivle.project.common.config.TestSecurityConfig;
-import com.aivle.project.metricaverage.service.MetricAverageBatchSaveResult;
-import com.aivle.project.metricaverage.service.MetricAverageBatchService;
+import com.aivle.project.finance.internal.metricaverage.service.MetricAverageBatchSaveResult;
+import com.aivle.project.finance.internal.metricaverage.service.MetricAverageBatchService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

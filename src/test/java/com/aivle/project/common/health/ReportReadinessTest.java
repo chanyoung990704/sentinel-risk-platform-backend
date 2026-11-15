@@ -1,8 +1,8 @@
-package com.aivle.project.common.health;
+package com.aivle.project.reporting.internal.health;
 import static org.assertj.core.api.Assertions.*;
 import static org.mockito.Mockito.*;
-import com.aivle.project.company.reportjob.config.ReportWorkerProperties;
-import com.aivle.project.company.reportjob.service.ReportJobWorker;
+import com.aivle.project.reporting.internal.company.reportjob.config.ReportWorkerProperties;
+import com.aivle.project.reporting.internal.company.reportjob.service.ReportJobWorker;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.actuate.health.Status;
 import org.springframework.jdbc.core.JdbcTemplate;

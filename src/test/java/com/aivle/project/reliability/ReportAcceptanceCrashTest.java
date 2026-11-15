@@ -1,7 +1,7 @@
 package com.aivle.project.reliability;
 import static org.assertj.core.api.Assertions.*;
 import com.aivle.project.support.ReportFlowIntegrationSupport;
-import com.aivle.project.company.reportrequest.model.CustomReportCommand;
+import com.aivle.project.reporting.api.CustomReportCommand;
 import java.nio.file.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;

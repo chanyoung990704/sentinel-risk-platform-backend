@@ -1,7 +1,7 @@
 package com.aivle.project.reliability;
 
 import com.aivle.project.ProjectApplication;
-import com.aivle.project.company.reportjob.service.ReportJobWorker;
+import com.aivle.project.reporting.internal.company.reportjob.service.ReportJobWorker;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sun.net.httpserver.HttpServer;
 import java.net.InetSocketAddress;

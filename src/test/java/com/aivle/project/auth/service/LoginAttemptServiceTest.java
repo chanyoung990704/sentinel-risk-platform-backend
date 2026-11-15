@@ -1,13 +1,13 @@
-package com.aivle.project.auth.service;
+package com.aivle.project.identity.internal.auth.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.aivle.project.auth.config.LoginAttemptProperties;
-import com.aivle.project.auth.exception.AuthErrorCode;
-import com.aivle.project.auth.exception.AuthException;
+import com.aivle.project.identity.internal.auth.config.LoginAttemptProperties;
+import com.aivle.project.identity.api.AuthErrorCode;
+import com.aivle.project.identity.api.AuthException;
 import java.time.Duration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

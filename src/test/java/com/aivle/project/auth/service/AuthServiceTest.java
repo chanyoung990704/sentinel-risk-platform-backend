@@ -1,4 +1,4 @@
-package com.aivle.project.auth.service;
+package com.aivle.project.identity.internal.auth.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -11,19 +11,19 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-import com.aivle.project.auth.dto.AuthLoginResponse;
-import com.aivle.project.auth.dto.LoginRequest;
-import com.aivle.project.auth.dto.PasswordChangeRequest;
-import com.aivle.project.auth.dto.TokenRefreshRequest;
-import com.aivle.project.auth.dto.TokenResponse;
-import com.aivle.project.auth.exception.AuthErrorCode;
-import com.aivle.project.auth.exception.AuthException;
-import com.aivle.project.auth.token.JwtTokenService;
-import com.aivle.project.auth.token.RefreshTokenCache;
-import com.aivle.project.user.entity.UserEntity;
-import com.aivle.project.user.security.CustomUserDetails;
-import com.aivle.project.user.security.CustomUserDetailsService;
-import com.aivle.project.user.service.UserDomainService;
+import com.aivle.project.identity.api.AuthLoginResponse;
+import com.aivle.project.identity.api.LoginRequest;
+import com.aivle.project.identity.api.PasswordChangeRequest;
+import com.aivle.project.identity.api.TokenRefreshRequest;
+import com.aivle.project.identity.api.TokenResponse;
+import com.aivle.project.identity.api.AuthErrorCode;
+import com.aivle.project.identity.api.AuthException;
+import com.aivle.project.identity.internal.auth.token.JwtTokenService;
+import com.aivle.project.identity.internal.auth.token.RefreshTokenCache;
+import com.aivle.project.identity.internal.user.entity.UserEntity;
+import com.aivle.project.identity.internal.user.security.CustomUserDetails;
+import com.aivle.project.identity.internal.user.security.CustomUserDetailsService;
+import com.aivle.project.identity.internal.user.service.UserDomainService;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -68,7 +68,7 @@ class AuthServiceTest {
 	private PasswordEncoder passwordEncoder;
 
 	@Mock
-	private com.aivle.project.user.mapper.UserMapper userMapper;
+	private com.aivle.project.identity.internal.user.mapper.UserMapper userMapper;
 
 	private AuthService newAuthService() {
 		return new AuthService(
@@ -106,11 +106,11 @@ class AuthServiceTest {
 		when(jwtTokenService.getAccessTokenExpirationSeconds()).thenReturn(1800L);
 		when(jwtTokenService.getRefreshTokenExpirationSeconds()).thenReturn(604800L);
 
-		com.aivle.project.user.dto.UserSummaryDto userSummaryDto = new com.aivle.project.user.dto.UserSummaryDto(
+		com.aivle.project.identity.api.UserSummaryDto userSummaryDto = new com.aivle.project.identity.api.UserSummaryDto(
 			UUID.randomUUID().toString(),
 			"user@example.com",
 			"홍길동",
-			com.aivle.project.user.entity.RoleName.ROLE_USER
+			com.aivle.project.identity.api.RoleName.ROLE_USER
 		);
 		when(userMapper.toSummaryDto(eq(userDetails), any())).thenReturn(userSummaryDto);
 

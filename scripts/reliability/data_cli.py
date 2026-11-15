@@ -32,7 +32,7 @@ def main():
     classpath = (runtime.WORKSPACE / "build/portfolio-import-classpath.txt").read_text().strip()
     os.chdir(runtime.WORKSPACE)
     os.execvpe("java", ["java", "-Xms128m", "-Xmx1g", "-cp", classpath,
-                       "com.aivle.project.dataimport.cli.ImportCommand"] + args, runtime.environment())
+                       "com.aivle.project.finance.internal.dataimport.cli.ImportCommand"] + args, runtime.environment())
 
 
 if __name__ == "__main__":

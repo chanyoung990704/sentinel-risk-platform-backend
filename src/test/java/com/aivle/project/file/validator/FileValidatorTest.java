@@ -1,11 +1,11 @@
-package com.aivle.project.file.validator;
+package com.aivle.project.storage.internal.file.validator;
 
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.aivle.project.file.config.FileUploadProperties;
-import com.aivle.project.file.exception.FileErrorCode;
-import com.aivle.project.file.exception.FileException;
+import com.aivle.project.storage.internal.file.config.FileUploadProperties;
+import com.aivle.project.storage.api.FileErrorCode;
+import com.aivle.project.storage.api.FileException;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

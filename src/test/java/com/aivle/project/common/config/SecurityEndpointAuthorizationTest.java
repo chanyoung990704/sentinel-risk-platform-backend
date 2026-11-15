@@ -6,12 +6,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.aivle.project.company.service.CompanySearchService;
-import com.aivle.project.dashboard.service.DashboardSummaryService;
-import com.aivle.project.metricaverage.service.MetricAverageBatchService;
-import com.aivle.project.user.dto.AdminUserListItemDto;
-import com.aivle.project.user.service.AdminUserQueryService;
-import com.aivle.project.watchlist.service.CompanyWatchlistService;
+import com.aivle.project.finance.internal.company.service.CompanySearchService;
+import com.aivle.project.app.internal.dashboard.service.DashboardSummaryService;
+import com.aivle.project.finance.internal.metricaverage.service.MetricAverageBatchService;
+import com.aivle.project.identity.api.AdminUserListItemDto;
+import com.aivle.project.identity.internal.user.service.AdminUserQueryService;
+import com.aivle.project.watchlist.internal.service.CompanyWatchlistService;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

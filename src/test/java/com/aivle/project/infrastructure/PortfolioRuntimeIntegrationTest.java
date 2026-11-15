@@ -3,8 +3,8 @@ package com.aivle.project.infrastructure;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.aivle.project.support.PortfolioIntegrationSupport;
-import com.aivle.project.common.config.LocalMailConfig.DisabledMailSender;
-import com.aivle.project.company.client.AiServerClient;
+import com.aivle.project.identity.internal.common.config.LocalMailConfig.DisabledMailSender;
+import com.aivle.project.aiintegration.internal.company.client.AiServerClient;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;

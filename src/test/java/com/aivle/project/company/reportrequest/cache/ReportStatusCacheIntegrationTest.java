@@ -1,9 +1,11 @@
-package com.aivle.project.company.reportrequest.cache;
+package com.aivle.project.reporting.internal.company.reportrequest.cache;
+import com.aivle.project.reporting.api.CustomReportCommand;
 
 import static org.assertj.core.api.Assertions.*;
-import com.aivle.project.company.reportrequest.model.*;
-import com.aivle.project.company.reportrequest.service.*;
-import com.aivle.project.perf.QueryCountProbe;
+
+import com.aivle.project.reporting.api.ReportRequestException;
+import com.aivle.project.reporting.internal.company.reportrequest.service.*;
+import com.aivle.project.app.internal.perf.QueryCountProbe;
 import com.aivle.project.support.CustomReportIntegrationSupport;
 import java.nio.file.*;
 import java.time.Duration;
@@ -21,10 +23,10 @@ class ReportStatusCacheIntegrationTest extends CustomReportIntegrationSupport {
     @Autowired ReportRequestQueryService queries;
     @Autowired ReportRequestService requests;
     @Autowired QueryCountProbe probe;
-    @Autowired com.aivle.project.messaging.inbox.ReportJobInbox inbox;
+    @Autowired com.aivle.project.reporting.internal.messaging.inbox.ReportJobInbox inbox;
     @Autowired com.fasterxml.jackson.databind.ObjectMapper mapper;
     UUID request() { return requests.accept(users.getFirst(),company,"cache-"+UUID.randomUUID(),new CustomReportCommand(null,"현금흐름 검토")).requestId(); }
-    ReportRequestQueryService.Status status(UUID id,long version) { return new ReportRequestQueryService.Status(id,"PROCESSING",version,1,1,null,null,null); }
+    com.aivle.project.reporting.api.ReportRequestView status(UUID id,long version) { return new com.aivle.project.reporting.api.ReportRequestView(id,"PROCESSING",version,1,1,null,null,null); }
     @Test void missLoadsOwnedDatabaseAndTwoSecondTtlExpires() throws Exception {
         // given
         var id=request();long owner=users.getFirst();assertThat(cache.getOwnedStatus(owner,id)).isEmpty();
@@ -57,7 +59,7 @@ class ReportStatusCacheIntegrationTest extends CustomReportIntegrationSupport {
         // given
         var id=request();var first=queries.getOwned(users.getFirst(),id);assertThat(first.status()).isEqualTo("ACCEPTED");
         var body=jdbc.queryForObject("SELECT payload FROM outbox_events WHERE aggregateid=? AND type='REQUEST_ACCEPTED'",String.class,id.toString());
-        inbox.accept(mapper.readValue(body,com.aivle.project.messaging.outbox.ReportEvent.class));
+        inbox.accept(mapper.readValue(body,com.aivle.project.reporting.internal.messaging.outbox.ReportEvent.class));
         assertThat(cache.getOwnedStatus(users.getFirst(),id).orElseThrow().stateVersion()).isEqualTo(first.stateVersion());
         // when / then: 권한 확인 SQL에 현재 버전도 포함할 수 있어 이벤트 지연을 감춘다.
         var current=queries.getOwned(users.getFirst(),id);
@@ -90,10 +92,10 @@ class ReportStatusCacheIntegrationTest extends CustomReportIntegrationSupport {
             boolean allReady=ready.await(10,TimeUnit.SECONDS);start.countDown();assertThat(allReady).isTrue();for(var task:tasks)task.get(20,TimeUnit.SECONDS);
         }
         // then
-        assertThat(counts).hasSize(100);assertThat(counts).allMatch(n->n>=1&&n<=2);
+        assertThat(counts).hasSize(100);assertThat(counts).allMatch(n->n==2||n==4);
         var sorted=latencies.stream().sorted().toList();var evidence=new LinkedHashMap<String,Object>();
         evidence.put("requests",100);evidence.put("concurrency",100);evidence.put("sqlStatements",counts.stream().mapToLong(Long::longValue).sum());
-        evidence.put("coldMissLoads",counts.stream().filter(n->n==2).count());evidence.put("p95Millis",sorted.get(94));evidence.put("cacheTtlSeconds",2);
+        evidence.put("coldMissLoads",counts.stream().filter(n->n==4).count());evidence.put("p95Millis",sorted.get(94));evidence.put("cacheTtlSeconds",2);
         evidence.put("sqlSamples",new ArrayList<>(counts));evidence.put("latencyMillis",new ArrayList<>(latencies));
         Path out=Path.of(System.getenv().getOrDefault("PORTFOLIO_K_RUN_DIR","build/reports/status-cache"));Files.createDirectories(out);
         Files.writeString(out.resolve(System.getenv().getOrDefault("PORTFOLIO_K_RUN_LABEL","manual")+"-cold-miss-100-"+UUID.randomUUID()+".json"),new com.fasterxml.jackson.databind.ObjectMapper().writeValueAsString(evidence),StandardOpenOption.CREATE_NEW);

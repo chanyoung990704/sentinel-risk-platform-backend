@@ -1,17 +1,18 @@
-package com.aivle.project.perf;
+package com.aivle.project.app.internal.perf;
+import com.aivle.project.finance.internal.perf.PerfDataInitializer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.aivle.project.common.dto.ApiResponse;
-import com.aivle.project.company.entity.CompaniesEntity;
-import com.aivle.project.company.insight.service.CompanyInsightService;
-import com.aivle.project.company.news.service.NewsService;
-import com.aivle.project.company.reportanalysis.service.ReportAnalysisService;
-import com.aivle.project.company.repository.CompaniesRepository;
-import com.aivle.project.company.service.CompanyAiService;
+import com.aivle.project.foundation.api.dto.ApiResponse;
+import com.aivle.project.finance.internal.company.entity.CompaniesEntity;
+import com.aivle.project.insight.internal.company.insight.service.CompanyInsightService;
+import com.aivle.project.news.internal.company.news.service.NewsService;
+import com.aivle.project.insight.internal.company.reportanalysis.service.ReportAnalysisService;
+import com.aivle.project.finance.internal.company.repository.CompaniesRepository;
+import com.aivle.project.finance.internal.company.service.CompanyAiService;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -28,19 +29,19 @@ import org.springframework.test.util.ReflectionTestUtils;
 class PerfBenchmarkControllerTest {
 
 	@Mock
-	private CompaniesRepository companiesRepository;
+	private com.aivle.project.finance.api.CompanyDirectory companiesRepository;
 
 	@Mock
-	private NewsService newsService;
+	private com.aivle.project.news.api.NewsOperations newsService;
 
 	@Mock
-	private ReportAnalysisService reportAnalysisService;
+	private com.aivle.project.insight.api.ReportAnalysisOperations reportAnalysisService;
 
 	@Mock
-	private CompanyInsightService companyInsightService;
+	private com.aivle.project.insight.api.CompanyInsights companyInsightService;
 
 	@Mock
-	private CompanyAiService companyAiService;
+	private com.aivle.project.finance.api.LegacyFinancialAi companyAiService;
 
 	@InjectMocks
 	private PerfBenchmarkController controller;
@@ -76,7 +77,7 @@ class PerfBenchmarkControllerTest {
 		// given
 		when(companyInsightService.ensureInsightData(1L, true)).thenReturn(null);
 		when(companyInsightService.loadInsights(1L, 0, 10, 0, 1, null))
-			.thenReturn(new CompanyInsightService.InsightResult(List.of(), null, false));
+			.thenReturn(new com.aivle.project.insight.api.CompanyInsightResult(List.of(), null, false));
 
 		// when
 		ResponseEntity<ApiResponse<java.util.Map<String, Object>>> response = controller.insightRefresh(1L);
@@ -92,7 +93,7 @@ class PerfBenchmarkControllerTest {
 	@DisplayName("ai-report 호출 시 리포트 생성 서비스가 실행된다")
 	void aiReport_shouldDelegateToAiService() {
 		// given
-		when(companyAiService.generateAndSaveReport(1L, 2026, 1)).thenReturn(mock(com.aivle.project.file.entity.FilesEntity.class));
+		when(companyAiService.generateAndSaveReport(1L, 2026, 1)).thenReturn(mock(com.aivle.project.storage.internal.file.entity.FilesEntity.class));
 
 		// when
 		ResponseEntity<ApiResponse<java.util.Map<String, Object>>> response = controller.aiReport(1L, 2026, 1);

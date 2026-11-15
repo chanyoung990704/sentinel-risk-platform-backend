@@ -1,8 +1,8 @@
-package com.aivle.project.company.reportanalysis.controller;
+package com.aivle.project.insight.internal.company.reportanalysis.controller;
 
-import com.aivle.project.common.dto.ApiResponse;
-import com.aivle.project.company.reportanalysis.dto.ReportAnalysisResponse;
-import com.aivle.project.company.reportanalysis.service.ReportAnalysisService;
+import com.aivle.project.foundation.api.dto.ApiResponse;
+import com.aivle.project.insight.api.ReportAnalysisResponse;
+import com.aivle.project.insight.internal.company.reportanalysis.service.ReportAnalysisService;
 import java.time.OffsetDateTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;

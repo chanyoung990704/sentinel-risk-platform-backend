@@ -1,4 +1,4 @@
-package com.aivle.project.common.security;
+package com.aivle.project.identity.internal.common.security;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

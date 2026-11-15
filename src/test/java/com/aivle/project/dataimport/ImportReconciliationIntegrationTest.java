@@ -1,11 +1,14 @@
 package com.aivle.project.dataimport;
 
 import static org.assertj.core.api.Assertions.*;
-import com.aivle.project.dataimport.model.*;
-import com.aivle.project.dataimport.model.CanonicalMetricCell.*;
-import com.aivle.project.dataimport.model.ImportStartCommand.QuarantinePolicy;
-import com.aivle.project.dataimport.repository.SnapshotReportRepository;
-import com.aivle.project.dataimport.service.*;
+import com.aivle.project.finance.internal.dataimport.model.*;
+import com.aivle.project.finance.internal.dataimport.model.ImportStartCommand;
+import com.aivle.project.finance.internal.dataimport.model.ImportStartCommand;
+import com.aivle.project.finance.api.CanonicalMetricCell;
+import com.aivle.project.finance.api.CanonicalMetricCell.*;
+import com.aivle.project.finance.internal.dataimport.model.ImportStartCommand.QuarantinePolicy;
+import com.aivle.project.finance.internal.dataimport.repository.SnapshotReportRepository;
+import com.aivle.project.finance.internal.dataimport.service.*;
 import com.aivle.project.support.PortfolioIntegrationSupport;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
@@ -26,7 +29,7 @@ class ImportReconciliationIntegrationTest extends PortfolioIntegrationSupport {
 	@Autowired ImportRunService imports;
 	@Autowired SnapshotMaterializationService materializer;
 	@Autowired SnapshotReportRepository reports;
-	@Autowired com.aivle.project.dataimport.repository.ImportReconciliationRepository reconciliation;
+	@Autowired com.aivle.project.finance.internal.dataimport.repository.ImportReconciliationRepository reconciliation;
 	@Autowired ImportVerificationService verification;
 	@Autowired ImportMasterService masters;
 	@Autowired JdbcTemplate jdbc;
@@ -186,7 +189,7 @@ class ImportReconciliationIntegrationTest extends PortfolioIntegrationSupport {
 		return cliArguments(profile,output,"verify",snapshot.toString(),output.toString());
 	}
 	private int cliArguments(String profile,Path output,String... arguments)throws Exception {
-		var command=new ArrayList<>(List.of(Path.of(System.getProperty("java.home"),"bin/java").toString(),"-Xmx256m","-cp",System.getProperty("sentinel.test.classpath"),"com.aivle.project.dataimport.cli.ImportCommand"));command.addAll(List.of(arguments));var builder=new ProcessBuilder(command);
+		var command=new ArrayList<>(List.of(Path.of(System.getProperty("java.home"),"bin/java").toString(),"-Xmx256m","-cp",System.getProperty("sentinel.test.classpath"),"com.aivle.project.finance.internal.dataimport.cli.ImportCommand"));command.addAll(List.of(arguments));var builder=new ProcessBuilder(command);
 		builder.environment().keySet().removeIf(k->!Set.of("PATH","HOME","USER","LOGNAME","LANG","LC_ALL","LC_CTYPE","JAVA_HOME","TMPDIR").contains(k));
 		builder.environment().put("SPRING_PROFILES_ACTIVE",profile);builder.environment().put("PORTFOLIO_SECRET_DIR",com.aivle.project.support.PortfolioSecretPaths.directory().toString());
 		Path log=cliOutput().resolveSibling("cli-process-"+UUID.randomUUID()+".log");var process=builder.redirectErrorStream(true).redirectOutput(log.toFile()).start();

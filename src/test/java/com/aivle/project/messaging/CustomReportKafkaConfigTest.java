@@ -1,6 +1,6 @@
-package com.aivle.project.messaging;
+package com.aivle.project.reporting.internal.messaging;
 import static org.assertj.core.api.Assertions.*;
-import com.aivle.project.messaging.consumer.CustomReportKafkaConfig;
+import com.aivle.project.reporting.internal.messaging.consumer.CustomReportKafkaConfig;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.support.StaticListableBeanFactory;

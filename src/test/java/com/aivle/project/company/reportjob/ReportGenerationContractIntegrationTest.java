@@ -1,11 +1,11 @@
 package com.aivle.project.company.reportjob;
 import static org.assertj.core.api.Assertions.*;
-import com.aivle.project.company.reportjob.port.*;
-import com.aivle.project.company.reportjob.model.*;
-import com.aivle.project.company.reportjob.adapter.HttpMockReportGenerationAdapter;
-import com.aivle.project.company.reportrequest.service.ReportRequestService;
-import com.aivle.project.company.reportrequest.model.CustomReportCommand;
-import com.aivle.project.company.reportrequest.repository.ReportRequestRepository;
+import com.aivle.project.reporting.internal.company.reportjob.port.*;
+import com.aivle.project.reporting.internal.company.reportjob.model.*;
+import com.aivle.project.reporting.internal.company.reportjob.adapter.HttpMockReportGenerationAdapter;
+import com.aivle.project.reporting.internal.company.reportrequest.service.ReportRequestService;
+import com.aivle.project.reporting.api.CustomReportCommand;
+import com.aivle.project.reporting.internal.company.reportrequest.repository.ReportRequestRepository;
 import com.aivle.project.support.CustomReportIntegrationSupport;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.net.*;
@@ -81,7 +81,7 @@ class ReportGenerationContractIntegrationTest extends CustomReportIntegrationSup
 		// given
 		var r=requestRows.find(accepted("source-timeout","응답 제한")).orElseThrow();var source=reader.load(r.snapshotId(),company,r.targetQuarterKey());var input=new CustomReportInput(r.instructions(),r.inputHash());control("valid",0,1500);
 		// when / then
-		assertThatThrownBy(()->new HttpMockReportGenerationAdapter("http://127.0.0.1:18081",100,200).generate(source,input,r.id())).isInstanceOfSatisfying(ReportGenerationFailure.class,e->assertThat(e.retryable()).isTrue());
-		assertThatThrownBy(()->new HttpMockReportGenerationAdapter("https://example.invalid",100,200).generate(source,input,r.id())).isInstanceOfSatisfying(ReportGenerationFailure.class,e->assertThat(e.code()).isEqualTo("AI_NOT_LOCAL"));
+		assertThatThrownBy(()->new HttpMockReportGenerationAdapter(new com.aivle.project.aiintegration.internal.LocalAiPdfClient("http://127.0.0.1:18081",100,200),new com.fasterxml.jackson.databind.ObjectMapper()).generate(source,input,r.id())).isInstanceOfSatisfying(ReportGenerationFailure.class,e->assertThat(e.retryable()).isTrue());
+		assertThatThrownBy(()->new HttpMockReportGenerationAdapter(new com.aivle.project.aiintegration.internal.LocalAiPdfClient("https://example.invalid",100,200),new com.fasterxml.jackson.databind.ObjectMapper()).generate(source,input,r.id())).isInstanceOfSatisfying(ReportGenerationFailure.class,e->assertThat(e.code()).isEqualTo("AI_NOT_LOCAL"));
 	}
 }

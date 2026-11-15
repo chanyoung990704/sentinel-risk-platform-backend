@@ -1,4 +1,5 @@
-package com.aivle.project.auth.dto;
+package com.aivle.project.identity.internal.auth.dto;
+import com.aivle.project.identity.api.SignupRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

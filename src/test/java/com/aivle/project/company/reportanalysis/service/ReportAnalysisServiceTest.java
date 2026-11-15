@@ -1,14 +1,14 @@
-package com.aivle.project.company.reportanalysis.service;
+package com.aivle.project.insight.internal.company.reportanalysis.service;
 
-import com.aivle.project.company.entity.CompaniesEntity;
-import com.aivle.project.company.news.client.NewsClient;
-import com.aivle.project.company.news.dto.NewsItemResponse;
-import com.aivle.project.company.reportanalysis.dto.ReportApiResponse;
-import com.aivle.project.company.reportanalysis.entity.ReportAnalysisEntity;
-import com.aivle.project.company.reportanalysis.entity.ReportContentEntity;
-import com.aivle.project.company.reportanalysis.repository.ReportAnalysisRepository;
-import com.aivle.project.company.reportanalysis.repository.ReportContentRepository;
-import com.aivle.project.company.repository.CompaniesRepository;
+import com.aivle.project.finance.internal.company.entity.CompaniesEntity;
+import com.aivle.project.aiintegration.internal.NewsClient;
+import com.aivle.project.aiintegration.api.NewsItemResponse;
+import com.aivle.project.aiintegration.api.ReportApiResponse;
+import com.aivle.project.insight.internal.company.reportanalysis.entity.ReportAnalysisEntity;
+import com.aivle.project.insight.internal.company.reportanalysis.entity.ReportContentEntity;
+import com.aivle.project.insight.internal.company.reportanalysis.repository.ReportAnalysisRepository;
+import com.aivle.project.insight.internal.company.reportanalysis.repository.ReportContentRepository;
+import com.aivle.project.finance.internal.company.repository.CompaniesRepository;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -38,10 +38,10 @@ class ReportAnalysisServiceTest {
 	private ReportContentRepository reportContentRepository;
 
 	@Mock
-	private NewsClient newsClient;
+	private com.aivle.project.aiintegration.api.NewsGateway newsClient;
 
 	@Mock
-	private CompaniesRepository companiesRepository;
+	private com.aivle.project.finance.api.CompanyDirectory companiesRepository;
 
 	@InjectMocks
 	private ReportAnalysisService reportAnalysisService;

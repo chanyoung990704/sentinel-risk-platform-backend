@@ -27,7 +27,7 @@ public final class ReportDeliveryApplicationProcess {
 		try{afterCreate.accept(temporary);Files.writeString(temporary,identity);Files.move(temporary,ready,StandardCopyOption.ATOMIC_MOVE);}
 		finally{Files.deleteIfExists(temporary);}
 	}
-	static final class AckBoundary implements com.aivle.project.messaging.consumer.ReportDeliveryObserver {
+	static final class AckBoundary implements com.aivle.project.reporting.internal.messaging.consumer.ReportDeliveryObserver {
 		private final Path gate,ready;private final String target;private final ObjectMapper mapper=new ObjectMapper();
 		AckBoundary(Path gate,Path ready,String target){this.gate=gate;this.ready=ready;this.target=target;}
 		boolean ours(org.apache.kafka.clients.consumer.ConsumerRecord<byte[],byte[]> record){return record.key()!=null && target.equals(new String(record.key(),java.nio.charset.StandardCharsets.UTF_8)) && record.value()!=null;}
@@ -42,11 +42,11 @@ public final class ReportDeliveryApplicationProcess {
 			Runtime.getRuntime().halt(95);
 		}
 	}
-	public static final class ArtifactBoundary extends com.aivle.project.messaging.outbox.OutboxWriter {
+	public static final class ArtifactBoundary extends com.aivle.project.reporting.internal.messaging.outbox.OutboxWriter {
 		public ArtifactBoundary(org.springframework.jdbc.core.JdbcTemplate jdbc,ObjectMapper mapper){super(jdbc,mapper);}
-		@Override public void append(com.aivle.project.messaging.outbox.ReportEvent event){
+		@Override public void append(com.aivle.project.reporting.internal.messaging.outbox.ReportEvent event){
 			super.append(event);
-			if(event.eventType()==com.aivle.project.messaging.outbox.ReportEventType.STATUS_CHANGED && event.payload().status()==com.aivle.project.company.reportrequest.model.ReportRequestStatus.SUCCEEDED)Runtime.getRuntime().halt(96);
+			if(event.eventType()==com.aivle.project.reporting.api.ReportEventType.STATUS_CHANGED && event.payload().status()==com.aivle.project.reporting.api.ReportRequestStatus.SUCCEEDED)Runtime.getRuntime().halt(96);
 		}
 	}
 }
