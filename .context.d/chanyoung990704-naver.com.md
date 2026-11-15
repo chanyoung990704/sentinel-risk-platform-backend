@@ -11,6 +11,20 @@
 
 ## 2. Recent Notes (최근 메모)
 
+- 2026-11-15 | 작업: B01~B08 게시 커밋 구성 | 결과: d3ace67(모듈 전환·관련 시험), d950dbd(verifiedCheck XML 집계 보강)을 refactor/modulith-boundaries에 기록했다. 소스945개와 최종 검증 패키지 지문 일치·비밀키 고신뢰 패턴0·제외 대상 포함0·gradlew100755 확인. README/설계/실행계약/계획/컨텍스트는 별도 문서 커밋으로 함께 게시한다 | 이슈: 전체 장기 시험을 중복 실행하지 않고 동일 소스의 완료된 검증 근거를 유지했다. 원격 반영은 push 뒤 ls-remote로 대조하며, main 병합·배포는 수행하지 않는다.
+
+- 2026-11-15 | 작업: 사용자 커밋·push 승인으로 B01~B08 게시 준비 | 결과: 최종 패키지의 소스945개 지문 일치, 기존 Java642pass/15skip 연결 검증·Python114·브라우저13 근거 유지. refactor/modulith-boundaries 브랜치에 모듈 전환·검증 집계 보강·문서를 구분해 커밋 후 원격 반영 예정 | 이슈: 원본 checkout/main·시험 원자료·로컬 참고 문서 보존. B09/배포/메인 병합은 이번 범위에서 제외.
+
+- 2026-11-15 | B01~B08 마감 | 11모듈/구조·독립16,Java657고유642pass+기존15skip(초기실패1별도수정재실행),UI13/build·최종Python114pass. 최종검토Important1은aggregate XML수집툴/시험2파일만RED→GREEN,앱·빌드·측정러너불변. 실제비교16회/조회57742오류0·SQL11·응답동등,정상본2520+가드본590전부종결·실제PDF3892정합/고아0. B5가드후2회미실행/TPS N/A·조회시간향상판정유보. 원본149976/NULL8656/zero1383/8332버전/59counts·스키마·격리828·6서비스ID이미지보존재개/API초기정지/시험모두보존정지. CDC최종RUNNING관찰만(deliveryVerified=false),원본새쓰기없음. 결과docs/results/modulith.md·원장perf/results/20261114-modulith,최종패키지evidence-verification.json. B09/commit/push/deploy제외,기존15skip/insights500/모바일Minor명시.
+
+- 2026-11-15 | B08 계속 검증 | 새 modulith 환경 실제 선별20/20·관리 CLI13/13·계정 JPA/JDBC2/2·S3 close실패 RED→4/4 GREEN. 전체637개 중 CLI2실패를 보강했고 b08-final-verification bootJar/5범위 전체회귀를 실행 중이다. 기존15skip/strict INCOMPLETE 유지, UI·새 A/B조회 및 보고서 도착률1/5×3·독립재계산·마지막 전체검토1회·보존감사/원본재개·문서최종편집은 아직 남았다. WSL 부팅e21f49f3…유지/전용 keepalive11580을 완료시 소유검사후종료, 원인 미확정. 원장perf/results/20261114-modulith/progress.md, B09/커밋/push/배포 제외.
+
+- 2026-11-14 | B01~B08 중간 검증 | 애플리케이션/시험 컴파일·11모듈 전면 구조 검증 및 fast454pass/기존15skip, 모듈15개중14pass(메일 인프라 누락1보완중). SQL59테이블정책 RED2→GREEN, 댓글이름·로컬blob롤백·OpenAPI문자열경로회귀를재현/수정. 파일 메타 API와CLI읽기adapter로reporting직접filesSQL제거. PK/FK/인덱스/원본149976·격리828·6컨테이너ID와180MB시험seed를신규private경로에보존하고원본인프라보존정지,operations전환중 | 미완료:최종독립기동/실제인프라/CDC·장애·UI·새전후성능/증거편집. 과거수치를신규결과로재사용하지않음. 원장perf/results/20261114-modulith/progress.md. B09/커밋/push/배포제외.
+
+- 2026-11-14 | 작업: 사용자 B01~B08 전체 구현 승인으로 착수 | 결과: 변경 전 fast462중447pass/기존15skip·원본149976행SHA일치/59테이블보존·Modulith1.4.14 POM/Boot3.5호환 확인. 경계 시험2개 RED 후 타입 소유권 이동과 API·ID 참조·재무 source/AI 전송·관심기업 배치 조회 경계를 구현 중 | 이슈: 아직 전체 컴파일/기능·장애·성능 회귀 및 B07/B08 미완료. 임시 직접 참조와 시험 fixture 갱신을 계속해야 함. 상태·Ruling·개발 실패 로그·기준 소스는 perf/results/20261114-modulith/progress.md 및 modulith-baseline 실행 사본에 보존. B09/커밋/push/배포 제외, 원본 DB/checkout/기존 raw 보존.
+
+- 2026-11-14 | 작업: 사용자 요청에 따른 Spring Modulith/MSA 준비 계획 | 결과: 현재 단일 Gradle/Boot·20패키지/463Java 및 auth-user/common/company-report/file-post·직접 SQL 결합을 조사하고, identity/finance/insight/reporting/aiintegration/watchlist/news/community/storage + app/foundation 경계 설계와 B01~B08 전환·검증 계획 초안을 작성했다. 기존 접수/완료 transaction·CDC·기본 cache-off를 보존하고 B09 실제 서비스/DB 추출은 별도 후속으로 구분 | 이슈: 계획만 작성, 애플리케이션/의존성/DB 변경 및 신규 시험·성능 측정·커밋/push 없음. Boot3.5↔Modulith1.4 공식 호환 확인, 패치/테이블·계약 상세는 착수 시 고정. docs/superpowers/specs/2026-11-14-modulith-extraction-design.md 및 plans/2026-11-14-modulith-migration-plan.md 참조.
+
 - 2026-11-14 | 작업: README 보강·GitHub main fast-forward 게시 | 결과: backend1d07f3a/frontend7d5f009/docsfa691d8 3개논리커밋을origin/main에push,원격fa691d8확인. README새결과·측정범위·cache-off판단·실행상태/흐름정리,Ubuntu명령예시점검·환경/키Git제외·MP4binary/원본blob일치·비밀패턴0/깨진링크0. 기존607/104검증코드변경없고게시메타데이터만별도패키지검증(1164파일/14주장),원래M07raw는보존 | 이슈: 원본main폴더의미커밋context/AGENTS/계획을보존해로컬checkout은동기화하지않음. 실제원격main에반영한것이며로컬변경정리/force/pull덮어쓰기없음. 게시기록/명령예시최종문서커밋은별도전송.
 
 - 2026-11-14 | 작업: 사용자 GitHub push·README 최신 결과 편집·main 병합 명시 승인 | 결과: README 핵심 표/조건/아키텍처/완료 상태를 검증된 수치로 정리, 원시 자료·참고용 Git 제외 유지 및 환경/키 제외 보강·동영상 binary 속성 보강. 기존607 Java/104 Python 측정 소스와 새 문서 편집을 구분해 게시용 검증 준비 | 이슈: 원본 main checkout의 개인 context/AGENTS/계획 미커밋 변경은 보존하며 원격 main에 fast-forward 반영 예정. 코드·화면·문서를 논리 단위로 커밋하고 원격 SHA 확인,force/사용자 변경 덮어쓰기 없음.

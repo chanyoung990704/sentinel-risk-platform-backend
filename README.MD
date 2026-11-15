@@ -19,6 +19,7 @@
 | 재시작 후 대기 작업과 완료 PDF를 함께 복구해야 함 | DB·파일 정지 checkpoint를 별도 DB/broker에 복원하고 Outbox 재전달·Inbox 중복 방어 | 복원 **3회·303건 완료**, 기존 완료 PDF 크기·SHA 보존 및 신규 다운로드 확인 |
 | 기업 개요에서 최신 보고서 버전을 고르는 조회 비용 | MAX 하위 조회를 NOT EXISTS로 변경하고 동일 응답·데이터로 전후 비교 | 동시 10명에서 P95 중앙값 **200.836→144.805ms(-27.90%)**, TPS **79.793→104.490(+30.95%)** |
 | 상태 조회에 Redis를 추가해도 소유권 확인 SQL이 남음 | off/on/on/off 비교로 지연·변동·SQL·정합성을 함께 평가 | P95 중앙값 약 **3.73ms** 차이, SQL/조회 **1→1.0975**와 운영 비용을 고려해 **기본 cache-off** 유지 |
+| 도메인 경계를 넘는 Entity/Repository·직접 SQL과 건별 서비스 호출 | 11개 닫힌 Modulith 모듈·DTO·읽기 스냅샷·SQL 소유권·배치 API | 구조/독립 기동 **16개 통과**, 20기업 finance 호출 **41→1회**, finance 배치 내부 SQL은 1/20기업 모두 **2회** |
 
 위 결과는 WSL2 Ubuntu의 실제 MySQL·Redis·Kafka·Debezium과 모의 AI 서버에서 확인했습니다. 파일→DB 정합성, 장애 복구, 조회 성능은 각각 다른 조건의 실험입니다.
 
@@ -35,7 +36,7 @@
 
 실행과 복원 경계는 [로컬 운영 절차](docs/runbooks/portfolio-local.md), 설계 선택은 [Kafka 선택 근거](docs/adr/0002-kafka-selection.md)와 [Redis 적용 범위](docs/adr/0003-redis-scope.md)에 정리했습니다. 수치 원자료·상세 결과·포트폴리오 참고 문서는 로컬에 보존하고 Git에서 제외합니다. 외부 AI 서버·메일·OAuth·외부 데이터 공급자의 실제 서비스 연결은 이 로컬 시험으로 보장하지 않습니다.
 
-M07 보강 후 최종 회귀는 Java607개·Python104개 통과, 실행 실패0개입니다. Java의 기존 비활성15개는 별도로 남아 있어 strict gate는 `INCOMPLETE`입니다. 위 장애3반복은 당시 기동 도구의 원자료이며, 이후 준비 파일 원자 공개와 복원 도구의 안전 검사를 보강한 현재 코드의 전체 회귀는 별도 실행으로 기록했습니다.
+M07 당시 보강 후 최종 회귀는 Java607개·Python104개 통과, 실행 실패0개입니다. Java의 기존 비활성15개는 별도로 남아 있어 strict gate는 `INCOMPLETE`입니다. 위 장애3반복은 당시 기동 도구의 원자료이며, 이후 준비 파일 원자 공개와 복원 도구의 안전 검사를 보강한 현재 코드의 전체 회귀는 별도 실행으로 기록했습니다.
 
 첫 장애 반복은 기존 91개 성공과 ACK 관측 시험의 별도 재실행 1개를 연결한 근거입니다. 최초 관측 실패 1회도 보존하며, 한 번에 전체 통과한 실행으로 표현하지 않습니다. CDC를 선택했으므로 polling 발행 경계는 N/A입니다. 고정 조건과 실제 시험은 [장애 조건](perf/fixtures/fault-matrix.json), [복구 통합 시험](src/test/java/com/aivle/project/reliability/ReportDeliveryRecoveryTest.java), [적재 중단·재개 시험](src/test/java/com/aivle/project/dataimport/ImportResumeIntegrationTest.java)에서 확인할 수 있습니다.
 
@@ -119,7 +120,7 @@ Client → 상태 조회 → PENDING → PROCESSING → COMPLETED / FAILED
 - Kafka가 비활성화됐거나 템플릿을 사용할 수 없는 환경에서는 동일 작업 메서드를 호출하는 `@Async` 경로로 폴백합니다.
 - Retry·Circuit Breaker·Bulkhead가 외부 AI 호출의 일시 실패, 지속 장애, 동시 호출 수를 각각 제어합니다.
 
-구현 근거: [CompanyAiController](src/main/java/com/aivle/project/company/controller/CompanyAiController.java), [AiJobDispatchService](src/main/java/com/aivle/project/company/job/AiJobDispatchService.java), [AiJobKafkaConsumer](src/main/java/com/aivle/project/company/job/AiJobKafkaConsumer.java), [AiReportRequestStatusService](src/main/java/com/aivle/project/company/service/AiReportRequestStatusService.java)
+구현 근거: [CompanyAiController](src/main/java/com/aivle/project/app/internal/company/controller/CompanyAiController.java), [AiJobDispatchService](src/main/java/com/aivle/project/aiintegration/internal/job/AiJobDispatchService.java), [AiJobKafkaConsumer](src/main/java/com/aivle/project/app/internal/messaging/AiJobKafkaConsumer.java), [AiReportRequestStatusService](src/main/java/com/aivle/project/finance/internal/company/service/AiReportRequestStatusService.java)
 
 맞춤 보고서 보강 경로는 추가 지시문·재무 snapshot을 요청 시 고정하고, 접수와 생성의 중단·재개를 분리합니다.
 
@@ -141,7 +142,7 @@ API → MySQL 요청·Outbox commit → Debezium CDC → Kafka 요청 topic
 
 당시 팀 기록은 대시보드 API P95 약500ms→50ms입니다. 원시 측정 자료를 보존하지 않아 현재 재검증한 수치로 인용하지 않으며, 인덱스 단독 효과로도 표현하지 않습니다. 원시 CSV가 남은 후속 로컬 비교는 위 M02 결과를 사용합니다.
 
-구현 근거: [RiskScoreBatchService](src/main/java/com/aivle/project/risk/service/RiskScoreBatchService.java), [MetricAverageBatchService](src/main/java/com/aivle/project/metricaverage/service/MetricAverageBatchService.java), [CompanyWatchlistRepositoryImpl](src/main/java/com/aivle/project/watchlist/repository/CompanyWatchlistRepositoryImpl.java), [V9 risk summary](src/main/resources/db/migration/V9__create_risk_score_summaries.sql), [V19 performance indexes](src/main/resources/db/migration/V19__add_performance_indexes.sql)
+구현 근거: [RiskScoreBatchService](src/main/java/com/aivle/project/finance/internal/risk/service/RiskScoreBatchService.java), [MetricAverageBatchService](src/main/java/com/aivle/project/finance/internal/metricaverage/service/MetricAverageBatchService.java), [CompanyWatchlistRepositoryImpl](src/main/java/com/aivle/project/watchlist/internal/repository/CompanyWatchlistRepositoryImpl.java), [V9 risk summary](src/main/resources/db/migration/V9__create_risk_score_summaries.sql), [V19 performance indexes](src/main/resources/db/migration/V19__add_performance_indexes.sql)
 
 ## 3. 동시성 문제에 하나의 Lock을 적용하지 않음
 
@@ -153,7 +154,7 @@ API → MySQL 요청·Outbox commit → Debezium CDC → Kafka 요청 topic
 
 Redis Distributed Lock을 모든 문제에 일괄 적용하지 않고, 각 저장소가 제공하는 가장 작은 원자성 단위를 사용했습니다.
 
-구현 근거: [V11 watchlist constraint](src/main/resources/db/migration/V11__create_company_watchlists.sql), [CompanyReportVersionIssueService](src/main/java/com/aivle/project/report/service/CompanyReportVersionIssueService.java), [LoginAttemptService](src/main/java/com/aivle/project/auth/service/LoginAttemptService.java)
+구현 근거: [V11 watchlist constraint](src/main/resources/db/migration/V11__create_company_watchlists.sql), [CompanyReportVersionIssueService](src/main/java/com/aivle/project/finance/internal/report/service/CompanyReportVersionIssueService.java), [LoginAttemptService](src/main/java/com/aivle/project/identity/internal/auth/service/LoginAttemptService.java)
 
 ## 4. 운영과 보안의 실패 경계
 
@@ -182,6 +183,20 @@ README에서 구현한 내용과 확장 설계를 섞지 않습니다.
 맞춤 보고서 보강은 WSL2 Ubuntu의 전용 MySQL·Kafka/Connect와 모의 AI HTTP 서버에서 검증합니다. 관리 앱 launcher가 CDC 수신과 worker를 켜면 HTTP 접수부터 본인 PDF 조회까지 연결됩니다. DB 장애 뒤 CDC task가 FAILED로 남는 경우에는 위치·이력을 유지하는 명시 복구 명령을 사용합니다. 실제 모델 품질이나 운영 배포 성과를 의미하지 않습니다. [맞춤 보고서 실행 문서](docs/runtime/custom-reports.md)와 [CDC 전달·복구](docs/runtime/messaging-recovery.md)를 참고하세요.
 
 `frontend/`의 기업 상세 화면에서 추가 내용 입력·응답 유실 후 같은 키 재전송·새로고침 후 추적·본인 PDF 다운로드를 연결했습니다. 새 상태 캐시는 MySQL 소유권/현재 버전을 확인하며 실패 시 DB로 조회합니다. 기존 Redis 기반 보고서 상태 경로와 구분하며, 성능 이득을 전제로 하지 않습니다. [화면·캐시 실행과 측정 조건](docs/runtime/browser-and-measurement.md)을 참고하세요.
+
+## 도메인 경계와 추후 서비스 분리
+
+단일 Spring Boot 애플리케이션을 Spring Modulith **11개 모듈**로 구분했습니다. 계정/인증, 원천 재무·적재, 맞춤 보고서, AI 전송, 조회 조립의 책임을 나누고 공개 API와 DTO·읽기 스냅샷로 연결합니다. 다른 모듈의 Entity/Repository와 내부 타입 참조는 구조 시험으로 차단합니다.
+
+모듈별 `STANDALONE` 기동, 공개 계약 검사, SQL 소유권 검사와 대표 MySQL 제한 계정 시험을 함께 둡니다. 관심기업 기본정보는 기업별 finance 호출을 배치 API로 바꾸고, 1개/20개 기업의 SQL 수와 기존 단일 조회의 JSON 동등성을 확인합니다. 관리 재개·격리 재전달 CLI도 전체 웹 앱과 별도로 실행해 연결을 검증합니다.
+
+현재는 동일 JVM·동일 DB입니다. 요청/슬롯/Outbox 및 파일 메타/완료의 로컬 트랜잭션과 모듈 간 FK 16개를 유지합니다. 독립 DB/서버 추출 전에는 source 보존, 계정 상태 전파, 파일 확정/보상과 키 배포 정책을 별도로 검증해야 합니다. [모듈·테이블 소유권](docs/architecture/module-ownership.md), [선택과 추출 제약](docs/adr/0004-modulith-boundaries.md)에 정리했습니다.
+
+현재 모듈 전환의 Java 근거는 최초 전체657개 실행과 실패1개의 시험 조립 보강/재실행을 연결한 **642통과·기존15비활성**입니다. 생산 코드 입력은 동일하며 한 번의 전체 통과로 표현하지 않습니다. 검토 보강 후 Python114개·브라우저13개(UI 계약12·실제 흐름1)와 빌드도 통과했습니다. strict gate는 기존15개 때문에 `INCOMPLETE`입니다.
+
+finance 배치의 SQL2회는 관심기업 관계/인증을 포함한 전체 HTTP 비용과 구분합니다. 상태 조회 서비스는 계정 확인을 분리해 기본2회/cache hit2회/cold4회로 비용이 증가했습니다. 위 M02/M04 수치는 당시 코드의 결과이며 현재 모듈 전환의 새 비교와 합치지 않습니다. 실제 화면의 맞춤 PDF 흐름과, 모의 서버가 제공하지 않는 기존 뉴스·공시 분석 연동도 구분합니다.
+
+새 비교는 조회6회·보고서10회(정상9·가드1)로 마감했습니다. 조회57,742건의 오류/응답 불일치0·SQL11을 확인했으나 반복 편차가 커 시간 개선 판정은 유보했습니다. 보고서1/s의 완료 P95 중앙값은2267.709→2274.020ms였고, 5/s는 변경 후 첫 실행에서 클라이언트 미완료 관측200가드가 동작해 후속2회를 실행하지 않았습니다. 정상본2520건과 가드본590건은 모두 완료됐으며 단축 구간의 정규TPS는N/A입니다.
 
 ## 기술 선택
 
@@ -254,18 +269,23 @@ docker compose -f docker-compose.app.yml -f docker-compose.local.yml down
 | 보고서 지표 적재·조회 | [Metric import](docs/report-metric-import.md), [Metric query](docs/report-metric-query.md) |
 | ERD와 마이그레이션 | [ERD](ERD.md), [`db/migration`](src/main/resources/db/migration) |
 | CI/CD | [buildspec.yml](buildspec.yml), [appspec.yml](appspec.yml), [`scripts`](scripts) |
+| 모듈 경계·검증 | [소유권](docs/architecture/module-ownership.md), [ADR](docs/adr/0004-modulith-boundaries.md), [구조 시험](src/test/java/com/aivle/project/architecture/ApplicationModulesTest.java) |
 
 ## 저장소 구조
 
 ```text
 src/main/java/com/aivle/project
-├── auth/             # JWT, refresh rotation, 로그인 제한
-├── company/          # 기업 조회, AI 작업, OpenDART/뉴스 연동
-├── dashboard/        # 대시보드 조회
-├── metricaverage/    # 지표 평균 사전 집계
-├── report/           # 보고서·버전·지표·PDF
-├── risk/             # 위험도 계산과 요약
-└── watchlist/        # 관심 기업과 대시보드 QueryDSL 조회
+├── identity/         # 계정·권한·JWT·refresh
+├── finance/          # 원천 재무·적재·snapshot·기업·지표
+├── reporting/        # 맞춤 보고서·Outbox/Inbox·job·확정·복구
+├── aiintegration/    # AI HTTP 전송·오류 분류
+├── watchlist/        # 관심기업 관계
+├── insight/          # 사업보고서 해석·분석 조립
+├── news/             # 뉴스·평판
+├── community/        # 게시물·댓글·첨부 권한
+├── storage/          # 파일 메타·로컬/S3 저장
+├── app/              # HTTP/보안 정책·이벤트·화면 조립
+└── foundation/       # 순수 공통 타입·오류·해시
 
 src/main/resources/db/migration/  # MySQL Flyway
 src/test/                         # 단위·통합 테스트

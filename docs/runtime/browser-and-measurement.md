@@ -15,6 +15,8 @@ VITE_API_BASE_URL=http://localhost:18080 npm run dev -- --host 127.0.0.1 --stric
 
 기존 local 백엔드·Compose·CDC가 준비되어야 한다. 테스트 전용 `browser_runtime.py start off`는 20개 소유 사용자와 비공개 임의 자격 정보를 생성한다. 정식 실행용 사용자 생성기가 아니다. 소유 앱을 `stop`한 뒤에만 Gradle을 실행한다. fixture는 한 실험의 전후 측정 동안 동일하게 사용한다. 사용자 승인으로 시험 자료를 정리한 뒤에는 다음 start가 새 시험 계정을 생성하므로 새 run ID와 새 참조 요청을 준비한다. 다른 사용자/실제 자료는 정리하지 않는다.
 
+다른 namespace나 별도 실험에서 fixture 위치를 바꾸면 `SENTINEL_BROWSER_FIXTURE`에 해당 앱이 생성한 비공개 JSON의 절대 경로를 지정한다. B08은 `~/.local/share/sentinel/modulith/modulith-b08/r07-m04/browser-fixture.json`을 사용했다. portfolio의 자격 fixture를 다른 DB 시험에 재사용하지 않는다. `VITE_API_BASE_URL`은 dev 서버와 브라우저 시험/해당 빌드에 명시한다. 이 값이 없고 별도 proxy도 없으면 `/api`가 Vite로 전송돼404가 발생할 수 있다.
+
 ## 브라우저 계약
 
 한 의도에 UUID 키 하나를 사용하고, 수신 응답 유실 시 같은 키와 본문으로 재전송한다. 재전송에도 서버에서 요청 하나를 유지한다. 완료/실패 후 `새 요청 작성`은 새 키를 만든다. 입력과 requestId는 브라우저 sessionStorage의 사용자·기업별 공간에 보관하며 로그아웃/인증 만료 시 지운다. 이 저장소는 서버의 권한 검사를 대체하지 않는다.
@@ -38,7 +40,7 @@ UI 계약 시험의 API 대체와 실제 로그인/JWT/CORS/Kafka/worker/파일 
 
 발생기는 Ubuntu native filesystem에 먼저 기록하고 종료 뒤 보관본으로 복사한다. `windows.json`은 wall/monotonic 준비·본측정 경계와 실제 부하 중단 시각을 기록한다. 고정 도착률도 마지막 송신 뒤 구간 끝까지 대기한다. P95는 본구간에 시작한 요청의 지연 분포이며 성공 TPS는 정확한 본구간에 응답이 끝난 요청 수/120초다. 준비 중 시작해 본구간에 끝난 carry-in과 본구간 시작 후 종료 뒤 끝난 carry-out을 따로 보관한다. 가드로 단축된 구간의 정규 TPS는 null이며 drain 완료 수를 처리량으로 바꾸지 않는다.
 
-준비 예외도 ExitStack으로 소유 스레드·CSV를 정리한 뒤 partial 자료를 보관한다. 현재 알려진 제한은 READ HTTP/DTO 오류가 표본에는 남지만 즉시 중단 guard와 연결되지 않는 점이다. 해당 실패에서는 설정된 기간까지 계속될 수 있다. 이번V2 READ는오류0이며일반manifest의HTTPerror가드설명은이예외를정확히반영하지못한다.
+준비 예외도 ExitStack으로 소유 스레드·CSV를 정리한 뒤 partial 자료를 보관한다. R07 당시에는 READ HTTP/DTO 오류와 즉시 중단 guard가 연결되지 않는 제한이 있었으나 M07에서 실패 응답·DTO 불일치·전송 예외를 guard에 연결했다. 과거V2 READ의 오류0 원자료와 보강 후 현재 구현을 구분한다.
 
 ```bash
 python3 scripts/perf/report_benchmark.py --run-id m03-off-a1-r1 --rate 1 --latency 200 --cache off
@@ -67,3 +69,7 @@ python3 scripts/reliability/cache_runtime.py up
 상태 소비자는 `sentinel-custom-report-status-cache-v1` 별도 group과 MANUAL_IMMEDIATE ACK를 사용한다. 새 그룹은 latest에서 시작하고 기존 offset은 유지한다. 과거 상태는 DB miss fill로 재구성하며 신규 상태 이벤트는 DB 조회와 Redis 갱신 뒤 ACK한다. Redis/DB 실패는 1초 간격 재시도로 ACK를 보류한다. 잘못된 메시지는 소비자별 격리 원장과 DLT Outbox commit 뒤 ACK한다. 상태 격리 메시지를 보고서 접수 메시지로 재발행하는 관리 명령은 409로 차단한다.
 
 2026-11-12 비교에서 기본 cache-off를 유지하기로 했다. 각 모드6회 중앙값은 P95 36.122→32.393ms, 성공TPS446.379→483.413으로 좋아졌지만, 반복 범위가 크게 겹치고 요청당 평균SQL은1→1.0975로 증가했다. 약3.73ms 차이와 별도 Redis/projector·cold miss의 비용을 함께 판단한 해당 경로의 결론이다. 모든 Redis 캐시의 기각이나 통계적 유의성 검정 결과를 의미하지 않는다. 기능은 명시적으로 켜 실험할 수 있으며 권한 확인을 줄여 성능을 높이지 않는다.
+
+모듈 전환 뒤 상태 조회 서비스는 계정 확인을 분리해 기본2회/cache hit2회/cold4회로 SQL 비용이 증가했다. 위 M04의 한 SQL 기준과 과거 off/on 수치는 당시 조건이며 현재 비용과 합치지 않는다. B08의 대표 보고서 비교는 사용자 승인에 따라1/5요청/초·전후 각3회로 축소했다.
+
+공용 검증 도구 `run_verification.py`는 `verifiedCheck`의 의존5범위를 수집·필수 검증한다. 없는/빈 XML을 범위에서 빼지 않고 오래된 XML도 실패로 분류한다. 기존skip15개가 있으면 strict INCOMPLETE와 원래 Gradle 종료 코드는 유지한다.

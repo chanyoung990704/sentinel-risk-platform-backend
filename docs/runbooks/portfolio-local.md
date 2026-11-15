@@ -78,3 +78,19 @@ restore는 DB 적용 전에 기존 Kafka volume이나 Kafka/Connect 컨테이너
 원자료는 `perf/results/20261113-m05-m07`, 실행 command/XML/조건/해시는 각 run에 보존한다. 과거 성능 측정과 후속 코드의 차이를 기록하며, 실험되지 않은 개선율을 추가하지 않는다. 기존 disabled15개와 별도 JMeter 미실행, 선택하지 않은 polling도 숨기지 않는다.
 
 정지 checkpoint는 온라인 무중단 백업이나 RPO0을 입증하지 않는다. 단일 WSL/단일 broker·모의 HTTP의 결과를 서비스 배포, 전원 장애, 다중 서버 재해복구, 실제 AI 정확도나 외부 호출 exactly-once로 확대하지 않는다.
+
+## 모듈 전환 검증 환경
+
+B01~B08은 별도 `SENTINEL_RUNTIME_NAMESPACE=modulith`를 사용한다. Compose project는 `sentinel-modulith`, private state는 `~/.local/share/sentinel/modulith`, Ubuntu 실행 사본은 `~/.local/share/sentinel/workspaces/modulith-runtime`이다. 기존 portfolio/operations/restore와 포트가 같으므로 동시에 기동하지 않는다. 원본은 컨테이너·volume·소비 위치를 보존해 정지/재개만 한다.
+
+이 namespace 추가는 checkpoint/reset/장애 행렬의 대상을 확장하지 않는다. 그 도구의 operations/restore 제한은 유지한다. 모듈 검증 시작 전에는 project·6개 서비스·localhost 포트 소유권과 GLOBAL 슬롯·미종결 요청·미완료 job이 모두 0인지 확인한다. 이전 실행의 대기 작업이 남으면 새로운 회귀를 시작하지 않는다. 원장/파일/offset을 지워 성공 조건을 만들지 않는다.
+
+빠른 경계 검증은 Ubuntu에서 앱용 DB 환경 변수를 제거한 뒤 실행한다.
+
+```bash
+env -u SPRING_DATASOURCE_URL -u SPRING_DATASOURCE_USERNAME -u SPRING_DATASOURCE_PASSWORD -u SPRING_DATASOURCE_DRIVER_CLASS_NAME -u SPRING_PROFILES_ACTIVE bash ./gradlew modulithTest fastTest --no-daemon
+```
+
+`modulithTest`는 전체 구조와 11개 독립 기동을 확인하고 `build/spring-modulith-docs/`를 생성한다. 실제 인프라 검증은 별도 준비된 시험 DB·JWT 키·CDC·제한 계정이 필요하다. 제한 계정은 [소유권 문서](../architecture/module-ownership.md)의 절차로 새 시험 환경에서 한 번 준비한다. 기존 자격 파일은 덮지 않는다. `verifiedCheck -PoutboxMode=cdc`는 모듈/fast/실제 인프라/CDC/복구 범위를 포함하지만 기존 비활성 15개가 있으면 `INCOMPLETE`를 유지한다.
+
+이번 전후 측정은 조회의 동시 사용자 수와 보고서의 고정 도착률을 구분한다. 앱·부하 발생기·Gradle·브라우저 시험을 동시에 돌리지 않고, 버전 교체 시 앱을 먼저 정지한 다음 정식 clean/build를 수행한다. 원자료에는 소스 지문·컨테이너 image ID·재무 전체 지문·실제 측정 창·guard와 실패 실행을 남긴다. 보고서 이력 증가와 A/B 순서 효과는 통제 한계로 공개한다.

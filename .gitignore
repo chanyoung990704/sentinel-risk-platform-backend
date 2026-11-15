@@ -65,4 +65,5 @@ perf/results/*
 /docs/results/reliability.md
 /docs/results/data-quality.md
 /docs/results/performance.md
+/docs/results/modulith.md
 __pycache__/
