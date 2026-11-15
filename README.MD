@@ -5,10 +5,26 @@
 기능 수보다 **데이터 수집 → 처리 → 저장 → 서빙 → 운영** 흐름에서 발생한 응답 지연, 장시간 외부 처리, 동시성, 정합성 문제를 해결하는 데 집중했습니다.
 
 - 개발 기간: 2026.01 - 2026.03
-- 로컬 복원·신뢰성 보강: 2026.11
+- 로컬 복원·신뢰성·모듈 경계 보강: 2026.11
 - 팀 구성: 6명(백엔드 2명)
 - 백엔드: Java 21, Spring Boot 3.5, MySQL 8, Redis 7, Kafka, QueryDSL
-- 배포: Docker, AWS ECR, CodeBuild, CodeDeploy, EC2
+- 기존 배포 구성: Docker, AWS ECR, CodeBuild, CodeDeploy, EC2
+
+## 현재 구현·검증 상태
+
+2026.11 로컬 보강에서는 데이터 적재·맞춤 보고서의 장애 복구에 이어 **Spring Modulith 11개 모듈 분리와 전후 비교**를 마쳤습니다. 현재는 단일 Spring Boot 애플리케이션·단일 MySQL을 유지하며, 독립 서비스로 추출하기 전에 코드와 데이터 접근 경계를 검증하는 단계입니다.
+
+| 항목 | 최근 검증 결과 |
+| --- | --- |
+| 모듈 경계 | 11개 모듈의 독립 기동과 구조·공개 계약 검사 **16개 통과**, 59개 테이블 소유권 검사 |
+| Java 회귀 | 고유 657개 중 **642개 통과·기존 15개 비활성**. 최초 전체 실행과 실패 1개 수정 후 재시험을 연결한 집계 |
+| 도구·화면 | Python **114개**, 브라우저 **13개** 통과와 프런트·백엔드 빌드 확인. 브라우저는 UI 계약 12개＋실제 로그인→모의 PDF 흐름 1개 |
+| 조회 비교 | 본 측정 **57,742건**, HTTP 오류·업무 응답 불일치 **0건**. 반복 편차가 커 시간 개선 판정은 유보 |
+| 보고서 비교 | 정상 실행 본 측정 **2,520건**＋적체 가드 실행 **590건** 모두 완료. 가드 실행은 정규 처리량 비교에서 제외 |
+
+Java 결과는 한 번의 전체 통과를 의미하지 않으며, 기존 15개 비활성 시험 때문에 strict gate는 `INCOMPLETE`입니다. 외부 AI 실제 연결 시험 1개와 기존 웹 회귀 14개가 비활성 상태입니다. 실제 화면 시험은 모의 AI를 사용하므로 원격 AI의 가용성·분석 품질을 보장하지 않습니다.
+
+경계와 추출 제약은 [모듈·테이블 소유권](docs/architecture/module-ownership.md)과 [Modulith 설계 결정](docs/adr/0004-modulith-boundaries.md), 검증 코드는 [모듈 구조 시험](src/test/java/com/aivle/project/architecture/ApplicationModulesTest.java)과 [실제 SQL 소유권 시험](src/test/java/com/aivle/project/architecture/ModuleSqlOwnershipIntegrationTest.java)에서 확인할 수 있습니다.
 
 ## 핵심 엔지니어링 결과
 
@@ -17,8 +33,8 @@
 | 적재 중단·재시도로 값이 누락되거나 미검증 데이터가 조회될 가능성 | snapshot/run/chunk 원장, 검증 후 활성 전환, 독립 CSV/OOXML·Decimal 대조 | **149,976개 위치**의 누락·추가·값 차이·중복 **0**, 실제 60,000개 적재 후 종료·재개 검증 |
 | 요청 저장과 메시지 발행 사이 장애, 재전달·늦은 worker 완료 | 요청·Outbox 원자 저장 → CDC → Inbox/job commit 후 ACK → lease·재시도·결과 확정 | 적용 **15개 장애 조건×3회**, CDC 중단·broker 중단·응답 유실의 정상 복구 **900건 완료** |
 | 재시작 후 대기 작업과 완료 PDF를 함께 복구해야 함 | DB·파일 정지 checkpoint를 별도 DB/broker에 복원하고 Outbox 재전달·Inbox 중복 방어 | 복원 **3회·303건 완료**, 기존 완료 PDF 크기·SHA 보존 및 신규 다운로드 확인 |
-| 기업 개요에서 최신 보고서 버전을 고르는 조회 비용 | MAX 하위 조회를 NOT EXISTS로 변경하고 동일 응답·데이터로 전후 비교 | 동시 10명에서 P95 중앙값 **200.836→144.805ms(-27.90%)**, TPS **79.793→104.490(+30.95%)** |
-| 상태 조회에 Redis를 추가해도 소유권 확인 SQL이 남음 | off/on/on/off 비교로 지연·변동·SQL·정합성을 함께 평가 | P95 중앙값 약 **3.73ms** 차이, SQL/조회 **1→1.0975**와 운영 비용을 고려해 **기본 cache-off** 유지 |
+| 기업 개요에서 최신 보고서 버전을 고르는 조회 비용(M02 당시) | MAX 하위 조회를 NOT EXISTS로 변경하고 동일 응답·데이터로 전후 비교 | 동시 10명에서 P95 중앙값 **200.836→144.805ms(-27.90%)**, TPS **79.793→104.490(+30.95%)** |
+| 상태 조회에 Redis를 추가해도 소유권 확인 SQL이 남음(M04 당시) | off/on/on/off 비교로 지연·변동·SQL·정합성을 함께 평가 | P95 중앙값 약 **3.73ms** 차이, SQL/조회 **1→1.0975**와 운영 비용을 고려해 **기본 cache-off** 유지 |
 | 도메인 경계를 넘는 Entity/Repository·직접 SQL과 건별 서비스 호출 | 11개 닫힌 Modulith 모듈·DTO·읽기 스냅샷·SQL 소유권·배치 API | 구조/독립 기동 **16개 통과**, 20기업 finance 호출 **41→1회**, finance 배치 내부 SQL은 1/20기업 모두 **2회** |
 
 위 결과는 WSL2 Ubuntu의 실제 MySQL·Redis·Kafka·Debezium과 모의 AI 서버에서 확인했습니다. 파일→DB 정합성, 장애 복구, 조회 성능은 각각 다른 조건의 실험입니다.
@@ -178,6 +194,8 @@ README에서 구현한 내용과 확장 설계를 섞지 않습니다.
 | 새 맞춤 요청의 DB 기준 상태 캐시·버전 Lua·별도 소비 그룹/Redis 장애 복구 및 전후12회 비교 | 기본 cache-off 유지: 작은 지연 이득 대비 반복 편차·추가 SQL·운영 비용 확인 |
 | 기존 보고서 경로의 Redis 요청 상태·Lua 전이 | 기존 경로의 장시간 `PROCESSING` 고착 복구 배치 |
 | Docker Compose 기반 애플리케이션·Redis·Kafka 구성 | Kafka 다중 브로커, Redis Replica/Sentinel |
+| 11개 모듈·공개 API/ID 참조·독립 기동·SQL 소유권 검증 | 모듈 간 FK 16개와 로컬 트랜잭션을 고려한 서비스·DB 추출 |
+| 모듈 전환 후 조회·보고서 전후 16회 비교와 적체 가드 | 고부하의 worker·DB·상태 조회 비용을 분리한 추가 측정 |
 | CodeBuild → ECR → CodeDeploy → EC2, Health Gate | 부하·Scale-out 측정, Multi-AZ, Auto Scaling |
 
 맞춤 보고서 보강은 WSL2 Ubuntu의 전용 MySQL·Kafka/Connect와 모의 AI HTTP 서버에서 검증합니다. 관리 앱 launcher가 CDC 수신과 worker를 켜면 HTTP 접수부터 본인 PDF 조회까지 연결됩니다. DB 장애 뒤 CDC task가 FAILED로 남는 경우에는 위치·이력을 유지하는 명시 복구 명령을 사용합니다. 실제 모델 품질이나 운영 배포 성과를 의미하지 않습니다. [맞춤 보고서 실행 문서](docs/runtime/custom-reports.md)와 [CDC 전달·복구](docs/runtime/messaging-recovery.md)를 참고하세요.
@@ -192,24 +210,39 @@ README에서 구현한 내용과 확장 설계를 섞지 않습니다.
 
 현재는 동일 JVM·동일 DB입니다. 요청/슬롯/Outbox 및 파일 메타/완료의 로컬 트랜잭션과 모듈 간 FK 16개를 유지합니다. 독립 DB/서버 추출 전에는 source 보존, 계정 상태 전파, 파일 확정/보상과 키 배포 정책을 별도로 검증해야 합니다. [모듈·테이블 소유권](docs/architecture/module-ownership.md), [선택과 추출 제약](docs/adr/0004-modulith-boundaries.md)에 정리했습니다.
 
-현재 모듈 전환의 Java 근거는 최초 전체657개 실행과 실패1개의 시험 조립 보강/재실행을 연결한 **642통과·기존15비활성**입니다. 생산 코드 입력은 동일하며 한 번의 전체 통과로 표현하지 않습니다. 검토 보강 후 Python114개·브라우저13개(UI 계약12·실제 흐름1)와 빌드도 통과했습니다. strict gate는 기존15개 때문에 `INCOMPLETE`입니다.
+### 모듈 전환의 비용과 전후 비교
 
-finance 배치의 SQL2회는 관심기업 관계/인증을 포함한 전체 HTTP 비용과 구분합니다. 상태 조회 서비스는 계정 확인을 분리해 기본2회/cache hit2회/cold4회로 비용이 증가했습니다. 위 M02/M04 수치는 당시 코드의 결과이며 현재 모듈 전환의 새 비교와 합치지 않습니다. 실제 화면의 맞춤 PDF 흐름과, 모의 서버가 제공하지 않는 기존 뉴스·공시 분석 연동도 구분합니다.
+관심기업 20개의 기본정보 조립에서 finance 호출은 41회에서 배치 API 1회로 줄었습니다. finance 배치 내부 SQL은 1개·20개 기업 모두 2회이며, 관심기업 관계·인증을 포함한 전체 HTTP 요청의 SQL 수와는 구분합니다. 반면 상태 조회 HTTP의 기본 SQL은 계정 확인을 분리하면서 1회에서 2회로 늘었습니다. 현재는 기본 2회·캐시 적중 2회·미적중 4회이므로 경계 분리가 모든 조회 비용을 줄였다고 해석하지 않습니다.
 
-새 비교는 조회6회·보고서10회(정상9·가드1)로 마감했습니다. 조회57,742건의 오류/응답 불일치0·SQL11을 확인했으나 반복 편차가 커 시간 개선 판정은 유보했습니다. 보고서1/s의 완료 P95 중앙값은2267.709→2274.020ms였고, 5/s는 변경 후 첫 실행에서 클라이언트 미완료 관측200가드가 동작해 후속2회를 실행하지 않았습니다. 정상본2520건과 가드본590건은 모두 완료됐으며 단축 구간의 정규TPS는N/A입니다.
+전후 비교는 WSL2 Ubuntu 단일 PC, 실제 재무 149,976행, JVM heap 512MiB·DB pool 10, 준비 30초·본 측정 120초 조건입니다. 조회는 동시 10명, 보고서는 20사용자·worker 4개·모의 AI 200ms·cache-off로 측정했습니다. A 다음 B를 실행하고 보고서 이력을 보존했으므로 실행 순서·이력 증가·PC 부하의 영향이 남습니다.
+
+| 대상 | 변경 전 → 변경 후 | 판정 |
+| --- | --- | --- |
+| 조회: 전후 각 3회 | P95 중앙값 209.249→151.430ms, SQL/요청 11→11 | 반복 범위가 크므로 시간 개선 성과로 사용하지 않음 |
+| 보고서 1건/초: 전후 각 3회 | 클라이언트 완료 P95 중앙값 2,267.709→2,274.020ms | 이 조건에서 사전 12% 악화 경보 없음. 최대 처리량·통계적 동등성의 근거는 아님 |
+| 보고서 5건/초 | 변경 전 3회, 변경 후 첫 실행에서 미완료 관측 200건 가드 작동 | 후속 2회 미실행, 변경 후 정규 TPS는 N/A |
+
+총 16회 중 보고서 정상 실행 9회와 가드 실행 1회의 본 측정 3,110건은 모두 완료됐고, 누락·중복 job/artifact와 외부 추가 호출은 없었습니다. 가드 실행은 접수를 중단하고 남은 요청을 모두 처리한 결과이며 정상 완주와 구분합니다. 위 M02·M04의 수치는 각각 당시 코드의 별도 실험으로, 이번 결과와 합치지 않습니다.
+
+### 남은 검증 범위
+
+- 모의 AI가 지원하지 않는 기존 뉴스·공시 분석 경로에서는 외부 호출 실패 뒤 `/api/companies/{id}/insights`의 500 응답을 관찰했습니다. 맞춤 보고서 흐름의 통과를 모든 화면 API의 정상 동작으로 확대하지 않으며, 해당 트랜잭션·오류 처리 정책은 후속 보강 대상입니다.
+- 모듈 간 FK 16개와 로컬 트랜잭션이 남아 있습니다. 별도 DB 계정 시험은 경계 검사 근거이며, 운영 애플리케이션의 물리적 DB 권한 격리나 실제 MSA 배포를 의미하지 않습니다.
+- 실제 원격 AI·S3·메일/OAuth 제공자, 다중 브로커 HA와 운영 트래픽 확장성은 이번 로컬 검증에 포함하지 않았습니다.
 
 ## 기술 선택
 
 | 영역 | 기술 | 사용 목적 |
 | --- | --- | --- |
 | Backend | Java 21, Spring Boot 3.5, Spring Security | API, 인증·인가, 트랜잭션 경계 |
+| Architecture | Spring Modulith 1.4 | 모듈 의존성·공개 계약·독립 기동 검증. 영속 이벤트 전달은 기존 CDC 유지 |
 | Data | MySQL 8, JPA, QueryDSL, Flyway | 정합성, 동적 조회, 스키마 버전 관리 |
 | Batch | Spring Batch, Scheduler | 기업 데이터 수집과 사전 집계 |
 | Messaging | Kafka, Debezium CDC, Outbox/Inbox, Spring Event | 커밋된 요청의 전달·중복 수신 방어·실행 원장 분리 |
 | Cache/State | Redis 7, Lua | 요청 상태, 인증 토큰, 횟수 제한의 원자적 갱신 |
 | Resilience | Resilience4j | Retry, Circuit Breaker, Bulkhead |
 | Infra | Docker, AWS ECR, CodeBuild, CodeDeploy, EC2 | 이미지 기반 빌드·배포와 헬스 검증 |
-| Test/Measure | JUnit 5, Mockito, MockWebServer, Docker Compose, Python, p6spy | 단위·실제 인프라 회귀, HTTP·SQL·부하 계측. JMeter JMX는 미실행 템플릿 |
+| Test/Measure | JUnit 5, Mockito, MockWebServer, Playwright, Docker Compose, Python, p6spy | 단위·실제 인프라 회귀, HTTP·SQL·부하 계측. JMeter JMX는 미실행 템플릿 |
 
 ## 실행과 검증
 
